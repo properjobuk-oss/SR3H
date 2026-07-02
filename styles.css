@@ -35,10 +35,47 @@ body {
   text-rendering: geometricPrecision;
 }
 
+html.intro-enabled,
+html.intro-enabled body {
+  overflow: hidden;
+}
+
 a {
   color: inherit;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
+}
+
+.intro-overlay {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: none;
+  place-items: center;
+  padding:
+    max(32px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right))
+    max(32px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+  background: #fff;
+  opacity: 1;
+  transition:
+    opacity 420ms ease,
+    visibility 420ms ease;
+}
+
+html.intro-enabled .intro-overlay {
+  display: grid;
+}
+
+html.intro-exiting .intro-overlay {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.intro-video {
+  display: block;
+  width: min(72vw, 560px);
+  max-height: 52svh;
+  object-fit: contain;
 }
 
 .site-header {
@@ -287,6 +324,10 @@ h3 {
 }
 
 @media (max-width: 720px) {
+  .intro-video {
+    width: min(78vw, 320px);
+  }
+
   .site-header {
     padding-top: calc(14px + env(safe-area-inset-top));
     padding-bottom: 14px;
@@ -318,6 +359,10 @@ h3 {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .intro-overlay {
+    display: none !important;
+  }
+
   *,
   *::before,
   *::after {

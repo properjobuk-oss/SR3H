@@ -33,9 +33,38 @@
     <link rel="mask-icon" href="favicon.svg" color="#1a1a18">
     <link rel="manifest" href="site.webmanifest">
     <link rel="preload" href="assets/sr3h-quiet-material.jpg" as="image">
+    <link rel="preload" href="assets/sr3h-logo-reveal.mp4" as="video" type="video/mp4">
     <link rel="stylesheet" href="styles.css">
+    <script>
+      (() => {
+        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        let seen = false;
+
+        try {
+          seen = window.sessionStorage.getItem("sr3hIntroSeen") === "1";
+        } catch {
+          seen = false;
+        }
+
+        if (!reduce && !seen) {
+          document.documentElement.classList.add("intro-enabled");
+        }
+      })();
+    </script>
   </head>
   <body>
+    <div class="intro-overlay" aria-hidden="true">
+      <video
+        class="intro-video"
+        src="assets/sr3h-logo-reveal.mp4"
+        muted
+        playsinline
+        autoplay
+        preload="auto"
+        poster="apple-touch-icon.png"
+      ></video>
+    </div>
+
     <header class="site-header" aria-label="SR3H">
       <a class="brand" href="/" aria-label="SR3H home">
         <img
