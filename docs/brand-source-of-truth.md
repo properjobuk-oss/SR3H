@@ -20,7 +20,7 @@ SR3H turns specialist knowledge into elegant software products for complex profe
 
 Proper Job: Price estimation software for UK building and construction work, using real-world levers and cost drivers.
 
-Brane: Structured knowledge tools for specialist teams and complex decisions.
+Brane: A private intelligence layer for context, field awareness and safer high-confidence decisions.
 
 Conchup: In-house engineering software for guiding, reviewing and controlling AI-assisted development from one calm command centre.
 
