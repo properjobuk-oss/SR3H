@@ -17,7 +17,7 @@ if (document.documentElement.classList.contains("intro-enabled")) {
 
     window.setTimeout(() => {
       document.documentElement.classList.remove("intro-enabled", "intro-exiting");
-    }, 460);
+    }, 1160);
   };
 
   const fallbackTimer = window.setTimeout(closeIntro, 2600);
