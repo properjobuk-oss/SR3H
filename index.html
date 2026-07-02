@@ -8,6 +8,10 @@
       name="description"
       content="SR3H LTD builds and backs specialist software for practical work."
     >
+    <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#f7f5f0" id="theme-color">
+    <meta name="apple-mobile-web-app-title" content="SR3H">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta property="og:title" content="SR3H LTD">
     <meta
       property="og:description"
@@ -17,6 +21,7 @@
     <meta property="og:image" content="assets/sr3h-quiet-material.jpg">
     <link rel="canonical" href="https://sr3h.uk/">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="mask-icon" href="favicon.svg" color="#1a1a18">
     <link rel="preload" href="assets/sr3h-quiet-material.jpg" as="image">
     <link rel="stylesheet" href="styles.css">
   </head>
@@ -30,7 +35,7 @@
     </header>
 
     <main>
-      <section class="hero" aria-labelledby="hero-title">
+      <section class="hero" aria-labelledby="hero-title" data-theme-color="#f7f5f0">
         <div class="hero-copy">
           <p class="eyebrow">SR3H LTD</p>
           <h1 id="hero-title">Specialist software for practical work.</h1>
@@ -44,7 +49,7 @@
         </div>
       </section>
 
-      <section class="section compact" aria-labelledby="what-title">
+      <section class="section compact" aria-labelledby="what-title" data-theme-color="#f7f5f0">
         <div class="section-inner split">
           <h2 id="what-title">What we do</h2>
           <p>
@@ -54,7 +59,7 @@
         </div>
       </section>
 
-      <section class="section" id="work" aria-labelledby="work-title">
+      <section class="section" id="work" aria-labelledby="work-title" data-theme-color="#fbfaf7">
         <div class="section-inner">
           <h2 id="work-title">Selected work</h2>
           <div class="work-list">
@@ -84,7 +89,7 @@
         </div>
       </section>
 
-      <section class="section muted" aria-labelledby="principles-title">
+      <section class="section muted" aria-labelledby="principles-title" data-theme-color="#efede7">
         <div class="section-inner principles">
           <h2 id="principles-title">Principles</h2>
           <ul>
@@ -97,7 +102,7 @@
         </div>
       </section>
 
-      <section class="section contact" aria-labelledby="contact-title">
+      <section class="section contact" aria-labelledby="contact-title" data-theme-color="#f7f5f0">
         <div class="section-inner split">
           <h2 id="contact-title">Contact</h2>
           <p>
@@ -116,5 +121,6 @@
         United Kingdom, NN4 7SL.
       </p>
     </footer>
+    <script src="site.js"></script>
   </body>
 </html>
