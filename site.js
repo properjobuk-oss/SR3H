@@ -3,7 +3,10 @@ const introVideo = document.querySelector(".intro-video");
 
 if (document.documentElement.classList.contains("intro-enabled")) {
   const closeIntro = () => {
-    if (!document.documentElement.classList.contains("intro-enabled")) {
+    if (
+      !document.documentElement.classList.contains("intro-enabled") ||
+      document.documentElement.classList.contains("intro-whiteout")
+    ) {
       return;
     }
 
@@ -13,11 +16,20 @@ if (document.documentElement.classList.contains("intro-enabled")) {
       // Storage can be unavailable in strict privacy modes.
     }
 
-    document.documentElement.classList.add("intro-exiting");
+    document.documentElement.classList.add("intro-whiteout");
 
     window.setTimeout(() => {
-      document.documentElement.classList.remove("intro-enabled", "intro-exiting");
-    }, 1160);
+      document.documentElement.classList.add("intro-page-visible", "intro-exiting");
+    }, 520);
+
+    window.setTimeout(() => {
+      document.documentElement.classList.remove(
+        "intro-enabled",
+        "intro-whiteout",
+        "intro-page-visible",
+        "intro-exiting",
+      );
+    }, 1780);
   };
 
   const fallbackTimer = window.setTimeout(closeIntro, 2600);

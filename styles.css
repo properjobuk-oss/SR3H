@@ -1,14 +1,14 @@
 :root {
   color-scheme: light;
-  --paper: #f7f5f0;
-  --paper-soft: #fbfaf7;
+  --paper: #f5fbfb;
+  --paper-soft: #fbfefe;
   --ink: #1a1a18;
-  --muted: #6d6b66;
+  --muted: #647174;
   --blue: #2e6fd8;
-  --line: rgba(26, 26, 24, 0.13);
-  --line-strong: rgba(26, 26, 24, 0.24);
-  --white: rgba(255, 255, 255, 0.72);
-  --shadow: 0 18px 55px rgba(26, 26, 24, 0.08);
+  --line: rgba(20, 39, 44, 0.12);
+  --line-strong: rgba(20, 39, 44, 0.24);
+  --white: rgba(255, 255, 255, 0.78);
+  --shadow: 0 18px 55px rgba(20, 39, 44, 0.08);
   --page-pad: clamp(20px, 4vw, 56px);
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -75,6 +75,33 @@ html.intro-exiting .intro-overlay {
   width: min(72vw, 560px);
   max-height: 52svh;
   object-fit: contain;
+  transition: opacity 520ms ease;
+}
+
+html.intro-whiteout .intro-video {
+  opacity: 0;
+}
+
+.site-header,
+main,
+.site-footer {
+  transition:
+    opacity 1200ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html.intro-enabled .site-header,
+html.intro-enabled main,
+html.intro-enabled .site-footer {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+html.intro-enabled.intro-page-visible .site-header,
+html.intro-enabled.intro-page-visible main,
+html.intro-enabled.intro-page-visible .site-footer {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .site-header {
@@ -89,8 +116,8 @@ html.intro-exiting .intro-overlay {
   padding:
     calc(16px + env(safe-area-inset-top)) max(var(--page-pad), env(safe-area-inset-right))
     16px max(var(--page-pad), env(safe-area-inset-left));
-  background: rgba(247, 245, 240, 0.78);
-  border-bottom: 1px solid rgba(26, 26, 24, 0.07);
+  background: rgba(245, 251, 251, 0.8);
+  border-bottom: 1px solid rgba(20, 39, 44, 0.07);
   -webkit-backdrop-filter: blur(18px);
   backdrop-filter: blur(18px);
 }
@@ -135,7 +162,7 @@ html.intro-exiting .intro-overlay {
     calc(126px + env(safe-area-inset-top)) max(var(--page-pad), env(safe-area-inset-right))
     70px max(var(--page-pad), env(safe-area-inset-left));
   background:
-    linear-gradient(rgba(247, 245, 240, 0.24), rgba(247, 245, 240, 0.3)),
+    linear-gradient(rgba(245, 251, 251, 0.18), rgba(245, 251, 251, 0.36)),
     url("assets/sr3h-quiet-material.jpg") center / cover no-repeat;
   border-bottom: 1px solid var(--line);
 }
@@ -175,7 +202,7 @@ h3 {
 .intro {
   max-width: 520px;
   margin-block-end: 34px;
-  color: #403f3b;
+  color: #354044;
   font-size: clamp(20px, 2.1vw, 28px);
   line-height: 1.25;
 }
@@ -230,7 +257,7 @@ h3 {
 }
 
 .section.muted {
-  background: #efede7;
+  background: #edf7f7;
 }
 
 .section-inner {
