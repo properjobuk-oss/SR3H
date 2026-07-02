@@ -4,7 +4,7 @@
 
 SR3H is the quiet operator brand.
 
-It is not the loud product brand. Proper Job, clinical mapping work and future tools keep their own names.
+It is not the loud product brand. Proper Job, Brane and future tools keep their own names.
 
 ## Core Line
 
@@ -20,7 +20,7 @@ SR3H turns specialist knowledge into elegant software products for complex profe
 
 Proper Job: Price estimation software for UK building and construction work, using real-world levers and cost drivers.
 
-Clinical workflow tools: Early software-assisted mapping work with clinical and academic partners.
+Brane: Structured knowledge tools for specialist teams and complex decisions.
 
 Pipeline: Further specialist tools in development.
 
@@ -42,7 +42,7 @@ Do not describe SR3H as an agency.
 
 Do not name NDA-covered work in public copy.
 
-Do not overstate clinical, research or product claims.
+Do not overstate research, product or partner claims.
 
 Do not use inflated technology language.
 
