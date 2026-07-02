@@ -273,7 +273,27 @@ h3 {
   background: #edf7f7;
 }
 
+.work-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.work-section::before {
+  position: absolute;
+  right: max(-120px, -5vw);
+  bottom: -170px;
+  width: min(58vw, 760px);
+  aspect-ratio: 1;
+  background: url("assets/conchup-rainbow-watermark.png") center / contain no-repeat;
+  content: "";
+  filter: grayscale(1) contrast(0.72);
+  opacity: 0.09;
+  pointer-events: none;
+}
+
 .section-inner {
+  position: relative;
+  z-index: 1;
   width: min(1120px, 100%);
   margin: 0 auto;
 }
