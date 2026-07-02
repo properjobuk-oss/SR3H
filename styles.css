@@ -273,14 +273,14 @@ h3 {
 
 .work-section::before {
   position: absolute;
-  right: max(-780px, -42vw);
-  bottom: -860px;
-  width: min(168vw, 2200px);
+  right: max(-1180px, -64vw);
+  bottom: -1240px;
+  width: min(236vw, 3200px);
   aspect-ratio: 1;
   background: url("assets/conchup-rainbow-watermark.png") center / contain no-repeat;
   content: "";
   filter: grayscale(1) contrast(0.72);
-  opacity: 0.055;
+  opacity: 0.07;
   pointer-events: none;
 }
 
@@ -338,11 +338,11 @@ h3 {
 
 .work-item-proper-job::after {
   position: absolute;
-  inset: -58px;
+  inset: -142px;
   background: url("assets/proper-job-watermark.png") center / contain no-repeat;
   content: "";
-  filter: blur(1.2px);
-  opacity: 0.13;
+  filter: blur(1.8px);
+  opacity: 0.075;
   pointer-events: none;
 }
 
@@ -354,27 +354,27 @@ h3 {
   aspect-ratio: 1;
   background: url("assets/brane-field-watermark.png") center / contain no-repeat;
   content: "";
-  opacity: 0.18;
+  opacity: 0.15;
   pointer-events: none;
 }
 
 .work-item-conchup::after {
   position: absolute;
-  right: -210px;
-  bottom: -206px;
-  width: min(218%, 700px);
+  right: -290px;
+  bottom: -284px;
+  width: min(282%, 880px);
   aspect-ratio: 1;
   background: url("assets/conchup-rainbow-watermark.png") center / contain no-repeat;
   content: "";
-  opacity: 0.16;
+  opacity: 0.2;
   pointer-events: none;
 }
 
 .work-item-pipeline::after {
   position: absolute;
-  right: -104px;
-  bottom: -112px;
-  width: min(136%, 430px);
+  right: -220px;
+  bottom: -216px;
+  width: min(224%, 700px);
   aspect-ratio: 1;
   background: url("assets/pipeline-field-watermark.png") center / contain no-repeat;
   content: "";
