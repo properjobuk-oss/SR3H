@@ -10,12 +10,6 @@ if (document.documentElement.classList.contains("intro-enabled")) {
       return;
     }
 
-    try {
-      window.sessionStorage.setItem("sr3hIntroSeen", "1");
-    } catch {
-      // Storage can be unavailable in strict privacy modes.
-    }
-
     document.documentElement.classList.add("intro-whiteout");
 
     window.setTimeout(() => {

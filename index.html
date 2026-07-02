@@ -34,19 +34,12 @@
     <link rel="manifest" href="site.webmanifest">
     <link rel="preload" href="assets/sr3h-quiet-material.jpg" as="image">
     <link rel="preload" href="assets/sr3h-logo-reveal.mp4" as="video" type="video/mp4">
-    <link rel="stylesheet" href="styles.css?v=20260702-2">
+    <link rel="stylesheet" href="styles.css?v=20260702-3">
     <script>
       (() => {
         const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        let seen = false;
 
-        try {
-          seen = window.sessionStorage.getItem("sr3hIntroSeen") === "1";
-        } catch {
-          seen = false;
-        }
-
-        if (!reduce && !seen) {
+        if (!reduce) {
           document.documentElement.classList.add("intro-enabled");
         }
       })();
@@ -173,6 +166,6 @@
         United Kingdom, NN4 7SL.
       </p>
     </footer>
-    <script src="site.js?v=20260702-2"></script>
+    <script src="site.js?v=20260702-3"></script>
   </body>
 </html>
