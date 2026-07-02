@@ -280,14 +280,14 @@ h3 {
 
 .work-section::before {
   position: absolute;
-  right: max(-120px, -5vw);
-  bottom: -170px;
-  width: min(58vw, 760px);
+  right: max(-330px, -18vw);
+  bottom: -390px;
+  width: min(92vw, 1180px);
   aspect-ratio: 1;
   background: url("assets/conchup-rainbow-watermark.png") center / contain no-repeat;
   content: "";
   filter: grayscale(1) contrast(0.72);
-  opacity: 0.09;
+  opacity: 0.075;
   pointer-events: none;
 }
 
@@ -348,7 +348,7 @@ h3 {
   inset: 0;
   background: url("assets/proper-job-watermark.png") center / cover no-repeat;
   content: "";
-  opacity: 0.5;
+  opacity: 0.28;
   pointer-events: none;
 }
 
@@ -360,19 +360,19 @@ h3 {
   aspect-ratio: 1;
   background: url("assets/brane-field-watermark.png") center / contain no-repeat;
   content: "";
-  opacity: 0.3;
+  opacity: 0.22;
   pointer-events: none;
 }
 
 .work-item-conchup::after {
   position: absolute;
-  right: -86px;
-  bottom: -96px;
-  width: min(122%, 400px);
+  right: -126px;
+  bottom: -132px;
+  width: min(154%, 500px);
   aspect-ratio: 1;
   background: url("assets/conchup-rainbow-watermark.png") center / contain no-repeat;
   content: "";
-  opacity: 0.32;
+  opacity: 0.24;
   pointer-events: none;
 }
 
