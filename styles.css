@@ -295,9 +295,17 @@ h3 {
 }
 
 .work-item {
+  position: relative;
+  overflow: hidden;
   min-height: 260px;
   padding: 24px;
   background: var(--paper-soft);
+}
+
+.work-item h3,
+.work-item p {
+  position: relative;
+  z-index: 1;
 }
 
 .work-item p {
@@ -305,6 +313,18 @@ h3 {
   margin: 0;
   color: var(--muted);
   font-size: 15px;
+}
+
+.work-item-conchup::after {
+  position: absolute;
+  right: -46px;
+  bottom: -58px;
+  width: min(76%, 260px);
+  aspect-ratio: 1;
+  background: url("assets/conchup-rainbow-watermark.png") center / contain no-repeat;
+  content: "";
+  opacity: 0.16;
+  pointer-events: none;
 }
 
 .principles {
