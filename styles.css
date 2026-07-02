@@ -145,13 +145,6 @@ html.intro-exiting .intro-overlay {
   width: min(760px, 100%);
 }
 
-.eyebrow {
-  margin: 0 0 24px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 600;
-}
-
 h1,
 h2,
 h3,

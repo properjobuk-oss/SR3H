@@ -8,11 +8,11 @@ It is not the loud product brand. Proper Job, clinical mapping work and future t
 
 ## Core Line
 
-Specialist software for practical work.
+Practical intelligence for specialist work.
 
 ## Approved Description
 
-SR3H LTD builds and backs focused digital products with expert partners.
+SR3H LTD builds and backs practical intelligence for specialist work.
 
 SR3H turns specialist knowledge into simple software products for complex professional work.
 
@@ -26,15 +26,15 @@ Pipeline: Further specialist tools in development.
 
 ## Principles
 
-Useful beats clever.
+Strategic clarity.
 
-Specialists lead the problem.
+Domain expertise.
 
-Evidence before claims.
+Evidence-led judgment.
 
-Trust is a product feature.
+Quiet systems.
 
-Keep it simple enough to use.
+Trust by design.
 
 ## Avoid
 
