@@ -75,7 +75,12 @@ html.intro-exiting .intro-overlay {
   width: min(72vw, 560px);
   max-height: 52svh;
   object-fit: contain;
+  opacity: 0;
   transition: opacity 520ms ease;
+}
+
+html.intro-ready .intro-video {
+  opacity: 1;
 }
 
 html.intro-whiteout .intro-video {

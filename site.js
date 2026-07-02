@@ -19,6 +19,7 @@ if (document.documentElement.classList.contains("intro-enabled")) {
     window.setTimeout(() => {
       document.documentElement.classList.remove(
         "intro-enabled",
+        "intro-ready",
         "intro-whiteout",
         "intro-page-visible",
         "intro-exiting",
@@ -27,6 +28,10 @@ if (document.documentElement.classList.contains("intro-enabled")) {
   };
 
   const fallbackTimer = window.setTimeout(closeIntro, 2600);
+
+  introVideo?.addEventListener("canplay", () => {
+    document.documentElement.classList.add("intro-ready");
+  });
 
   introVideo?.addEventListener("ended", () => {
     window.clearTimeout(fallbackTimer);
