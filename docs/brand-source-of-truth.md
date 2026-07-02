@@ -22,6 +22,8 @@ Proper Job: Price estimation software for UK building and construction work, usi
 
 Brane: Structured knowledge tools for specialist teams and complex decisions.
 
+Conchup: In-house engineering software for guiding, reviewing and controlling AI-assisted development from one calm command centre.
+
 Pipeline: Further specialist tools in development.
 
 ## Principles
