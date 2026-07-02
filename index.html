@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    >
     <title>SR3H LTD</title>
     <meta
       name="description"
@@ -10,6 +13,8 @@
     >
     <meta name="color-scheme" content="light">
     <meta name="theme-color" content="#f7f5f0" id="theme-color">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="SR3H">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta property="og:title" content="SR3H LTD">
@@ -18,16 +23,28 @@
       content="Specialist software for practical work."
     >
     <meta property="og:type" content="website">
-    <meta property="og:image" content="assets/sr3h-quiet-material.jpg">
+    <meta property="og:image" content="assets/sr3h-logo-og.png">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="canonical" href="https://sr3h.uk/">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="favicon-16.png" sizes="16x16" type="image/png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="mask-icon" href="favicon.svg" color="#1a1a18">
+    <link rel="manifest" href="site.webmanifest">
     <link rel="preload" href="assets/sr3h-quiet-material.jpg" as="image">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <header class="site-header" aria-label="SR3H">
-      <a class="wordmark" href="/" aria-label="SR3H home">SR3H</a>
+      <a class="brand" href="/" aria-label="SR3H home">
+        <img
+          src="assets/sr3h-logo-header.png"
+          width="940"
+          height="380"
+          alt="SR3H"
+        >
+      </a>
       <nav class="nav" aria-label="Primary">
         <a href="#work">Work</a>
         <a href="mailto:hello@sr3h.uk">Contact</a>
