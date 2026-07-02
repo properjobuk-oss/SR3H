@@ -22,7 +22,7 @@ Proper Job: Price estimation software for UK building and construction work, usi
 
 Brane: A private intelligence layer for context, field awareness and safer high-confidence decisions.
 
-Conchup: In-house engineering software for aligning agents and copilots under human oversight, versioning and project blueprint control.
+Conchup: In-house engineering software for aligning agents and copilots under human oversight, versioned blueprints and controlled project delivery.
 
 Pipeline: Unannounced technical work across specialist software, intelligence systems and practical automation.
 
