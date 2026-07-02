@@ -129,7 +129,7 @@ html.intro-enabled.intro-page-visible .site-footer {
 
 .brand {
   display: inline-flex;
-  width: 94px;
+  width: 112px;
   min-height: 32px;
   align-items: center;
   -webkit-tap-highlight-color: transparent;
@@ -147,7 +147,8 @@ html.intro-enabled.intro-page-visible .site-footer {
   gap: clamp(18px, 3vw, 36px);
   align-items: center;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
+  line-height: 1;
 }
 
 .nav a {
@@ -390,7 +391,7 @@ h3 {
   }
 
   .brand {
-    width: 82px;
+    width: 98px;
   }
 
   .hero {
