@@ -168,8 +168,15 @@ html.intro-enabled.intro-page-visible .site-footer {
     calc(126px + env(safe-area-inset-top)) max(var(--page-pad), env(safe-area-inset-right))
     70px max(var(--page-pad), env(safe-area-inset-left));
   background:
-    linear-gradient(rgba(245, 251, 251, 0.18), rgba(245, 251, 251, 0.36)),
+    linear-gradient(
+      135deg,
+      rgba(229, 248, 250, 0.58),
+      rgba(238, 251, 245, 0.5) 46%,
+      rgba(250, 254, 253, 0.72)
+    ),
     url("assets/sr3h-quiet-material.jpg") center / cover no-repeat;
+  background-color: #eef9f7;
+  background-blend-mode: screen, normal;
   border-bottom: 1px solid var(--line);
 }
 
