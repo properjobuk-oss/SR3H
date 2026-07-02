@@ -170,9 +170,9 @@ html.intro-enabled.intro-page-visible .site-footer {
   background:
     linear-gradient(
       140deg,
-      rgba(253, 255, 255, 0.48),
-      rgba(244, 250, 255, 0.34) 48%,
-      rgba(255, 255, 255, 0.58)
+      rgba(255, 255, 255, 0.66),
+      rgba(248, 252, 255, 0.5) 48%,
+      rgba(255, 255, 255, 0.74)
     ),
     url("assets/sr3h-quiet-material.jpg") center / cover no-repeat;
   border-bottom: 1px solid var(--line);
