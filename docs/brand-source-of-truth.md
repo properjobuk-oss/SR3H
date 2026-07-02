@@ -24,7 +24,7 @@ Brane: A private intelligence layer for context, field awareness and safer high-
 
 Conchup: In-house engineering software for aligning agents and copilots under human oversight, versioning and project blueprint control.
 
-Pipeline: Further specialist tools in development.
+Pipeline: Unannounced technical work across specialist software, intelligence systems and practical automation.
 
 ## Principles
 
