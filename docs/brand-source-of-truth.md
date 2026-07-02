@@ -4,7 +4,7 @@
 
 SR3H is the quiet operator brand.
 
-It is not the loud product brand. Proper Job, SpeechMate, clinical mapping work and future tools keep their own names.
+It is not the loud product brand. Proper Job, clinical mapping work and future tools keep their own names.
 
 ## Core Line
 
@@ -19,8 +19,6 @@ SR3H turns specialist knowledge into simple software products for complex profes
 ## Selected Work Language
 
 Proper Job: Early guide pricing and shared client links for UK builders.
-
-SpeechMate: Oxford-linked experimental speech support for public speaking and challenging conversations.
 
 Clinical workflow tools: Early software-assisted mapping work with clinical and academic partners.
 
@@ -42,7 +40,7 @@ Keep it simple enough to use.
 
 Do not describe SR3H as an agency.
 
-Do not call SpeechMate an Oxford spinout unless the legal status is confirmed.
+Do not name NDA-covered work in public copy.
 
 Do not overstate clinical, research or product claims.
 
