@@ -14,7 +14,7 @@ Practical intelligence for specialist work.
 
 SR3H LTD builds and backs practical intelligence for specialist work.
 
-SR3H turns specialist knowledge into simple software products for complex professional work.
+SR3H turns specialist knowledge into elegant software products for complex professional work.
 
 ## Selected Work Language
 
