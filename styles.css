@@ -325,25 +325,25 @@ h3 {
 
 .work-item-brane::after {
   position: absolute;
-  right: -94px;
-  bottom: -86px;
-  width: min(118%, 390px);
+  right: -72px;
+  bottom: -68px;
+  width: min(112%, 360px);
   aspect-ratio: 1;
   background: url("assets/brane-field-watermark.png") center / contain no-repeat;
   content: "";
-  opacity: 0.12;
+  opacity: 0.2;
   pointer-events: none;
 }
 
 .work-item-conchup::after {
   position: absolute;
-  right: -46px;
-  bottom: -58px;
-  width: min(76%, 260px);
+  right: -34px;
+  bottom: -46px;
+  width: min(74%, 250px);
   aspect-ratio: 1;
   background: url("assets/conchup-rainbow-watermark.png") center / contain no-repeat;
   content: "";
-  opacity: 0.16;
+  opacity: 0.24;
   pointer-events: none;
 }
 
