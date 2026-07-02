@@ -315,6 +315,18 @@ h3 {
   font-size: 15px;
 }
 
+.work-item-brane::after {
+  position: absolute;
+  right: -94px;
+  bottom: -86px;
+  width: min(118%, 390px);
+  aspect-ratio: 1;
+  background: url("assets/brane-field-watermark.png") center / contain no-repeat;
+  content: "";
+  opacity: 0.12;
+  pointer-events: none;
+}
+
 .work-item-conchup::after {
   position: absolute;
   right: -46px;
