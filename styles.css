@@ -1,6 +1,6 @@
 :root {
   color-scheme: light;
-  --paper: #f5fbfb;
+  --paper: #eefafa;
   --paper-soft: #fbfefe;
   --ink: #1a1a18;
   --muted: #647174;
@@ -121,7 +121,7 @@ html.intro-enabled.intro-page-visible .site-footer {
   padding:
     calc(16px + env(safe-area-inset-top)) max(var(--page-pad), env(safe-area-inset-right))
     16px max(var(--page-pad), env(safe-area-inset-left));
-  background: rgba(245, 251, 251, 0.8);
+  background: rgba(238, 250, 250, 0.82);
   border-bottom: 1px solid rgba(20, 39, 44, 0.07);
   -webkit-backdrop-filter: blur(18px);
   backdrop-filter: blur(18px);
@@ -170,13 +170,13 @@ html.intro-enabled.intro-page-visible .site-footer {
   background:
     linear-gradient(
       135deg,
-      rgba(229, 248, 250, 0.58),
-      rgba(238, 251, 245, 0.5) 46%,
-      rgba(250, 254, 253, 0.72)
+      rgba(218, 248, 252, 0.76),
+      rgba(231, 252, 242, 0.68) 46%,
+      rgba(251, 255, 253, 0.82)
     ),
     url("assets/sr3h-quiet-material.jpg") center / cover no-repeat;
-  background-color: #eef9f7;
-  background-blend-mode: screen, normal;
+  background-color: #eaf8f7;
+  background-blend-mode: normal, normal;
   border-bottom: 1px solid var(--line);
 }
 
