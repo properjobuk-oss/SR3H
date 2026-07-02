@@ -12,13 +12,13 @@ Practical intelligence for specialist work.
 
 ## Approved Description
 
-SR3H LTD builds and backs practical intelligence for specialist work.
+SR3H LTD shapes expert knowledge into practical digital products.
 
 SR3H turns specialist knowledge into elegant software products for complex professional work.
 
 ## Selected Work Language
 
-Proper Job: Early guide pricing and shared client links for UK builders.
+Proper Job: Price estimation software for UK building and construction work, using real-world levers and cost drivers.
 
 Clinical workflow tools: Early software-assisted mapping work with clinical and academic partners.
 
