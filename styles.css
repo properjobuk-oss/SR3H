@@ -5,6 +5,7 @@
   --ink: #1a1a18;
   --muted: #647174;
   --blue: #2e6fd8;
+  --chrome: #8eabc9;
   --line: rgba(20, 39, 44, 0.12);
   --line-strong: rgba(20, 39, 44, 0.24);
   --white: rgba(255, 255, 255, 0.78);
@@ -25,13 +26,13 @@
 }
 
 html {
-  background: var(--blue);
+  background: var(--chrome);
   scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  background: var(--blue);
+  background: var(--chrome);
   color: var(--ink);
   font-size: 16px;
   line-height: 1.45;

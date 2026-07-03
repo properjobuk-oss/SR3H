@@ -3,8 +3,8 @@
   "short_name": "SR3H",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#2e6fd8",
-  "theme_color": "#2e6fd8",
+  "background_color": "#8eabc9",
+  "theme_color": "#8eabc9",
   "icons": [
     {
       "src": "/icon-192.png",

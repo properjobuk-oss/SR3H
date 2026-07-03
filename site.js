@@ -58,7 +58,7 @@ if (document.documentElement.classList.contains("intro-enabled")) {
 
 document
   .querySelectorAll('meta[name="theme-color"]')
-  .forEach((meta) => meta.setAttribute("content", "#2e6fd8"));
+  .forEach((meta) => meta.setAttribute("content", "#8eabc9"));
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
