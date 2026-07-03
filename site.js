@@ -57,4 +57,6 @@ if (document.documentElement.classList.contains("intro-enabled")) {
   });
 }
 
-document.querySelector("#theme-color")?.setAttribute("content", "#2e6fd8");
+document
+  .querySelectorAll('meta[name="theme-color"]')
+  .forEach((meta) => meta.setAttribute("content", "#2e6fd8"));
