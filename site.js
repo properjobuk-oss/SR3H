@@ -3,7 +3,10 @@ const introVideo = document.querySelector(".intro-video");
 
 if (document.documentElement.classList.contains("intro-enabled")) {
   const showIntroVideo = () => {
-    document.documentElement.classList.remove("intro-fallback-visible");
+    if (!introVideo || introVideo.paused || introVideo.ended) {
+      return;
+    }
+
     document.documentElement.classList.add("intro-ready");
   };
 
@@ -32,19 +35,15 @@ if (document.documentElement.classList.contains("intro-enabled")) {
     }, 1780);
   };
 
-  const fallbackDisplayTimer = window.setTimeout(() => {
-    if (!document.documentElement.classList.contains("intro-ready")) {
-      document.documentElement.classList.add("intro-fallback-visible");
-    }
-  }, 650);
   const fallbackTimer = window.setTimeout(closeIntro, 3600);
 
-  introVideo?.addEventListener("loadeddata", showIntroVideo);
-  introVideo?.addEventListener("canplay", showIntroVideo);
   introVideo?.addEventListener("playing", showIntroVideo);
 
+  if (introVideo && !introVideo.paused && !introVideo.ended) {
+    showIntroVideo();
+  }
+
   introVideo?.addEventListener("ended", () => {
-    window.clearTimeout(fallbackDisplayTimer);
     window.clearTimeout(fallbackTimer);
     closeIntro();
   });
