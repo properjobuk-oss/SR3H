@@ -381,7 +381,7 @@ h3 {
   aspect-ratio: 1;
   background: url("assets/brane-field-watermark.png") center / contain no-repeat;
   content: "";
-  opacity: 0.15;
+  opacity: 0.12;
   pointer-events: none;
 }
 
@@ -405,7 +405,7 @@ h3 {
   aspect-ratio: 1;
   background: url("assets/pipeline-field-watermark.png") center / contain no-repeat;
   content: "";
-  opacity: 0.16;
+  opacity: 0.12;
   pointer-events: none;
 }
 
