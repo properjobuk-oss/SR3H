@@ -175,6 +175,12 @@ html.intro-enabled.intro-page-visible .site-footer {
   display: block;
   width: 100%;
   height: auto;
+  transform-origin: 18% 50%;
+}
+
+.brand:hover img,
+.brand:focus-visible img {
+  animation: brand-home-settle 840ms var(--ease-out);
 }
 
 .nav {
@@ -184,6 +190,35 @@ html.intro-enabled.intro-page-visible .site-footer {
   color: var(--muted);
   font-size: 14px;
   line-height: 1;
+}
+
+@keyframes brand-home-settle {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0 rgba(46, 111, 216, 0));
+    transform: translateY(0) rotate(0);
+  }
+
+  34% {
+    filter: drop-shadow(0 0 10px rgba(46, 111, 216, 0.18));
+    transform: translateY(-1px) rotate(-1.7deg);
+  }
+
+  64% {
+    filter: drop-shadow(0 0 5px rgba(46, 111, 216, 0.1));
+    transform: translateY(0) rotate(0.55deg);
+  }
+}
+
+@keyframes brand-home-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0 rgba(46, 111, 216, 0));
+  }
+
+  42% {
+    filter: drop-shadow(0 0 9px rgba(46, 111, 216, 0.18));
+  }
 }
 
 .nav a {
@@ -696,5 +731,10 @@ html.motion-ready [data-reveal].is-visible {
   html.motion-ready [data-reveal] {
     opacity: 1;
     transform: none;
+  }
+
+  .brand:hover img,
+  .brand:focus-visible img {
+    animation: brand-home-glow 720ms ease-out;
   }
 }
