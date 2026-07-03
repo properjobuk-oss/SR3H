@@ -26,6 +26,7 @@ const CONTACT_FOCUS_DURATION = 1500;
 const ANCHOR_SCROLL_SETTLE_DELAY = 360;
 
 setThemeColor(THEME_COLOR);
+initFreshPageStart();
 initIntro();
 initMotion();
 
@@ -37,6 +38,23 @@ function setThemeColor(color) {
 
 function prefersReducedMotion() {
   return window.matchMedia(REDUCED_MOTION_QUERY).matches;
+}
+
+function initFreshPageStart() {
+  if ("scrollRestoration" in window.history) {
+    window.history.scrollRestoration = "manual";
+  }
+
+  if (window.location.hash) {
+    window.history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}${window.location.search}`,
+    );
+  }
+
+  window.scrollTo(0, 0);
+  window.addEventListener("pageshow", () => window.scrollTo(0, 0), { once: true });
 }
 
 function initIntro() {
