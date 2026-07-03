@@ -79,7 +79,7 @@ html.intro-exiting .intro-overlay {
   display: block;
   width: min(62vw, 420px);
   height: auto;
-  opacity: 0.92;
+  opacity: 0;
   transition: opacity 420ms ease;
 }
 
@@ -96,7 +96,10 @@ html.intro-ready .intro-video {
   opacity: 1;
 }
 
-html.intro-ready .intro-fallback,
+html.intro-fallback-visible:not(.intro-ready) .intro-fallback {
+  opacity: 0.92;
+}
+
 html.intro-whiteout .intro-video {
   opacity: 0;
 }
