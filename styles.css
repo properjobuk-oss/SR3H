@@ -427,7 +427,14 @@ h3 {
 }
 
 .contact a {
+  color: var(--blue);
+  text-decoration: none;
   white-space: nowrap;
+}
+
+.contact a:hover,
+.contact a:focus-visible {
+  color: #1f5fc7;
 }
 
 .site-footer {
