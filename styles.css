@@ -70,6 +70,19 @@ html.intro-exiting .intro-overlay {
   opacity: 0;
 }
 
+.intro-video,
+.intro-fallback {
+  grid-area: 1 / 1;
+}
+
+.intro-fallback {
+  display: block;
+  width: min(62vw, 420px);
+  height: auto;
+  opacity: 0.92;
+  transition: opacity 420ms ease;
+}
+
 .intro-video {
   display: block;
   width: min(72vw, 560px);
@@ -83,7 +96,12 @@ html.intro-ready .intro-video {
   opacity: 1;
 }
 
+html.intro-ready .intro-fallback,
 html.intro-whiteout .intro-video {
+  opacity: 0;
+}
+
+html.intro-whiteout .intro-fallback {
   opacity: 0;
 }
 
@@ -428,6 +446,10 @@ h3 {
 }
 
 @media (max-width: 720px) {
+  .intro-fallback {
+    width: min(72vw, 280px);
+  }
+
   .intro-video {
     width: min(78vw, 320px);
   }
@@ -463,10 +485,6 @@ h3 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .intro-overlay {
-    display: none !important;
-  }
-
   *,
   *::before,
   *::after {

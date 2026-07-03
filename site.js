@@ -2,6 +2,10 @@ const introOverlay = document.querySelector(".intro-overlay");
 const introVideo = document.querySelector(".intro-video");
 
 if (document.documentElement.classList.contains("intro-enabled")) {
+  const showIntroVideo = () => {
+    document.documentElement.classList.add("intro-ready");
+  };
+
   const closeIntro = () => {
     if (
       !document.documentElement.classList.contains("intro-enabled") ||
@@ -27,11 +31,11 @@ if (document.documentElement.classList.contains("intro-enabled")) {
     }, 1780);
   };
 
-  const fallbackTimer = window.setTimeout(closeIntro, 2600);
+  const fallbackTimer = window.setTimeout(closeIntro, 3600);
 
-  introVideo?.addEventListener("canplay", () => {
-    document.documentElement.classList.add("intro-ready");
-  });
+  introVideo?.addEventListener("loadeddata", showIntroVideo);
+  introVideo?.addEventListener("canplay", showIntroVideo);
+  introVideo?.addEventListener("playing", showIntroVideo);
 
   introVideo?.addEventListener("ended", () => {
     window.clearTimeout(fallbackTimer);
@@ -40,6 +44,10 @@ if (document.documentElement.classList.contains("intro-enabled")) {
 
   introVideo?.addEventListener("error", closeIntro);
   introOverlay?.addEventListener("click", closeIntro);
+
+  introVideo?.play?.().catch(() => {
+    window.setTimeout(closeIntro, 1200);
+  });
 }
 
 document.querySelector("#theme-color")?.setAttribute("content", "#2e6fd8");
