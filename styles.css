@@ -146,6 +146,20 @@ html.intro-enabled.intro-page-visible .site-footer {
   border-bottom: 1px solid var(--header-line);
   -webkit-backdrop-filter: blur(18px);
   backdrop-filter: blur(18px);
+  transition:
+    opacity 1200ms var(--ease-out),
+    transform 1200ms var(--ease-out),
+    background-color 1300ms var(--ease-out),
+    border-color 1300ms var(--ease-out),
+    -webkit-backdrop-filter 1300ms var(--ease-out),
+    backdrop-filter 1300ms var(--ease-out);
+}
+
+.site-header.is-settling {
+  background: rgba(245, 251, 251, 0.56);
+  border-bottom-color: rgba(20, 39, 44, 0.025);
+  -webkit-backdrop-filter: blur(28px);
+  backdrop-filter: blur(28px);
 }
 
 .brand {
@@ -530,6 +544,23 @@ h3 {
 .contact a:hover,
 .contact a:focus-visible {
   color: #1f5fc7;
+}
+
+.contact.is-contact-focus a[href^="mailto:"] {
+  animation: contact-glow 1500ms var(--ease-out);
+}
+
+@keyframes contact-glow {
+  0%,
+  100% {
+    color: var(--blue);
+    text-shadow: 0 0 0 rgba(46, 111, 216, 0);
+  }
+
+  34% {
+    color: #1f5fc7;
+    text-shadow: 0 0 18px rgba(46, 111, 216, 0.26);
+  }
 }
 
 .site-footer {

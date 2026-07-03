@@ -11,6 +11,7 @@ const INTRO_CLASSES = [
 
 const INTRO_TIMING = {
   pageRevealDelay: 520,
+  headerSettleReleaseDelay: 620,
   cleanupDelay: 1780,
   fallbackCloseDelay: 3600,
   playFailureDelay: 1200,
@@ -21,6 +22,8 @@ const REVEAL_MAX_DELAY = 260;
 const REVEAL_DELAY_STEP = 42;
 const WATERMARK_DRIFT = 9;
 const ANCHOR_LANDING_DURATION = 1400;
+const CONTACT_FOCUS_DURATION = 1500;
+const ANCHOR_SCROLL_SETTLE_DELAY = 360;
 
 setThemeColor(THEME_COLOR);
 initIntro();
@@ -32,6 +35,10 @@ function setThemeColor(color) {
     .forEach((meta) => meta.setAttribute("content", color));
 }
 
+function prefersReducedMotion() {
+  return window.matchMedia(REDUCED_MOTION_QUERY).matches;
+}
+
 function initIntro() {
   const root = document.documentElement;
 
@@ -40,6 +47,7 @@ function initIntro() {
   }
 
   const overlay = document.querySelector(".intro-overlay");
+  const header = document.querySelector(".site-header");
   const video = document.querySelector(".intro-video");
   let fallbackTimer;
 
@@ -58,9 +66,17 @@ function initIntro() {
 
     root.classList.add("intro-whiteout");
 
+    if (!prefersReducedMotion()) {
+      header?.classList.add("is-settling");
+    }
+
     window.setTimeout(() => {
       root.classList.add("intro-page-visible", "intro-exiting");
     }, INTRO_TIMING.pageRevealDelay);
+
+    window.setTimeout(() => {
+      header?.classList.remove("is-settling");
+    }, INTRO_TIMING.headerSettleReleaseDelay);
 
     window.setTimeout(() => {
       root.classList.remove(...INTRO_CLASSES);
@@ -93,7 +109,7 @@ function initIntro() {
 }
 
 function initMotion() {
-  if (window.matchMedia(REDUCED_MOTION_QUERY).matches) {
+  if (prefersReducedMotion()) {
     return;
   }
 
@@ -161,6 +177,16 @@ function initWorkCardMotion() {
   });
 }
 
+function restartTimedClass(element, className, duration) {
+  element.classList.remove(className);
+  void element.offsetWidth;
+  element.classList.add(className);
+
+  window.setTimeout(() => {
+    element.classList.remove(className);
+  }, duration);
+}
+
 function initAnchorLanding() {
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener("click", () => {
@@ -175,14 +201,12 @@ function initAnchorLanding() {
       }
 
       window.setTimeout(() => {
-        target.classList.remove("is-anchor-landing");
-        void target.offsetWidth;
-        target.classList.add("is-anchor-landing");
+        restartTimedClass(target, "is-anchor-landing", ANCHOR_LANDING_DURATION);
 
-        window.setTimeout(() => {
-          target.classList.remove("is-anchor-landing");
-        }, ANCHOR_LANDING_DURATION);
-      }, 360);
+        if (target.classList.contains("contact")) {
+          restartTimedClass(target, "is-contact-focus", CONTACT_FOCUS_DURATION);
+        }
+      }, ANCHOR_SCROLL_SETTLE_DELAY);
     });
   });
 }
