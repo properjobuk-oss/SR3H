@@ -20,6 +20,7 @@ const REVEAL_SELECTOR = ".hero-copy, .section-inner, .work-item, .principles li"
 const REVEAL_MAX_DELAY = 260;
 const REVEAL_DELAY_STEP = 42;
 const WATERMARK_DRIFT = 9;
+const ANCHOR_LANDING_DURATION = 1400;
 
 setThemeColor(THEME_COLOR);
 initIntro();
@@ -98,6 +99,7 @@ function initMotion() {
 
   initReveals();
   initWorkCardMotion();
+  initAnchorLanding();
 }
 
 function initReveals() {
@@ -155,6 +157,32 @@ function initWorkCardMotion() {
     card.addEventListener("pointerleave", () => {
       card.style.removeProperty("--watermark-x");
       card.style.removeProperty("--watermark-y");
+    });
+  });
+}
+
+function initAnchorLanding() {
+  document.querySelectorAll('a[href^="#"]').forEach((link) => {
+    link.addEventListener("click", () => {
+      if (!link.hash) {
+        return;
+      }
+
+      const target = document.querySelector(link.hash);
+
+      if (!target) {
+        return;
+      }
+
+      window.setTimeout(() => {
+        target.classList.remove("is-anchor-landing");
+        void target.offsetWidth;
+        target.classList.add("is-anchor-landing");
+
+        window.setTimeout(() => {
+          target.classList.remove("is-anchor-landing");
+        }, ANCHOR_LANDING_DURATION);
+      }, 360);
     });
   });
 }

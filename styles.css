@@ -348,12 +348,32 @@ h3 {
 }
 
 .work-list {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1px;
+  overflow: hidden;
   margin-top: 44px;
   background: var(--line);
   border: 1px solid var(--line);
+}
+
+.work-list::after {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  left: 0;
+  width: 44%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(46, 111, 216, 0.52), transparent);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-120%);
+}
+
+.work-section.is-anchor-landing .work-list::after {
+  animation: anchor-sweep 1280ms var(--ease-out);
 }
 
 .work-item {
@@ -521,14 +541,46 @@ h3 {
   font-size: 12px;
 }
 
+.footer-note {
+  display: flex;
+  width: min(1120px, 100%);
+  align-items: flex-start;
+  gap: 12px;
+}
+
 .site-footer p {
   width: min(1120px, 100%);
   margin: 0 auto;
 }
 
+.footer-mark {
+  flex: 0 0 auto;
+  width: 18px;
+  height: auto;
+  margin-top: -1px;
+  opacity: 0.52;
+}
+
 html.motion-ready [data-reveal] {
   opacity: 0;
   transform: translateY(12px);
+}
+
+@keyframes anchor-sweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-120%);
+  }
+
+  18%,
+  64% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(256%);
+  }
 }
 
 html.motion-ready [data-reveal].is-visible {
