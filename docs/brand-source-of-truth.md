@@ -24,7 +24,7 @@ Proper Job: Clearer guide prices for UK building work, built around the real lev
 
 Brane: A local-first context engine exploring how people can work with more useful intelligence while staying in control of their information.
 
-Conchup: A governed in-house platform for turning complex conversations into clear, traceable product decisions and build-ready work. Public access is not available; authorised collaborators will connect through the secured platform when ready.
+Conchup: An in-house engineering-orchestration platform for bespoke software with complex requirements. It is designed to maintain persistent project state across requirements, design, engineering, testing and release preparation; changes can be traced through affected work towards controlled rebuild, test and deployment. Public access is not available; authorised collaborators will connect through the secured platform when ready.
 
 NextUp: An in-development product for keeping track of what you watch and deciding what comes next.
 
