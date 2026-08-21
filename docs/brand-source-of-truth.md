@@ -2,7 +2,7 @@
 
 ## Position
 
-SR3H is the quiet operator brand.
+SR3H is the quiet operator brand and independent product studio.
 
 It is not the loud product brand. Proper Job, Brane and future tools keep their own names.
 
@@ -16,15 +16,23 @@ SR3H LTD shapes expert knowledge into practical digital products.
 
 SR3H turns specialist knowledge into elegant software products for complex professional work.
 
+SR3H makes useful digital products from complicated knowledge — for real people, real work and the occasional big question.
+
 ## Selected Work Language
 
-Proper Job: Price estimation software for UK building and construction work, using real-world levers and cost drivers.
+Proper Job: Clearer guide prices for UK building work, built around the real levers that shape a job.
 
-Brane: A private intelligence layer for context, field awareness and safer high-confidence decisions.
+Brane: A local-first context engine exploring how people can work with more useful intelligence while staying in control of their information.
 
-Conchup: In-house engineering software for aligning agents and copilots under human oversight, versioned blueprints and controlled project delivery.
+Conchup: A governed in-house platform for turning complex conversations into clear, traceable product decisions and build-ready work. Public access is not available; authorised collaborators will connect through the secured platform when ready.
 
-Pipeline: Unannounced technical work across specialist software, intelligence systems and practical automation.
+NextUp: An in-development product for keeping track of what you watch and deciding what comes next.
+
+Drift: An in-development product for exploring nearby places, new destinations and small moments worth going out for.
+
+Good Route: In-development navigation that respects the route a rider chose instead of constantly trying to replace it.
+
+Anup House: The first SR3H Community Build, creating a clearer online home for a welcoming guesthouse in Bodh Gaya.
 
 ## Principles
 
@@ -38,6 +46,8 @@ Quiet systems.
 
 Trust by design.
 
+Useful things first. Ambitious things too.
+
 ## Avoid
 
 Do not describe SR3H as an agency.
@@ -49,6 +59,8 @@ Do not overstate research, product or partner claims.
 Do not use inflated technology language.
 
 Do not write explainers where a short line will do.
+
+Do not imply a public Conchup login or platform access before the secured authorisation journey is live.
 
 ## Legal Details
 

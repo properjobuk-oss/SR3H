@@ -1,4 +1,4 @@
-const THEME_COLOR = "#8eabc9";
+const THEME_COLOR = "#eef3f1";
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
 const INTRO_CLASSES = [
@@ -17,7 +17,7 @@ const INTRO_TIMING = {
   playFailureDelay: 1200,
 };
 
-const REVEAL_SELECTOR = ".hero-copy, .section-inner, .work-item, .principles li";
+const REVEAL_SELECTOR = ".hero-copy, .section-inner, .work-item, .principles-list li";
 const REVEAL_MAX_DELAY = 260;
 const REVEAL_DELAY_STEP = 42;
 const WATERMARK_DRIFT = 9;
