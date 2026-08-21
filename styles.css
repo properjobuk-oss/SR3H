@@ -52,6 +52,8 @@ h1 { max-width: 880px; margin-bottom: 28px; font-size: clamp(49px, 8vw, 110px); 
 h2 { margin-bottom: 0; font-size: clamp(34px, 4.2vw, 65px); font-weight: 560; letter-spacing: -0.055em; line-height: 0.98; }
 h3 { margin: 0 0 12px; font-size: clamp(26px, 2.2vw, 36px); font-weight: 570; letter-spacing: -0.045em; line-height: 1; }
 .intro { max-width: 640px; margin-bottom: 34px; color: #374846; font-size: clamp(20px, 2.1vw, 28px); line-height: 1.27; }
+.hero-detail { max-width: 720px; margin-bottom: 18px; color: #43524f; font-size: clamp(16px, 1.25vw, 19px); line-height: 1.45; }
+.hero-detail--last { margin-bottom: 34px; }
 .hero-footnote { position: relative; z-index: 1; margin: 68px 0 0; color: #596966; font-size: 12px; letter-spacing: 0.03em; }
 .actions { display: flex; flex-wrap: wrap; gap: 12px; }
 .button { display: inline-flex; min-height: 46px; align-items: center; justify-content: center; padding: 0 19px; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 14px; font-weight: 600; text-decoration: none; transition: background-color 160ms ease, border-color 160ms ease, box-shadow 180ms ease, color 160ms ease, transform 180ms var(--ease-out); }
@@ -110,17 +112,25 @@ h3 { margin: 0 0 12px; font-size: clamp(26px, 2.2vw, 36px); font-weight: 570; le
 .project-card--route .project-media { background: #07110f; }
 .project-card--route .project-media img { object-position: center top; }
 
+.systems-section { background: #ffffff; }
+.systems-copy { max-width: 780px; }
+.systems-chain { display: flex; flex-wrap: wrap; gap: 8px; margin: 34px 0 0; padding: 0; list-style: none; }
+.systems-chain li { padding: 8px 11px; border: 1px solid rgba(23, 51, 46, 0.18); border-radius: 999px; color: var(--forest-dark); font-size: 13px; font-weight: 650; }
+
 .platform-section { background: var(--forest-dark); color: #f8f8f3; }
-.platform-panel { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(290px, 0.7fr); gap: clamp(40px, 9vw, 150px); align-items: end; }
-.platform-copy { max-width: 780px; }
+.research-heading { max-width: 860px; margin-bottom: clamp(44px, 7vw, 88px); }
+.research-heading h2 { max-width: 760px; }
+.research-heading .large-copy { margin: 26px 0 0; }
+.research-systems { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(24px, 4vw, 52px); }
+.research-system { padding-top: 25px; border-top: 1px solid rgba(238, 246, 239, 0.26); }
+.research-system h3 { color: #fff; font-size: clamp(34px, 3.2vw, 49px); }
+.research-system p { max-width: 600px; color: #d6e2da; }
+.research-system .project-label { color: #b6d9cc; }
+.research-system .button { margin-top: 10px; }
 .platform-section .eyebrow { color: #b6d9cc; }
 .platform-section .large-copy { color: #f6f7f2; }
 .platform-section .button.primary { border-color: #e8ecdf; background: #e8ecdf; color: var(--forest-dark); }
 .platform-section .button.primary:hover, .platform-section .button.primary:focus-visible { background: #fff; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22); }
-.platform-details { padding: 28px; border: 1px solid rgba(238, 246, 239, 0.22); border-radius: 16px; background: rgba(255,255,255,0.055); color: #d6e2da; }
-.platform-details > p:first-child { margin-bottom: 12px; color: #fff; font-weight: 700; }
-.platform-details ul { margin: 0 0 26px; padding-left: 1.15em; }
-.platform-details li { margin: 0 0 11px; }
 .quiet-note { margin-bottom: 0; color: #adc1b7; font-size: 14px; }
 
 .community-section { background: #ffffff; }
@@ -153,7 +163,7 @@ h3 { margin: 0 0 12px; font-size: clamp(26px, 2.2vw, 36px); font-weight: 570; le
 @media (max-width: 980px) {
   .featured-projects { grid-template-columns: repeat(3, 1fr); }
   .project-content { padding: 20px 0 30px; }
-  .platform-panel, .community-layout { grid-template-columns: 1fr; }
+  .research-systems, .community-layout { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 760px) {
@@ -166,7 +176,6 @@ h3 { margin: 0 0 12px; font-size: clamp(26px, 2.2vw, 36px); font-weight: 570; le
   .split, .section-heading, .contact-panel { grid-template-columns: 1fr; gap: 28px; }
   .section-heading { margin-bottom: 34px; }
   .featured-projects, .project-grid--secondary { grid-template-columns: 1fr; }
-  .platform-details { padding: 23px; }
   .footer-note { align-items: flex-start; }
 }
 
