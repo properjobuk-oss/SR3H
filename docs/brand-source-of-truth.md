@@ -2,51 +2,47 @@
 
 ## Position
 
-SR3H is the quiet operator brand and independent product studio.
+SR3H is an independent product and research studio.
 
 It is not the loud product brand. Proper Job, Brane and future tools keep their own names.
 
 ## Core Line
 
-Practical intelligence for specialist work.
+Practical intelligence, engineered.
 
 ## Approved Description
 
-SR3H LTD shapes expert knowledge into practical digital products.
+SR3H builds useful software and researches the systems that help language models work reliably with people over time.
 
-SR3H turns specialist knowledge into elegant software products for complex professional work.
+SR3H designs the layer around the model — interfaces, structured context, scoped memory, persistent state, permissions and evidence — so capability remains coherent, accountable and under human control.
 
-SR3H makes useful digital products from complicated knowledge — for real people, real work and the occasional big question.
+SR3H is based at Grassroots, H B Allen Centre, Oxford.
 
 ## Selected Work Language
 
-Proper Job: Clearer guide prices for UK building work, built around the real levers that shape a job.
+Proper Job: Clear guide-price ranges for UK building work, showing the assumptions and cost drivers behind each estimate.
 
-Brane: A local-first context engine exploring how people can work with more useful intelligence while staying in control of their information.
+Brane: A local-first context system for giving AI relevant personal knowledge while keeping memory, roles and permissions under the person’s control.
 
-Conchup: An in-house engineering-orchestration platform for bespoke software with complex requirements. It is designed to maintain persistent project state across requirements, design, engineering, testing and release preparation; changes can be traced through affected work towards controlled rebuild, test and deployment. Public access is not available; authorised collaborators will connect through the secured platform when ready.
+Conchup: Persistent engineering context connecting requirements, decisions, implementation, tests and evidence across long-running human–AI development. It is designed to trace the impact of a change through affected work, preserving what changed, why it changed and the evidence that the resulting system remains correct.
 
-NextUp: An in-development product for keeping track of what you watch and deciding what comes next.
+NextUp: A personal viewing log for keeping track and deciding what to watch next.
 
-Drift: An in-development product for exploring nearby places, new destinations and small moments worth going out for.
+Drift: A place-discovery tool for exploring nearby destinations and deciding where to go next.
 
-Good Route: In-development navigation that respects the route a rider chose instead of constantly trying to replace it.
+Good Route: Navigation that preserves the rider’s chosen route and makes rerouting an explicit decision.
 
-Anup House: The first SR3H Community Build, creating a clearer online home for a welcoming guesthouse in Bodh Gaya.
+Anup House: A clear online home for an independent guesthouse in Bodh Gaya, improving visitor information and discoverability.
 
 ## Principles
 
-Strategic clarity.
+Start with the real problem.
 
-Domain expertise.
+Make every layer agree.
 
-Evidence-led judgment.
+Keep context relevant and boundaries explicit.
 
-Quiet systems.
-
-Trust by design.
-
-Useful things first. Ambitious things too.
+Preserve human judgement and show evidence.
 
 ## Avoid
 
@@ -61,6 +57,8 @@ Do not use inflated technology language.
 Do not write explainers where a short line will do.
 
 Do not imply a public Conchup login or platform access before the secured authorisation journey is live.
+
+Do not imply that SR3H trains or improves foundation models; describe the systems around models and the conditions in which their existing capability can be used reliably.
 
 ## Legal Details
 
