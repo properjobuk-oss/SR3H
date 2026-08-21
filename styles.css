@@ -95,7 +95,7 @@ h3 { margin: 0 0 12px; font-size: clamp(26px, 2.2vw, 36px); font-weight: 570; le
 .project-card--phone .project-media img { width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: center; filter: none; }
 .project-content { padding: 22px 0 34px; }
 .project-content p:last-child { margin-bottom: 0; color: #4f5e5a; }
-.project-card--proper .project-media { background: var(--paper); }
+.project-card--proper .project-media { border-color: transparent; background: var(--paper); }
 .project-card--proper .project-media img { object-position: center top; }
 .project-card--conchup .project-media {
   background: radial-gradient(circle at center, #1d548d 0%, #0a2a4b 46%, #06172b 100%);
@@ -137,9 +137,14 @@ h3 { margin: 0 0 12px; font-size: clamp(26px, 2.2vw, 36px); font-weight: 570; le
 .community-layout { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.72fr); gap: clamp(38px, 9vw, 150px); align-items: start; }
 .community-intro { max-width: 780px; }
 .community-copy { max-width: 650px; }
-.community-project-link { display: flex; margin: 0 0 28px; flex-direction: column; gap: 8px; color: var(--forest-dark); text-decoration: none; }
-.community-project-link strong { font-size: clamp(28px, 3vw, 42px); letter-spacing: -0.05em; line-height: 1; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.13em; }
-.community-project-link > span { color: var(--muted); font-size: 15px; font-weight: 600; }
+.community-project-card { position: relative; display: block; aspect-ratio: 1.3; margin: 0 0 28px; overflow: hidden; background: var(--forest-dark); color: #fff; text-decoration: none; }
+.community-project-card::after { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8, 18, 17, 0.04) 28%, rgba(8, 18, 17, 0.78) 100%); content: ""; }
+.community-project-card img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 380ms var(--ease-out); }
+.community-project-card:hover img, .community-project-card:focus-visible img { transform: scale(1.035); }
+.community-project-card-copy { position: absolute; z-index: 1; right: 24px; bottom: 22px; left: 24px; display: flex; flex-direction: column; gap: 4px; }
+.community-project-card .project-label { margin: 0 0 4px; color: #d8eee7; }
+.community-project-card strong { font-size: clamp(28px, 3vw, 42px); letter-spacing: -0.05em; line-height: 1; }
+.community-project-card-copy > span:last-child { color: #edf4f1; font-size: 15px; font-weight: 600; }
 .text-link { color: var(--forest-dark); font-weight: 700; text-decoration-thickness: 1px; }
 
 .principles-section { background: #e7efed; }
