@@ -32,7 +32,11 @@ Drift: A place-discovery tool for exploring nearby destinations and deciding whe
 
 Good Route: Navigation that preserves the rider’s chosen route and makes rerouting an explicit decision.
 
-Anup House: A clear online home for an independent guesthouse in Bodh Gaya, improving visitor information and discoverability.
+Redthread: A private workspace for developing briefings, with each person’s work kept separate.
+
+Lunchtime Websites: A small pro bono SR3H initiative for people and good causes that need a clear, useful website.
+
+Anup House: The first Lunchtime Websites example, creating a clear online home for an independent guesthouse in Bodh Gaya and improving visitor information and discoverability.
 
 ## Principles
 
