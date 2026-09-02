@@ -18,6 +18,12 @@ SR3H designs the layer around the model — interfaces, structured context, scop
 
 SR3H is based at Grassroots, H B Allen Centre, Oxford.
 
+## Search Presentation
+
+Title: SR3H | Human–AI Systems & Software Studio, Oxford
+
+Description: SR3H is an Oxford product and research studio building dependable human–AI systems, persistent context infrastructure and practical software products.
+
 ## Selected Work Language
 
 Proper Job: Clear guide-price ranges for UK building work, showing the assumptions and cost drivers behind each estimate.
