@@ -46,16 +46,6 @@ Lunchtime Websites: A small pro bono SR3H initiative for people and good causes 
 
 Anup House: The first Lunchtime Websites example, creating a clear online home for an independent guesthouse in Bodh Gaya and improving visitor information and discoverability.
 
-## Principles
-
-Start with the real problem.
-
-Make every layer agree.
-
-Keep context relevant and boundaries explicit.
-
-Preserve human judgement and show evidence.
-
 ## Avoid
 
 Do not describe SR3H as an agency.
