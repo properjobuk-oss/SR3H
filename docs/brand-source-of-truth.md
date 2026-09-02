@@ -16,7 +16,7 @@ SR3H researches, designs and builds useful software and dependable human–AI sy
 
 SR3H incubates ideas around real problems, developing the strongest through applied research and careful engineering into useful, scalable products.
 
-SR3H designs the layer around the model — interfaces, structured context, scoped memory, persistent state, permissions and evidence — so capability remains coherent, accountable and under human control.
+SR3H specialises in the underlying engineering that makes complex software work reliably: preserving context, connecting knowledge and keeping decisions traceable, while making the experience simple for the person using it.
 
 SR3H is based at Grassroots, H B Allen Centre, Oxford.
 
