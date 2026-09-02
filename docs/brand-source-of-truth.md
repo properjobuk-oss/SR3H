@@ -2,7 +2,7 @@
 
 ## Position
 
-SR3H is an independent product and research studio.
+SR3H is an independent product and technology lab in Oxford.
 
 It is not the loud product brand. Proper Job, Brane and future tools keep their own names.
 
@@ -12,7 +12,9 @@ Practical intelligence, engineered.
 
 ## Approved Description
 
-SR3H builds useful software and researches the systems that help language models work reliably with people over time.
+SR3H researches, designs and builds useful software and dependable human–AI systems.
+
+SR3H incubates ideas around real problems, developing the strongest through applied research and careful engineering into useful, scalable products.
 
 SR3H designs the layer around the model — interfaces, structured context, scoped memory, persistent state, permissions and evidence — so capability remains coherent, accountable and under human control.
 
@@ -20,9 +22,9 @@ SR3H is based at Grassroots, H B Allen Centre, Oxford.
 
 ## Search Presentation
 
-Title: SR3H | Human–AI Systems & Software Studio, Oxford
+Title: SR3H | Software & Human–AI Technology Lab, Oxford
 
-Description: SR3H is an Oxford product and research studio building dependable human–AI systems, persistent context infrastructure and practical software products.
+Description: SR3H is an independent product and technology lab in Oxford. We research, design and build useful software and dependable human–AI systems.
 
 ## Selected Work Language
 
