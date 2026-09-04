@@ -12,7 +12,7 @@ Practical intelligence, engineered.
 
 ## Approved Description
 
-SR3H researches, designs and builds useful software and dependable human–AI systems.
+SR3H is an independent product and technology lab in Oxford. We research, design and build useful software and dependable human–AI systems.
 
 SR3H incubates ideas around real problems, developing the strongest through applied research and careful engineering into useful, scalable products.
 
