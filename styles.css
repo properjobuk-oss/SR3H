@@ -153,7 +153,7 @@ h3 { margin: 0 0 12px; font-size: clamp(26px, 2.2vw, 36px); font-weight: 570; le
 .text-link { color: var(--forest-dark); font-weight: 700; text-decoration-thickness: 1px; }
 
 
-.contact { background: #ffffff; }
+.contact { background: #dce8e4; }
 .contact-panel { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.55fr); gap: clamp(34px, 8vw, 140px); align-items: end; }
 .contact-panel > div:last-child { max-width: 450px; }
 .contact-panel .button { margin-top: 8px; }
