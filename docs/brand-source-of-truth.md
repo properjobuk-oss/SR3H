@@ -16,7 +16,7 @@ SR3H researches, designs and builds useful software and dependable human–AI sy
 
 SR3H incubates ideas around real problems, developing the strongest through applied research and careful engineering into useful, scalable products.
 
-SR3H specialises in the underlying engineering that makes complex software work reliably: preserving context, connecting knowledge and keeping decisions traceable, while making the experience simple for the person using it.
+We study how AI uses knowledge, makes recommendations and works with people. We turn that research into tools for real decisions and practical work.
 
 SR3H is based at Grassroots, H B Allen Centre, Oxford.
 
@@ -30,9 +30,9 @@ Description: SR3H is an independent product and technology lab in Oxford. We res
 
 Proper Job: Clear guide-price ranges for UK building work, showing the assumptions and cost drivers behind each estimate.
 
-Brane: A local-first context system for giving AI relevant personal knowledge while keeping memory, roles and permissions under the person’s control.
+Brane: Personal knowledge for more useful AI, with control over what is shared and what stays private.
 
-Conchup: Persistent engineering context connecting requirements, decisions, implementation, tests and evidence across long-running human–AI development. It is designed to trace the impact of a change through affected work, preserving what changed, why it changed and the evidence that the resulting system remains correct.
+Conchup: Software engineering with a lasting record of requirements, decisions and the evidence behind a build.
 
 NextUp: A personal viewing log for keeping track and deciding what to watch next.
 
@@ -45,6 +45,18 @@ Redthread: A private workspace for developing briefings, with each person’s wo
 Lunchtime Websites: A small pro bono SR3H initiative for people and good causes that need a clear, useful website.
 
 Anup House: The first Lunchtime Websites example, creating a clear online home for an independent guesthouse in Bodh Gaya and improving visitor information and discoverability.
+
+## Research Language
+
+How AI understands a task and finds the right help.
+
+Our research spans human–AI interfaces, specialist knowledge and how AI finds and recommends products and services. We test whether changes lead to better decisions and real-world outcomes.
+
+Conchup: We explore how AI-assisted development can carry requirements and decisions from an idea through to a tested build, without losing why things changed.
+
+Brane: We explore how personal knowledge can make AI more useful without treating every part of a person’s life as one shared memory.
+
+Describe research questions and aims, not unproven results. Keep unpublished project names, internal architecture and experiment details out of public copy. Discovery means appropriate recommendations, not guaranteed visibility or ranking.
 
 ## Avoid
 
