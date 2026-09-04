@@ -109,6 +109,8 @@ h3 { margin: 0 0 12px; font-size: clamp(26px, 2.2vw, 36px); font-weight: 570; le
   height: 100%;
   object-fit: cover;
 }
+.project-card--marketloop .project-media { background: #fff; }
+.project-card--marketloop .project-media img { width: 94%; height: auto; object-fit: contain; }
 .project-card--brane .project-media { background: #151817; }
 .project-card--brane .project-media img { object-position: center 37%; }
 .project-card--brane .project-media .project-media-alt { object-position: center; transform: scale(1.13); }

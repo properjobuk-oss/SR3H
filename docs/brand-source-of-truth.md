@@ -46,6 +46,10 @@ Lunchtime Websites: A small pro bono SR3H initiative for people and good causes 
 
 Anup House: The first Lunchtime Websites example, creating a clear online home for an independent guesthouse in Bodh Gaya and improving visitor information and discoverability.
 
+Clarity: A space for reflection, meditation and Buddhist learning, bringing daily practice into everyday life.
+
+Market Loop: Market Loop helps businesses understand how AI finds and recommends them, improve how they are represented, and learn from which customers actually convert.
+
 ## Research Language
 
 How AI understands a task and finds the right help.
