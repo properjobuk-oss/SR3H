@@ -28,9 +28,9 @@ Description: SR3H is an independent product and technology lab in Oxford. We res
 
 ## Selected Work Language
 
-Proper Job: Clear guide-price ranges for UK building work, showing the assumptions and cost drivers behind each estimate.
+Proper Job: Clear guide-price ranges for UK building work, showing the assumptions and cost drivers behind each estimate. Also available as an MCP app for AI assistants.
 
-Brane: Personal knowledge for more useful AI, with control over what is shared and what stays private.
+Brane: Personal knowledge for more useful AI, with control over what is shared and what stays private. In Safari, it also shows which trackers are present on each page.
 
 Conchup: Software engineering with a lasting record of requirements, decisions and the evidence behind a build.
 
