@@ -40,7 +40,7 @@ Drift: A place-discovery tool for exploring nearby destinations and deciding whe
 
 Good Route: Navigation that preserves the rider’s chosen route and makes rerouting an explicit decision.
 
-Redthread: A private workspace for developing briefings, with each person’s work kept separate.
+RedThread: A private workspace for developing briefings, with each person’s work kept separate.
 
 Lunchtime Websites: A small pro bono SR3H initiative for people and good causes that need a clear, useful website.
 
