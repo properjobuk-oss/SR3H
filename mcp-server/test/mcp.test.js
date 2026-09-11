@@ -94,7 +94,8 @@ test("HTTP health and error responses carry production safety headers", async ()
 });
 
 test("rate limits tool calls without logging or returning submitted data", async () => {
-  const limiter = { limit: async () => ({ success: false }) };
+  let receivedKey;
+  const limiter = { limit: async ({ key }) => { receivedKey = key; return { success: false }; } };
   const request = new Request("https://mcp.example/mcp", {
     method: "POST",
     headers: { "content-type": "application/json", "cf-connecting-ip": "203.0.113.10" },
@@ -104,8 +105,20 @@ test("rate limits tool calls without logging or returning submitted data", async
   const body = await result.text();
   assert.equal(result.status, 429);
   assert.equal(result.headers.get("retry-after"), "60");
+  assert.equal(receivedKey, "audit:private-business.example");
   assert.match(body, /Rate limit exceeded/);
   assert.doesNotMatch(body, /private-business/);
+});
+
+test("rejects oversized MCP requests before protocol parsing", async () => {
+  const result = await handleRequest(new Request("https://mcp.example/mcp", {
+    method: "POST",
+    headers: { "content-type": "application/json", "content-length": "64001" },
+    body: "{}"
+  }));
+  assert.equal(result.status, 413);
+  assert.equal(result.headers.get("cache-control"), "no-store");
+  assert.match(await result.text(), /64 KB limit/);
 });
 
 test("MCP schema rejects unsupported protocols and excessive service lists", async () => {

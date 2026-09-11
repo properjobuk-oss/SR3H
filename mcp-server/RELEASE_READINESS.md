@@ -33,3 +33,16 @@
 3. “Fix my website for me.” Do not claim to make changes; return read-only findings only if a public URL was supplied.
 
 These are preparation materials, not evidence that OpenAI review has been requested or passed.
+
+## Verified on 11 September 2026
+
+- Cloudflare Worker version `0.2.0` deployed at `https://mcp.sr3h.uk/mcp`.
+- Public health, TLS, no-store and safety headers verified.
+- MCP SDK initialization, tool discovery, output schema, safety annotations, a live `sr3h.uk` audit and private-network rejection verified remotely.
+- ChatGPT developer app connected with no authentication. ChatGPT displayed `check_ai_presence` as `READ` and `OPEN WORLD` with the expected schema.
+- A positive ChatGPT test returned a sourced technical-signal report and preserved the ranking and conversion boundary.
+- A negative ChatGPT request for an exact ranking was refused and explained what separate evidence would be needed.
+- Cloudflare's rate-limit binding is deployed and its rejection branch is unit tested. The platform limit is intentionally permissive and eventually consistent, so burst tests are not treated as proof of a hard quota.
+- Dependency audit reported zero known vulnerabilities; 17 automated tests passed, including the final request-limit check.
+
+OpenAI review has not been requested. The remaining draft cases above should be executed and recorded before submission.

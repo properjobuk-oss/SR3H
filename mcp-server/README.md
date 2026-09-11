@@ -22,7 +22,7 @@ Verify a deployed endpoint with the same SDK client used by MCP consumers:
 npm run verify:remote -- https://your-worker.example/mcp https://sr3h.uk
 ```
 
-Production uses a Cloudflare rate-limit binding for audit calls, Workers observability for bounded failure events, explicit input and output schemas, and no-store responses. Submitted website URLs and page contents are not written to application logs or persistent storage.
+Production uses a per-target-site Cloudflare rate-limit binding for audit calls, a 64 KB MCP request limit, Workers observability for bounded failure events, explicit input and output schemas, and no-store responses. Submitted website URLs and page contents are not written to application logs or persistent storage. Cloudflare's binding is intentionally permissive and eventually consistent, so it is an abuse-control layer rather than an exact accounting limit.
 
 Public information: [support](https://sr3h.uk/ai-presence-support.html), [privacy](https://sr3h.uk/ai-presence-privacy.html), and [terms](https://sr3h.uk/ai-presence-terms.html).
 

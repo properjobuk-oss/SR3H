@@ -4,6 +4,7 @@ import { z } from "zod";
 import { auditWebsite } from "./audit.js";
 
 const SERVICE_VERSION = "0.2.0";
+const MAX_MCP_REQUEST_BYTES = 64_000;
 const signalStatusSchema = z.enum(["clear", "partial", "gap", "missing", "blocked", "unverified"]);
 const auditResultSchema = z.object({
   audit: z.object({
@@ -135,11 +136,24 @@ export async function handleRequest(request, env = {}) {
   }
   if (url.pathname !== "/mcp") return cors(new Response("Not found", { status: 404 }));
 
+  if (request.method === "POST") {
+    const declaredBytes = Number(request.headers.get("content-length"));
+    if (Number.isFinite(declaredBytes) && declaredBytes > MAX_MCP_REQUEST_BYTES) {
+      return cors(new Response(JSON.stringify({
+        jsonrpc: "2.0",
+        id: null,
+        error: { code: -32600, message: "MCP request exceeds the 64 KB limit." }
+      }), { status: 413, headers: { "content-type": "application/json" } }));
+    }
+  }
+
   if (request.method === "POST" && env.AUDIT_RATE_LIMITER) {
     try {
       const rpc = await request.clone().json();
       if (rpc?.method === "tools/call") {
-        const key = request.headers.get("cf-connecting-ip") || "unknown";
+        let target = "invalid-target";
+        try { target = new URL(rpc?.params?.arguments?.website_url).hostname.toLowerCase() || target; } catch { /* invalid input shares a bounded key */ }
+        const key = `audit:${target}`;
         const { success } = await env.AUDIT_RATE_LIMITER.limit({ key });
         if (!success) {
           console.warn(JSON.stringify({ event: "audit_rate_limited" }));
