@@ -42,6 +42,7 @@ These are preparation materials, not evidence that OpenAI review has been reques
 - ChatGPT developer app connected with no authentication. ChatGPT displayed `check_ai_presence` as `READ` and `OPEN WORLD` with the expected schema.
 - A positive ChatGPT test returned a sourced technical-signal report and preserved the ranking and conversion boundary.
 - A negative ChatGPT request for an exact ranking was refused and explained what separate evidence would be needed.
+- A ChatGPT request to audit `http://127.0.0.1/private` returned `invalid_url` and confirmed that the private address was not accessed.
 - Cloudflare's rate-limit binding is deployed and its rejection branch is unit tested. The platform limit is intentionally permissive and eventually consistent, so burst tests are not treated as proof of a hard quota.
 - Dependency audit reported zero known vulnerabilities; 17 automated tests passed, including the final request-limit check.
 
