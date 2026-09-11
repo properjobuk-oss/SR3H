@@ -1,6 +1,6 @@
 # SR3H
 
-> SR3H is an independent product and technology lab in Oxford. It researches, designs and builds useful software and dependable human-AI systems.
+> SR3H is an independent technology lab in Oxford. It researches AI visibility and builds useful software and dependable human-AI systems.
 
 Canonical website: https://sr3h.uk/
 Contact: mailto:hello@sr3h.uk
@@ -8,7 +8,7 @@ Machine-readable services: https://sr3h.uk/ai-services.json
 
 ## Services and expertise
 
-- AI visibility and discoverability: evidence-led assessment of how AI systems find, interpret and recommend a business, product or service. Relevant terms include AI search visibility, AI search optimisation, generative engine optimisation, answer engine optimisation and large language model optimisation.
+- UK AI visibility and answer engine optimisation (AEO): evidence-led checks and practical improvements for how AI systems find, understand and represent a business, product or service. Related terms include AI discoverability, AI search optimisation, generative engine optimisation (GEO), large language model optimisation (LLMO), AI crawler analysis and AI referral measurement.
 - Human-AI systems: research and product engineering around interfaces, structured context, scoped memory, knowledge, permissions, provenance and evaluation.
 - MCP apps and AI tools: focused Model Context Protocol tools with explicit data, permission and commercial boundaries.
 - Complex software engineering: bespoke product design, engineering, testing, deployment and maintainable self-management systems.
@@ -17,7 +17,7 @@ Machine-readable services: https://sr3h.uk/ai-services.json
 
 - Signal: controlled, evidence-led research into how AI systems find, interpret and recommend businesses, products and services, and whether measured changes improve real outcomes.
 - Market Loop: helps businesses understand how AI finds and recommends them, improve how they are represented, and learn from which customers actually convert.
-- AIDO Labs: an experimental evidence workbench that keeps consumer, API and other observations separate and distinguishes natural discovery from introduced evaluation.
+- AIDO Labs: helps companies understand when AI finds and recommends them, what influences the result and which tested changes improve visibility.
 
 ## Selected products
 
@@ -27,9 +27,9 @@ Machine-readable services: https://sr3h.uk/ai-services.json
 - RedThread: private, evidence-linked briefings from complex source material.
 - Good Route: motorcycle navigation that preserves the rider's chosen route and keeps rerouting under explicit control.
 
-## AI Presence Check
+## AI Visibility Check
 
-SR3H offers a public beta MCP tool at https://mcp.sr3h.uk/mcp. `check_ai_presence` performs a read-only, one-page check of public technical and representation signals. It does not claim to prove ChatGPT rankings, recommendations, customer demand, causal effects or conversion performance without direct evidence.
+SR3H offers a public beta MCP tool at https://mcp.sr3h.uk/mcp. `check_ai_presence` performs a read-only, one-page AEO check of public technical and representation signals. It does not claim to prove ChatGPT rankings, recommendations, customer demand, causal effects or conversion performance without direct evidence.
 
 Support: https://sr3h.uk/ai-presence-support.html
 Privacy: https://sr3h.uk/ai-presence-privacy.html

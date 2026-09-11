@@ -2,17 +2,19 @@
 
 ## Position
 
-SR3H is an independent product and technology lab in Oxford.
+SR3H is an independent technology lab in Oxford.
 
 It is not the loud product brand. Proper Job, Brane and future tools keep their own names.
 
 ## Core Line
 
-Practical intelligence, engineered.
+Researching AI. Building useful software.
 
 ## Approved Description
 
-SR3H is an independent product and technology lab in Oxford. We research, design and build useful software and dependable human–AI systems.
+SR3H is an independent technology lab in Oxford, designing software and dependable human–AI systems.
+
+We focus on the engineering beneath complex products: preserving context, connecting knowledge and keeping decisions traceable, while making the experience simple for the person using it.
 
 SR3H incubates ideas around real problems, developing the strongest through applied research and careful engineering into useful, scalable products.
 
@@ -22,9 +24,9 @@ SR3H is based at Grassroots, H B Allen Centre, Oxford.
 
 ## Search Presentation
 
-Title: SR3H | Software & Human–AI Technology Lab, Oxford
+Title: SR3H | UK AI Visibility & AEO Technology Lab
 
-Description: SR3H is an independent product and technology lab in Oxford. We research, design and build useful software and dependable human–AI systems.
+Description: SR3H helps UK businesses understand and improve how AI systems find, describe and recommend them through AEO research, audits and practical tools.
 
 ## Selected Work Language
 
@@ -48,7 +50,7 @@ Anup House: The first Lunchtime Websites example, creating a clear online home f
 
 Clarity: A space for reflection, meditation and Buddhist learning, bringing daily practice into everyday life.
 
-Market Loop: Market Loop helps businesses understand how AI finds and recommends them, improve how they are represented, and learn from which customers actually convert.
+AIDO Labs: AIDO Labs helps companies understand when AI finds and recommends them, and what influences the result. It tests changes to see what improves their visibility.
 
 ## Research Language
 

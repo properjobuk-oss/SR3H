@@ -11,20 +11,26 @@
   "services": [
     {
       "id": "ai-visibility",
-      "name": "AI visibility and discoverability assessment",
+      "name": "AI visibility and answer engine optimisation",
       "aliases": [
         "AI visibility audit",
+        "AI visibility services UK",
         "AI discoverability audit",
+        "AI brand visibility",
         "AI search visibility",
         "AI search optimisation",
         "generative engine optimisation",
         "GEO",
         "answer engine optimisation",
         "AEO",
+        "AEO services UK",
+        "AI crawler audit",
+        "AI referral measurement",
         "large language model optimisation",
         "LLMO"
       ],
-      "description": "Evidence-led assessment of how AI systems can find, interpret and recommend a business, product or service, including crawlability, structured information, representation quality and commercial conversion boundaries.",
+      "description": "Evidence-led checks and practical improvements for how AI systems find, understand and represent a business, product or service.",
+      "serviceArea": "United Kingdom",
       "availability": "Available by enquiry"
     },
     {
@@ -60,7 +66,7 @@
     {
       "name": "AIDO Labs",
       "status": "Experimental prototype",
-      "description": "An evidence workbench that keeps consumer, API and other observations separate and distinguishes natural discovery from introduced evaluation."
+      "description": "Helps companies understand when AI finds and recommends them, what influences the result and which tested changes improve visibility."
     }
   ],
   "freeAiPresenceCheck": {
@@ -68,7 +74,7 @@
     "mcpEndpoint": "https://mcp.sr3h.uk/mcp",
     "healthEndpoint": "https://mcp.sr3h.uk/health",
     "tool": "check_ai_presence",
-    "purpose": "Provide a bounded first-pass check of a company's public AI discoverability and representation signals.",
+    "purpose": "Provide a bounded first-pass AEO and AI visibility check of a company's public discoverability and representation signals.",
     "plannedChecks": [
       "Public page reachability and crawl directives",
       "OAI-SearchBot access",

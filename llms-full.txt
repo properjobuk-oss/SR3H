@@ -8,11 +8,11 @@ Contact: hello@sr3h.uk
 
 ## What SR3H does
 
-SR3H researches, designs and builds useful software and dependable human-AI systems. Its work covers the engineering around capable models: human interfaces, structured context, scoped memory, knowledge, permissions, provenance, evaluation and the connection between requirements, implementation, tests and evidence.
+SR3H is an independent technology lab in Oxford. It researches AI visibility and builds useful software and dependable human-AI systems. Its work covers human interfaces, structured context, scoped memory, knowledge, permissions, provenance, evaluation and the connection between requirements, implementation, tests and evidence.
 
 ## AI visibility and discoverability
 
-SR3H studies how AI systems find, interpret and recommend businesses, products and services. The work relates to AI visibility, AI discoverability, AI search visibility, AI search optimisation, generative engine optimisation (GEO), answer engine optimisation (AEO), large language model optimisation (LLMO), entity understanding, structured data, retrieval, citation, representation quality and conversion measurement.
+SR3H helps UK businesses understand and improve how AI systems find, describe and recommend them. This work covers AI visibility, AI discoverability, AI search optimisation, answer engine optimisation (AEO), generative engine optimisation (GEO), large language model optimisation (LLMO), entity understanding, structured data, crawler access, retrieval, citation, representation quality, referral traffic and conversion measurement.
 
 An SR3H assessment can examine public crawlability, robots directives, sitemaps, canonical identity, structured data, service clarity, public evidence, answer consistency and the boundary between being technically discoverable and being commercially selected.
 
@@ -34,7 +34,7 @@ AIDO Labs does not treat API output as proof of consumer behaviour, population d
 
 ## Service areas
 
-1. AI visibility and discoverability assessment.
+1. UK AI visibility and answer engine optimisation (AEO).
 2. Human-AI interface and system research.
 3. MCP app and AI tool engineering.
 4. Context, memory, knowledge graph and provenance systems.
