@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { createServer, handleRequest } from "../src/index.js";
+import { createServer, createWorker, handleRequest } from "../src/index.js";
 
 const page = `<!doctype html><html><head><title>Test Co</title><meta name="description" content="A test service"><link rel="canonical" href="https://test.example/"><script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Test Co"}</script></head><body>Test Co in Oxford</body></html>`;
 
@@ -22,7 +22,7 @@ test("MCP client initializes, lists the annotated tool and calls it", async () =
   await client.connect(clientTransport);
   try {
     const listed = await client.listTools();
-    assert.equal(client.getServerVersion().version, "0.2.0");
+    assert.equal(client.getServerVersion().version, "0.3.0");
     assert.equal(listed.tools.length, 1);
     assert.equal(listed.tools[0].name, "check_ai_presence");
     assert.equal(listed.tools[0].annotations.readOnlyHint, true);
@@ -81,7 +81,7 @@ test("HTTP health and error responses carry production safety headers", async ()
   assert.equal(health.status, 200);
   assert.equal(health.headers.get("cache-control"), "no-store");
   assert.equal(health.headers.get("x-content-type-options"), "nosniff");
-  assert.equal((await health.json()).version, "0.2.0");
+  assert.equal((await health.json()).version, "0.3.0");
 
   const missing = await handleRequest(new Request("https://mcp.example/nope"));
   assert.equal(missing.status, 404);
@@ -94,8 +94,8 @@ test("HTTP health and error responses carry production safety headers", async ()
 });
 
 test("rate limits tool calls without logging or returning submitted data", async () => {
-  let receivedKey;
-  const limiter = { limit: async ({ key }) => { receivedKey = key; return { success: false }; } };
+  const receivedKeys = [];
+  const limiter = { limit: async ({ key }) => { receivedKeys.push(key); return { success: false }; } };
   const request = new Request("https://mcp.example/mcp", {
     method: "POST",
     headers: { "content-type": "application/json", "cf-connecting-ip": "203.0.113.10" },
@@ -105,9 +105,83 @@ test("rate limits tool calls without logging or returning submitted data", async
   const body = await result.text();
   assert.equal(result.status, 429);
   assert.equal(result.headers.get("retry-after"), "60");
-  assert.equal(receivedKey, "audit:private-business.example");
+  assert.deepEqual(receivedKeys.sort(), ["audit-ip:203.0.113.10", "audit-target:private-business.example"]);
   assert.match(body, /Rate limit exceeded/);
   assert.doesNotMatch(body, /private-business/);
+});
+
+test("website checker returns a bounded audit to an allowed SR3H origin", async () => {
+  const limiterKeys = [];
+  const limiter = { limit: async ({ key }) => { limiterKeys.push(key); return { success: true }; } };
+  const request = new Request("https://mcp.example/check", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "origin": "https://sr3h.uk",
+      "cf-connecting-ip": "203.0.113.22"
+    },
+    body: JSON.stringify({ website_url: "https://test.example", business_name: "Test Co" })
+  });
+  const response = await handleRequest(request, { AUDIT_RATE_LIMITER: limiter }, fetchImpl);
+  const body = await response.json();
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("access-control-allow-origin"), "https://sr3h.uk");
+  assert.equal(body.result.audit.technical_readiness, "clear");
+  assert.equal("score" in body.result.audit, false);
+  assert.deepEqual(limiterKeys.sort(), ["web-check-ip:203.0.113.22", "web-check-target:test.example"]);
+});
+
+test("Cloudflare execution context is not mistaken for the audit fetch function", async () => {
+  const worker = createWorker(fetchImpl);
+  const request = new Request("https://mcp.example/check", {
+    method: "POST",
+    headers: { "content-type": "application/json", "origin": "https://sr3h.uk" },
+    body: JSON.stringify({ website_url: "https://test.example" })
+  });
+  const response = await worker.fetch(request, {}, { waitUntil() {} });
+  const body = await response.json();
+  assert.equal(response.status, 200);
+  assert.equal(body.result.audit.final_url, "https://test.example/");
+});
+
+test("website checker rejects unapproved browser origins and honeypot submissions", async () => {
+  const wrongOrigin = await handleRequest(new Request("https://mcp.example/check", {
+    method: "POST",
+    headers: { "content-type": "application/json", "origin": "https://attacker.example" },
+    body: JSON.stringify({ website_url: "https://test.example" })
+  }), {}, fetchImpl);
+  assert.equal(wrongOrigin.status, 403);
+  assert.equal(wrongOrigin.headers.get("access-control-allow-origin"), null);
+
+  const honeypot = await handleRequest(new Request("https://mcp.example/check", {
+    method: "POST",
+    headers: { "content-type": "application/json", "origin": "https://sr3h.uk" },
+    body: JSON.stringify({ website_url: "https://test.example", company_website: "filled-by-bot" })
+  }), {}, fetchImpl);
+  assert.equal(honeypot.status, 400);
+  assert.doesNotMatch(await honeypot.text(), /filled-by-bot/);
+});
+
+test("website checker rejects oversized requests before parsing", async () => {
+  const response = await handleRequest(new Request("https://mcp.example/check", {
+    method: "POST",
+    headers: { "content-type": "application/json", "origin": "https://sr3h.uk", "content-length": "8001" },
+    body: "{}"
+  }), {}, fetchImpl);
+  assert.equal(response.status, 413);
+  assert.match(await response.text(), /too large/i);
+});
+
+test("website checker uses its stricter public rate limit and fails closed", async () => {
+  const webLimiter = { limit: async () => ({ success: false }) };
+  const auditLimiter = { limit: async () => ({ success: true }) };
+  const response = await handleRequest(new Request("https://mcp.example/check", {
+    method: "POST",
+    headers: { "content-type": "application/json", "origin": "https://sr3h.uk" },
+    body: JSON.stringify({ website_url: "https://test.example" })
+  }), { WEB_RATE_LIMITER: webLimiter, AUDIT_RATE_LIMITER: auditLimiter }, fetchImpl);
+  assert.equal(response.status, 429);
+  assert.equal(response.headers.get("retry-after"), "60");
 });
 
 test("rejects oversized MCP requests before protocol parsing", async () => {

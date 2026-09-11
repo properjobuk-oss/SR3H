@@ -3,9 +3,27 @@ import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/
 import { z } from "zod";
 import { auditWebsite } from "./audit.js";
 
-const SERVICE_VERSION = "0.2.0";
+const SERVICE_VERSION = "0.3.0";
 const MAX_MCP_REQUEST_BYTES = 64_000;
+const MAX_WEB_REQUEST_BYTES = 8_000;
+const WEB_ORIGINS = new Set([
+  "https://sr3h.uk",
+  "https://www.sr3h.uk",
+  "http://127.0.0.1:4175",
+  "http://localhost:4175"
+]);
 const signalStatusSchema = z.enum(["clear", "partial", "gap", "missing", "blocked", "unverified"]);
+const auditInputShape = {
+  website_url: z.string().url().max(2048).describe("Complete public website URL beginning with https:// or http://"),
+  business_name: z.string().trim().min(1).max(120).optional().describe("Business or organisation name to look for on the checked page"),
+  location_or_service_area: z.string().trim().min(1).max(160).optional().describe("Important location or service area to look for"),
+  priority_services: z.array(z.string().trim().min(1).max(120)).max(8).optional().describe("Up to eight priority products or services to look for"),
+  target_customer: z.string().trim().min(1).max(300).optional().describe("Optional target customer context for interpreting clarity; it is not used to infer demand")
+};
+const webAuditInputSchema = z.object({
+  ...auditInputShape,
+  company_website: z.literal("").optional()
+}).strict();
 const auditResultSchema = z.object({
   audit: z.object({
     requested_url: z.string().url(),
@@ -80,13 +98,7 @@ export function createServer(fetchImpl = fetch) {
   server.registerTool("check_ai_presence", {
     title: "Check website AI presence",
     description: "Inspect a public website for observable technical and representation signals that affect AI-search discoverability. Returns sourced findings, gaps and explicit unknowns. It does not claim to measure ChatGPT ranking, recommendations or conversions.",
-    inputSchema: {
-      website_url: z.string().url().max(2048).describe("Complete public website URL beginning with https:// or http://"),
-      business_name: z.string().trim().min(1).max(120).optional().describe("Business or organisation name to look for on the checked page"),
-      location_or_service_area: z.string().trim().min(1).max(160).optional().describe("Important location or service area to look for"),
-      priority_services: z.array(z.string().trim().min(1).max(120)).max(8).optional().describe("Up to eight priority products or services to look for"),
-      target_customer: z.string().trim().min(1).max(300).optional().describe("Optional target customer context for interpreting clarity; it is not used to infer demand")
-    },
+    inputSchema: auditInputShape,
     outputSchema: auditResultSchema,
     annotations: {
       title: "Check website AI presence",
@@ -126,8 +138,115 @@ function cors(response) {
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
 
-export async function handleRequest(request, env = {}) {
+function webCors(response, origin) {
+  const headers = new Headers(response.headers);
+  if (origin && WEB_ORIGINS.has(origin)) {
+    headers.set("access-control-allow-origin", origin);
+    headers.set("vary", "Origin");
+  }
+  headers.set("access-control-allow-methods", "POST, OPTIONS");
+  headers.set("access-control-allow-headers", "content-type");
+  headers.set("cache-control", "no-store");
+  headers.set("x-content-type-options", "nosniff");
+  headers.set("referrer-policy", "no-referrer");
+  headers.set("cross-origin-resource-policy", "cross-origin");
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+}
+
+function jsonResponse(payload, status = 200, headers = {}) {
+  return new Response(JSON.stringify(payload), {
+    status,
+    headers: { "content-type": "application/json; charset=utf-8", ...headers }
+  });
+}
+
+async function readJsonBodyLimited(request, limit) {
+  const declaredBytes = Number(request.headers.get("content-length"));
+  if (Number.isFinite(declaredBytes) && declaredBytes > limit) throw new Error("request_too_large");
+  if (!request.body) return {};
+
+  const reader = request.body.getReader();
+  const chunks = [];
+  let total = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > limit) {
+      await reader.cancel();
+      throw new Error("request_too_large");
+    }
+    chunks.push(value);
+  }
+
+  const joined = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    joined.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return JSON.parse(new TextDecoder().decode(joined));
+}
+
+async function rateLimitAudit(env, target, request, prefix = "audit") {
+  const limiter = prefix === "web-check"
+    ? env.WEB_RATE_LIMITER || env.AUDIT_RATE_LIMITER
+    : env.AUDIT_RATE_LIMITER;
+  if (!limiter) return true;
+  const targetKey = `${prefix}-target:${target}`;
+  const ip = request.headers.get("cf-connecting-ip") || "unknown";
+  const ipKey = `${prefix}-ip:${ip}`;
+  const [targetResult, ipResult] = await Promise.all([
+    limiter.limit({ key: targetKey }),
+    limiter.limit({ key: ipKey })
+  ]);
+  return targetResult.success && ipResult.success;
+}
+
+async function handleWebCheck(request, env, fetchImpl) {
+  const origin = request.headers.get("origin") || "";
+  if (origin && !WEB_ORIGINS.has(origin)) {
+    return webCors(jsonResponse({ error: "This checker can only be used from the SR3H website." }, 403), origin);
+  }
+  if (request.method === "OPTIONS") return webCors(new Response(null, { status: 204 }), origin);
+  if (request.method !== "POST") return webCors(jsonResponse({ error: "Method not allowed." }, 405), origin);
+
+  let parsed;
+  try {
+    const body = await readJsonBodyLimited(request, MAX_WEB_REQUEST_BYTES);
+    parsed = webAuditInputSchema.safeParse(body);
+  } catch (error) {
+    const tooLarge = error?.message === "request_too_large";
+    return webCors(jsonResponse({ error: tooLarge ? "The request is too large." : "The request was not valid JSON." }, tooLarge ? 413 : 400), origin);
+  }
+  if (!parsed.success) {
+    return webCors(jsonResponse({ error: "Check the website address and optional details, then try again." }, 400), origin);
+  }
+
+  const { company_website: _honeypot, ...input } = parsed.data;
+  let target = "invalid-target";
+  try { target = new URL(input.website_url).hostname.toLowerCase() || target; } catch { /* schema reports malformed URLs */ }
+  try {
+    if (!(await rateLimitAudit(env, target, request, "web-check"))) {
+      return webCors(jsonResponse({ error: "Too many checks. Wait one minute before trying again." }, 429, { "retry-after": "60" }), origin);
+    }
+  } catch {
+    return webCors(jsonResponse({ error: "The checker is temporarily unavailable. Try again shortly." }, 503), origin);
+  }
+
+  try {
+    const result = await auditWebsite(input, fetchImpl);
+    return webCors(jsonResponse({ result }), origin);
+  } catch (error) {
+    const code = errorCode(error);
+    console.error(JSON.stringify({ event: "web_audit_failed", error_code: code }));
+    return webCors(jsonResponse({ error: publicErrorMessage(code), code }, code === "invalid_url" ? 400 : 422), origin);
+  }
+}
+
+export async function handleRequest(request, env = {}, fetchImpl = fetch) {
   const url = new URL(request.url);
+  if (url.pathname === "/check") return handleWebCheck(request, env, fetchImpl);
   if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }));
   if (url.pathname === "/health" && ["GET", "HEAD"].includes(request.method)) {
     return cors(new Response(request.method === "HEAD" ? null : JSON.stringify({ ok: true, service: "SR3H AI Presence Check", version: SERVICE_VERSION }), {
@@ -153,8 +272,7 @@ export async function handleRequest(request, env = {}) {
       if (rpc?.method === "tools/call") {
         let target = "invalid-target";
         try { target = new URL(rpc?.params?.arguments?.website_url).hostname.toLowerCase() || target; } catch { /* invalid input shares a bounded key */ }
-        const key = `audit:${target}`;
-        const { success } = await env.AUDIT_RATE_LIMITER.limit({ key });
+        const success = await rateLimitAudit(env, target, request);
         if (!success) {
           console.warn(JSON.stringify({ event: "audit_rate_limited" }));
           return cors(new Response(JSON.stringify({
@@ -170,7 +288,7 @@ export async function handleRequest(request, env = {}) {
   }
 
   try {
-    const server = createServer();
+    const server = createServer(fetchImpl);
     const transport = new WebStandardStreamableHTTPServerTransport({ enableJsonResponse: true });
     await server.connect(transport);
     return cors(await transport.handleRequest(request));
@@ -184,6 +302,12 @@ export async function handleRequest(request, env = {}) {
   }
 }
 
-export default {
-  fetch: handleRequest
-};
+export function createWorker(fetchImpl = fetch) {
+  return {
+    fetch(request, env) {
+      return handleRequest(request, env, fetchImpl);
+    }
+  };
+}
+
+export default createWorker();

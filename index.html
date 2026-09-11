@@ -43,7 +43,7 @@
     <link rel="manifest" href="/site.webmanifest?v=20260703-1">
     <link rel="preload" href="assets/sr3h-quiet-material.jpg" as="image">
     <link rel="preload" href="assets/sr3h-logo-reveal.mp4?v=20260702-6" as="video" type="video/mp4">
-    <link rel="stylesheet" href="styles.css?v=20260911-1">
+    <link rel="stylesheet" href="styles.css?v=20260911-2">
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -186,6 +186,23 @@
             "provider": {
               "@id": "https://sr3h.uk/#organization"
             }
+          },
+          {
+            "@type": "WebApplication",
+            "@id": "https://sr3h.uk/#ai-presence-check",
+            "name": "SR3H AI Presence Check",
+            "url": "https://sr3h.uk/#ai-check",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Any",
+            "description": "A free, read-only check of public website signals that affect AI-search discoverability.",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "GBP"
+            },
+            "provider": {
+              "@id": "https://sr3h.uk/#organization"
+            }
           }
         ]
       }
@@ -203,6 +220,7 @@
       </a>
       <nav class="nav" aria-label="Primary">
         <a href="#work">Work</a>
+        <a href="#ai-check">AI check</a>
         <a href="#platform">Research</a>
         <a href="#community">Lunchtime Websites</a>
         <a href="#contact">Contact</a>
@@ -328,14 +346,15 @@
               </div>
             </article>
 
-            <article class="work-item project-card project-card--marketloop">
+            <article class="work-item project-card project-card--aido project-card--hover-preview">
               <div class="project-media">
-                <img src="assets/projects/market-loop-logo.png" alt="Market Loop: Find, Reach, Learn, Improve" loading="lazy" decoding="async">
+                <img src="assets/projects/aido-demand-intelligence.png" alt="AIDO Demand Intelligence" loading="lazy" decoding="async">
+                <img class="project-media-alt" src="assets/projects/aido-discovery-result.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
               </div>
               <div class="project-content">
-                <p class="project-label">AI discovery</p>
-                <h3>Market Loop</h3>
-                <p>Market Loop helps businesses understand how AI finds and recommends them, improve how they are represented, and learn from which customers actually convert.</p>
+                <p class="project-label">Demand intelligence</p>
+                <h3>AIDO Labs</h3>
+                <p>Demand intelligence for AI-mediated markets: showing how products are found, where discovery breaks down and which improvements are worth testing.</p>
               </div>
             </article>
           </div>
@@ -361,6 +380,48 @@
               <h3>Brane</h3>
               <p>We explore how personal knowledge can make AI more useful without treating every part of a person’s life as one shared memory.</p>
             </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section ai-check-section" id="ai-check" aria-labelledby="ai-check-title">
+        <div class="section-inner ai-check-layout">
+          <div class="ai-check-intro">
+            <p class="eyebrow">Free AI presence check</p>
+            <h2 id="ai-check-title">Can AI understand what your business does?</h2>
+            <p class="large-copy">Enter a public website. We will check the signals AI search systems can actually see and show the clearest next improvement.</p>
+            <p class="ai-check-boundary">This is a technical check, not a made-up score. It cannot prove rankings, recommendations or sales.</p>
+          </div>
+
+          <div class="ai-check-tool">
+            <form class="ai-check-form" id="ai-check-form">
+              <div class="form-field form-field--wide">
+                <label for="checker-url">Website</label>
+                <input id="checker-url" name="website_url" type="text" inputmode="url" autocomplete="url" autocapitalize="none" spellcheck="false" maxlength="2048" placeholder="example.com" required>
+              </div>
+              <div class="form-field">
+                <label for="checker-name">Business name <span>optional</span></label>
+                <input id="checker-name" name="business_name" type="text" autocomplete="organization" maxlength="120">
+              </div>
+              <div class="form-field">
+                <label for="checker-location">Location or service area <span>optional</span></label>
+                <input id="checker-location" name="location_or_service_area" type="text" autocomplete="address-level2" maxlength="160">
+              </div>
+              <div class="form-field form-field--wide">
+                <label for="checker-services">What should people find you for? <span>optional, separated by commas</span></label>
+                <input id="checker-services" name="priority_services" type="text" maxlength="600" placeholder="Boiler repair, heat pumps">
+              </div>
+              <div class="checker-honeypot" aria-hidden="true" hidden>
+                <label for="checker-company-website">Leave this empty</label>
+                <input id="checker-company-website" name="company_website" type="text" tabindex="-1" autocomplete="off">
+              </div>
+              <div class="ai-check-actions form-field--wide">
+                <button class="button primary" type="submit">Check my website</button>
+                <p>No account. One public page. No AI-generated score.</p>
+              </div>
+            </form>
+            <div class="ai-check-status" id="ai-check-status" role="status" aria-live="polite"></div>
+            <div class="ai-check-result" id="ai-check-result" tabindex="-1" hidden></div>
           </div>
         </div>
       </section>
@@ -412,6 +473,6 @@
         <a href="ai-presence-terms.html">Terms</a>
       </nav>
     </footer>
-    <script src="site.js?v=20260821-1"></script>
+    <script src="site.js?v=20260911-2"></script>
   </body>
 </html>

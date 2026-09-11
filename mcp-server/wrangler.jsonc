@@ -18,6 +18,14 @@
         "limit": 20,
         "period": 60
       }
+    },
+    {
+      "name": "WEB_RATE_LIMITER",
+      "namespace_id": "12002",
+      "simple": {
+        "limit": 5,
+        "period": 60
+      }
     }
   ],
   "observability": {

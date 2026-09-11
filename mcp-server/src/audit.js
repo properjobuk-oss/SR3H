@@ -237,9 +237,9 @@ export async function auditWebsite(input, fetchImpl = fetch) {
       robotsStatus = "unverified";
       robotsEvidence = `robots.txt returned HTTP ${robotsFetch.response.status}.`;
     }
-  } catch (error) {
+  } catch {
     robotsStatus = "unverified";
-    robotsEvidence = `robots.txt could not be checked: ${error.message}`;
+    robotsEvidence = "robots.txt could not be checked from the audit service.";
   }
 
   if (!sitemapCandidates.length) sitemapCandidates = [`${origin}/sitemap.xml`];

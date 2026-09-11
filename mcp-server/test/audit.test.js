@@ -105,6 +105,17 @@ test("does not treat HTML fallback pages as robots.txt or llms.txt", async () =>
   assert.equal(result.observations.find((item) => item.id === "llms_txt").status, "missing");
 });
 
+test("does not expose subrequest error details in returned evidence", async () => {
+  const fetchImpl = fixtureFetch({
+    "https://safe-errors.example/": response(html, { type: "text/html" }),
+    "https://safe-errors.example/robots.txt": () => { throw new Error("secret-provider-detail-123"); }
+  });
+  const result = await auditWebsite({ website_url: "https://safe-errors.example" }, fetchImpl);
+  const robots = result.observations.find((item) => item.id === "oai_searchbot");
+  assert.match(robots.evidence, /could not be checked from the audit service/);
+  assert.doesNotMatch(JSON.stringify(result), /secret-provider-detail-123/);
+});
+
 test("bounds page metadata and ignores malformed canonicals", () => {
   const result = inspectHtml(`<html><head><title>${"x".repeat(600)}</title><meta name="description" content="${"y".repeat(900)}"><link rel="canonical" href="javascript:alert(1)"></head></html>`, "https://safe.example.com/");
   assert.equal(result.title.length, 300);

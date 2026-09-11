@@ -24,11 +24,14 @@ const WATERMARK_DRIFT = 9;
 const ANCHOR_LANDING_DURATION = 1400;
 const CONTACT_FOCUS_DURATION = 1500;
 const ANCHOR_SCROLL_SETTLE_DELAY = 360;
+const AI_CHECK_COOLDOWN_MS = 20_000;
+const AI_CHECK_ENDPOINT = "https://mcp.sr3h.uk/check";
 
 setThemeColor(THEME_COLOR);
 initFreshPageStart();
 initIntro();
 initMotion();
+initAiPresenceChecker();
 
 function setThemeColor(color) {
   document
@@ -226,5 +229,178 @@ function initAnchorLanding() {
         }
       }, ANCHOR_SCROLL_SETTLE_DELAY);
     });
+  });
+}
+
+function makeElement(tag, className, text) {
+  const element = document.createElement(tag);
+  if (className) element.className = className;
+  if (text !== undefined) element.textContent = text;
+  return element;
+}
+
+function aiCheckTimestamp(value) {
+  try {
+    if (value !== undefined) window.sessionStorage.setItem("sr3h-ai-check-time", String(value));
+    return Number(window.sessionStorage.getItem("sr3h-ai-check-time") || 0);
+  } catch {
+    return 0;
+  }
+}
+
+function appendResultList(parent, items) {
+  const list = makeElement("ul", "ai-check-list");
+  items.forEach(({ title, text, source }) => {
+    const item = document.createElement("li");
+    if (title) item.append(makeElement("strong", "", title));
+    item.append(document.createTextNode(text));
+    if (source) {
+      item.append(document.createTextNode(" "));
+      const link = makeElement("a", "", "Source");
+      link.href = source;
+      link.target = "_blank";
+      link.rel = "noreferrer noopener";
+      item.append(link);
+    }
+    list.append(item);
+  });
+  parent.append(list);
+}
+
+function renderAiCheckResult(container, result, form) {
+  const state = result.audit?.technical_readiness || "partial";
+  const titles = {
+    clear: "The main technical signals are in place.",
+    partial: "The page is reachable, with some clear improvements.",
+    blocked: "A high-impact issue may be limiting discovery."
+  };
+
+  const head = makeElement("div", "ai-check-result-head");
+  const headCopy = document.createElement("div");
+  headCopy.append(makeElement("h3", "", titles[state] || titles.partial));
+  headCopy.append(makeElement("p", "", result.summary));
+  const stateLabel = makeElement("span", "ai-check-state", state);
+  stateLabel.dataset.state = state;
+  head.append(headCopy, stateLabel);
+
+  const grid = makeElement("div", "ai-check-result-grid");
+  const findings = makeElement("div", "ai-check-result-block");
+  findings.append(makeElement("h4", "", "Main findings"));
+  const gaps = (result.gaps || []).slice(0, 4).map((gap) => ({
+    title: gap.severity === "high" ? "Priority" : "Improvement",
+    text: gap.finding
+  }));
+  appendResultList(findings, gaps.length ? gaps : [{ text: "No gaps were found in this bounded technical check." }]);
+
+  const evidence = makeElement("div", "ai-check-result-block");
+  evidence.append(makeElement("h4", "", "Evidence checked"));
+  appendResultList(evidence, (result.observations || []).slice(0, 5).map((item) => ({
+    title: item.label,
+    text: item.evidence,
+    source: item.source_url
+  })));
+  grid.append(findings, evidence);
+
+  const limits = makeElement("div", "ai-check-result-block");
+  limits.append(makeElement("h4", "", "What this cannot determine"));
+  appendResultList(limits, (result.unknowns || []).slice(0, 3).map((text) => ({ text })));
+
+  const next = makeElement("p", "ai-check-next");
+  next.append(makeElement("strong", "", "Best next step"));
+  next.append(document.createTextNode(result.next_action));
+
+  const actions = makeElement("div", "ai-check-result-actions");
+  const contact = makeElement("a", "button primary", "Discuss a deeper check");
+  contact.href = "mailto:hello@sr3h.uk?subject=AI%20presence%20check";
+  const reset = makeElement("button", "ai-check-reset", "Check another website");
+  reset.type = "button";
+  reset.addEventListener("click", () => {
+    container.hidden = true;
+    container.replaceChildren();
+    form.hidden = false;
+    const status = document.querySelector("#ai-check-status");
+    if (status) status.textContent = "";
+    form.querySelector("input")?.focus();
+  });
+  actions.append(contact, reset);
+
+  container.replaceChildren(head, grid, limits, next, actions);
+  container.hidden = false;
+  form.hidden = true;
+  container.focus?.();
+}
+
+function initAiPresenceChecker() {
+  const form = document.querySelector("#ai-check-form");
+  const status = document.querySelector("#ai-check-status");
+  const resultContainer = document.querySelector("#ai-check-result");
+  if (!form || !status || !resultContainer) return;
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    status.classList.remove("is-error");
+    status.textContent = "";
+
+    const data = new FormData(form);
+    const services = String(data.get("priority_services") || "")
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+    if (services.length > 8 || services.some((item) => item.length > 120)) {
+      status.classList.add("is-error");
+      status.textContent = "Use no more than eight short services, separated by commas.";
+      return;
+    }
+
+    const previousCheck = aiCheckTimestamp();
+    const remaining = AI_CHECK_COOLDOWN_MS - (Date.now() - previousCheck);
+    if (remaining > 0) {
+      status.classList.add("is-error");
+      status.textContent = `Please wait ${Math.ceil(remaining / 1000)} seconds before another check.`;
+      return;
+    }
+
+    const suppliedUrl = String(data.get("website_url") || "").trim();
+    const websiteUrl = /^https?:\/\//i.test(suppliedUrl) ? suppliedUrl : `https://${suppliedUrl}`;
+    const payload = {
+      website_url: websiteUrl,
+      company_website: String(data.get("company_website") || "")
+    };
+    const optionalFields = ["business_name", "location_or_service_area"];
+    optionalFields.forEach((field) => {
+      const value = String(data.get(field) || "").trim();
+      if (value) payload[field] = value;
+    });
+    if (services.length) payload.priority_services = [...new Set(services)].slice(0, 8);
+
+    const submit = form.querySelector('button[type="submit"]');
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 30_000);
+    form.setAttribute("aria-busy", "true");
+    if (submit) submit.disabled = true;
+    status.textContent = "Checking the public page and its discovery signals…";
+    aiCheckTimestamp(Date.now());
+
+    try {
+      const response = await fetch(AI_CHECK_ENDPOINT, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok || !body.result) throw new Error(body.error || "The check could not be completed.");
+      status.textContent = "Check complete.";
+      renderAiCheckResult(resultContainer, body.result, form);
+    } catch (error) {
+      status.classList.add("is-error");
+      status.textContent = error?.name === "AbortError"
+        ? "The check took too long. Try again in a moment."
+        : error.message || "The check could not be completed.";
+    } finally {
+      window.clearTimeout(timeout);
+      form.removeAttribute("aria-busy");
+      if (submit) submit.disabled = false;
+    }
   });
 }

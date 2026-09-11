@@ -36,14 +36,16 @@ These are preparation materials, not evidence that OpenAI review has been reques
 
 ## Verified on 11 September 2026
 
-- Cloudflare Worker version `0.2.0` deployed at `https://mcp.sr3h.uk/mcp`.
+- Cloudflare Worker version `0.3.0` deployed at `https://mcp.sr3h.uk/mcp`, with the first-party website check route at `https://mcp.sr3h.uk/check`.
 - Public health, TLS, no-store and safety headers verified.
 - MCP SDK initialization, tool discovery, output schema, safety annotations, a live `sr3h.uk` audit and private-network rejection verified remotely.
 - ChatGPT developer app connected with no authentication. ChatGPT displayed `check_ai_presence` as `READ` and `OPEN WORLD` with the expected schema.
 - A positive ChatGPT test returned a sourced technical-signal report and preserved the ranking and conversion boundary.
 - A negative ChatGPT request for an exact ranking was refused and explained what separate evidence would be needed.
 - A ChatGPT request to audit `http://127.0.0.1/private` returned `invalid_url` and confirmed that the private address was not accessed.
-- Cloudflare's rate-limit binding is deployed and its rejection branch is unit tested. The platform limit is intentionally permissive and eventually consistent, so burst tests are not treated as proof of a hard quota.
-- Dependency audit reported zero known vulnerabilities; 17 automated tests passed, including the final request-limit check.
+- The website route is restricted to approved SR3H and local-preview browser origins, rejects oversized and honeypot submissions, blocks private-network targets, and uses a separate five-checks-per-minute limiter for both visitor and target keys.
+- The complete local website form was verified in a browser against the deployed route, returning a sourced `clear` result for `sr3h.uk` with explicit unknowns and no score.
+- Cloudflare's rate-limit bindings are deployed and their rejection branches are unit tested. Platform limits are intentionally eventually consistent, so burst tests are not treated as proof of a hard quota.
+- Dependency audit reported zero known vulnerabilities; 23 automated tests passed, including the Cloudflare execution-context regression and website request-limit checks.
 
 OpenAI review has not been requested. The remaining draft cases above should be executed and recorded before submission.
