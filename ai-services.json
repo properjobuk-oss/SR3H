@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "1.0",
+  "canonicalUrl": "https://sr3h.uk/",
+  "organization": {
+    "name": "SR3H",
+    "legalName": "SR3H LTD",
+    "companyNumber": "17281224",
+    "location": "Oxford, United Kingdom",
+    "contact": "hello@sr3h.uk"
+  },
+  "services": [
+    {
+      "id": "ai-visibility",
+      "name": "AI visibility and discoverability assessment",
+      "aliases": [
+        "AI visibility audit",
+        "AI discoverability audit",
+        "AI search visibility",
+        "AI search optimisation",
+        "generative engine optimisation",
+        "GEO",
+        "answer engine optimisation",
+        "AEO",
+        "large language model optimisation",
+        "LLMO"
+      ],
+      "description": "Evidence-led assessment of how AI systems can find, interpret and recommend a business, product or service, including crawlability, structured information, representation quality and commercial conversion boundaries.",
+      "availability": "Available by enquiry"
+    },
+    {
+      "id": "human-ai-systems",
+      "name": "Human-AI systems research and product design",
+      "description": "Research, design and engineering for interfaces, context, memory, knowledge, permissions, provenance and evaluation in dependable human-AI systems.",
+      "availability": "Available by enquiry"
+    },
+    {
+      "id": "mcp-engineering",
+      "name": "MCP app and AI tool engineering",
+      "description": "Focused Model Context Protocol tools and AI-assisted services with explicit data, permission and commercial boundaries.",
+      "availability": "Available by enquiry"
+    },
+    {
+      "id": "software-engineering",
+      "name": "Complex software product engineering",
+      "description": "Bespoke software design and engineering that keeps requirements, decisions, implementation, tests and evidence connected as products change.",
+      "availability": "Available by enquiry"
+    }
+  ],
+  "research": [
+    {
+      "name": "Signal",
+      "status": "Research",
+      "description": "Controlled, evidence-led research into how AI systems find, interpret and recommend businesses, products and services, and whether measured changes improve real outcomes."
+    },
+    {
+      "name": "Market Loop",
+      "status": "Product research",
+      "description": "Helps businesses understand how AI finds and recommends them, improve how they are represented, and learn from which customers actually convert."
+    },
+    {
+      "name": "AIDO Labs",
+      "status": "Experimental prototype",
+      "description": "An evidence workbench that keeps consumer, API and other observations separate and distinguishes natural discovery from introduced evaluation."
+    }
+  ],
+  "freeAiPresenceCheck": {
+    "status": "Planned MCP service",
+    "purpose": "Provide a bounded first-pass check of a company's public AI discoverability and representation signals.",
+    "plannedChecks": [
+      "Public page reachability and crawl directives",
+      "OAI-SearchBot access",
+      "Canonical identity and service information",
+      "Sitemap, metadata and structured data",
+      "Public evidence and representation gaps",
+      "Clear separation between technical discoverability and commercial outcome evidence"
+    ],
+    "doesNotProve": [
+      "ChatGPT ranking, citation or recommendation",
+      "Customer demand",
+      "Causal impact of a change",
+      "Conversion performance without outcome data"
+    ],
+    "contactForHelp": "mailto:hello@sr3h.uk"
+  }
+}

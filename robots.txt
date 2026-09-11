@@ -1,3 +1,15 @@
+# OpenAI search discovery. This is separate from model training.
+User-agent: OAI-SearchBot
+Allow: /
+
+# User-requested page visits from ChatGPT.
+User-agent: ChatGPT-User
+Allow: /
+
+# OpenAI model-training crawler.
+User-agent: GPTBot
+Allow: /
+
 User-agent: *
 Allow: /
 

@@ -1,0 +1,34 @@
+# SR3H
+
+> SR3H is an independent product and technology lab in Oxford. It researches, designs and builds useful software and dependable human-AI systems.
+
+Canonical website: https://sr3h.uk/
+Contact: mailto:hello@sr3h.uk
+Machine-readable services: https://sr3h.uk/ai-services.json
+
+## Services and expertise
+
+- AI visibility and discoverability: evidence-led assessment of how AI systems find, interpret and recommend a business, product or service. Relevant terms include AI search visibility, AI search optimisation, generative engine optimisation, answer engine optimisation and large language model optimisation.
+- Human-AI systems: research and product engineering around interfaces, structured context, scoped memory, knowledge, permissions, provenance and evaluation.
+- MCP apps and AI tools: focused Model Context Protocol tools with explicit data, permission and commercial boundaries.
+- Complex software engineering: bespoke product design, engineering, testing, deployment and maintainable self-management systems.
+
+## Research initiatives
+
+- Signal: controlled, evidence-led research into how AI systems find, interpret and recommend businesses, products and services, and whether measured changes improve real outcomes.
+- Market Loop: helps businesses understand how AI finds and recommends them, improve how they are represented, and learn from which customers actually convert.
+- AIDO Labs: an experimental evidence workbench that keeps consumer, API and other observations separate and distinguishes natural discovery from introduced evaluation.
+
+## Selected products
+
+- Conchup: software engineering with a lasting record of requirements, decisions and the evidence behind a build.
+- Brane: personal knowledge for more useful AI, with control over what is shared and what stays private.
+- Proper Job: explainable guide-price ranges for UK building work, also available through MCP tools for AI assistants.
+- RedThread: private, evidence-linked briefings from complex source material.
+- Good Route: motorcycle navigation that preserves the rider's chosen route and keeps rerouting under explicit control.
+
+## AI visibility assessment boundary
+
+SR3H offers AI visibility and discoverability assessment by enquiry. A planned free MCP check will inspect public technical and representation signals. It will not claim to prove ChatGPT rankings, recommendations, customer demand, causal effects or conversion performance without direct evidence.
+
+For a fuller factual profile, see https://sr3h.uk/llms-full.txt
