@@ -214,7 +214,7 @@ export async function auditWebsite(input, fetchImpl = fetch) {
   const origin = page.finalUrl.origin;
 
   let robotsStatus = "missing";
-  let robotsEvidence = "robots.txt was not found; no crawler restriction was observed there.";
+  let robotsEvidence = "No robots.txt file was found, so no crawler restriction was found there.";
   let robotsSource = `${origin}/robots.txt`;
   let sitemapCandidates = [];
   try {
@@ -224,66 +224,66 @@ export async function auditWebsite(input, fetchImpl = fetch) {
       const robotsText = await readLimitedText(robotsFetch.response);
       const looksLikeHtml = /<\s*(?:!doctype\s+html|html|head|body)\b/i.test(robotsText);
       if (looksLikeHtml) {
-        robotsEvidence = "robots.txt returned HTML rather than a robots file; no crawler rule was verified there.";
+        robotsEvidence = "The robots.txt address returned a webpage instead of crawler rules, so access could not be confirmed there.";
       } else {
         const decision = evaluateRobots(robotsText);
         robotsStatus = decision.allowed ? "clear" : "blocked";
         robotsEvidence = decision.allowed
-          ? `OAI-SearchBot is not blocked for /. Rules evaluated from ${decision.sourceGroup}.`
-          : `OAI-SearchBot is blocked for / by ${decision.matchedRule?.type}: ${decision.matchedRule?.path}.`;
+          ? "OpenAI's search crawler is allowed to access the homepage."
+          : `OpenAI's search crawler is blocked from the homepage by this rule: ${decision.matchedRule?.type} ${decision.matchedRule?.path}.`;
         sitemapCandidates = [...robotsText.matchAll(/^\s*sitemap\s*:\s*(\S+)/gim)].map((match) => match[1]);
       }
     } else if (robotsFetch.response.status !== 404) {
       robotsStatus = "unverified";
-      robotsEvidence = `robots.txt returned HTTP ${robotsFetch.response.status}.`;
+      robotsEvidence = `The robots.txt address returned HTTP ${robotsFetch.response.status}, so crawler access could not be confirmed.`;
     }
   } catch {
     robotsStatus = "unverified";
-    robotsEvidence = "robots.txt could not be checked from the audit service.";
+    robotsEvidence = "Crawler rules could not be checked from this service.";
   }
 
   if (!sitemapCandidates.length) sitemapCandidates = [`${origin}/sitemap.xml`];
-  let sitemap = { status: "missing", url: sitemapCandidates[0], evidence: "No readable sitemap was found." };
+  let sitemap = { status: "missing", url: sitemapCandidates[0], evidence: "No readable XML sitemap was found." };
   for (const candidate of sitemapCandidates.slice(0, 3)) {
     try {
       const result = await safeFetch(new URL(candidate, origin).href, fetchImpl, { accept: "application/xml,text/xml,*/*;q=0.5" });
       if (result.response.ok) {
         const body = await readLimitedText(result.response);
         if (/<(?:urlset|sitemapindex)\b/i.test(body)) {
-          sitemap = { status: "clear", url: result.finalUrl.href, evidence: "A readable XML sitemap was found." };
+          sitemap = { status: "clear", url: result.finalUrl.href, evidence: "A readable XML sitemap is available." };
           break;
         }
       }
     } catch { /* reflected as missing */ }
   }
 
-  let llms = { status: "missing", url: `${origin}/llms.txt`, evidence: "No llms.txt file was found. This file is optional and is not an OpenAI ranking signal." };
+  let llms = { status: "missing", url: `${origin}/llms.txt`, evidence: "No llms.txt file was found. It is optional and does not affect OpenAI ranking by itself." };
   try {
     const result = await safeFetch(llms.url, fetchImpl, { accept: "text/plain,*/*;q=0.5" });
     if (result.response.ok) {
       const body = await readLimitedText(result.response);
       const looksLikeHtml = /<\s*(?:!doctype\s+html|html|head|body)\b/i.test(body);
-      if (body.trim() && !looksLikeHtml) llms = { status: "clear", url: result.finalUrl.href, evidence: "A non-empty llms.txt file was found. It is supplementary machine-readable context, not a ranking guarantee." };
+      if (body.trim() && !looksLikeHtml) llms = { status: "clear", url: result.finalUrl.href, evidence: "An llms.txt file is available. It provides optional machine-readable context, not a ranking guarantee." };
     }
   } catch { /* reflected as missing */ }
 
   const suppliedTerms = [input.business_name, input.location_or_service_area, ...(input.priority_services || [])].filter(Boolean);
   const termPresence = presence(`${inspected.title || ""} ${inspected.description || ""} ${inspected.visibleText}`, suppliedTerms);
   const observations = [
-    signal("reachability", "Public webpage", "clear", `HTTP ${page.response.status}; final URL ${page.finalUrl.href}`, page.finalUrl.href),
-    signal("https", "HTTPS", page.finalUrl.protocol === "https:" ? "clear" : "gap", page.finalUrl.protocol === "https:" ? "The final page uses HTTPS." : "The final page uses unencrypted HTTP.", page.finalUrl.href),
-    signal("oai_searchbot", "OAI-SearchBot access", robotsStatus, robotsEvidence, robotsSource),
-    signal("indexing", "Index directive", inspected.noindex ? "blocked" : "clear", inspected.noindex ? "A noindex directive was found." : "No noindex directive was found on the checked page.", page.finalUrl.href),
-    signal("sitemap", "XML sitemap", sitemap.status, sitemap.evidence, sitemap.url),
-    signal("canonical", "Canonical URL", inspected.canonical ? "clear" : "gap", inspected.canonical ? `Canonical URL: ${inspected.canonical}` : "No canonical link was found on the checked page.", page.finalUrl.href),
-    signal("metadata", "Page title and description", inspected.title && inspected.description ? "clear" : "gap", `Title: ${inspected.title || "missing"}; description: ${inspected.description || "missing"}`, page.finalUrl.href),
-    signal("structured_data", "Structured data", inspected.structuredData.types.length && !inspected.structuredData.parseErrors ? "clear" : inspected.structuredData.blocks ? "partial" : "gap", inspected.structuredData.blocks ? `Types: ${inspected.structuredData.types.join(", ") || "none parsed"}; parse errors: ${inspected.structuredData.parseErrors}.` : "No JSON-LD structured data blocks were found.", page.finalUrl.href),
-    signal("llms_txt", "Supplementary AI profile", llms.status, llms.evidence, llms.url)
+    signal("reachability", "Page access", "clear", `The page loaded successfully (HTTP ${page.response.status}) at ${page.finalUrl.href}`, page.finalUrl.href),
+    signal("https", "Secure connection", page.finalUrl.protocol === "https:" ? "clear" : "gap", page.finalUrl.protocol === "https:" ? "The checked page uses HTTPS." : "The checked page uses an unencrypted HTTP connection.", page.finalUrl.href),
+    signal("oai_searchbot", "OpenAI search access", robotsStatus, robotsEvidence, robotsSource),
+    signal("indexing", "Indexing permission", inspected.noindex ? "blocked" : "clear", inspected.noindex ? "The page asks search engines not to index it." : "The page does not ask search engines to exclude it.", page.finalUrl.href),
+    signal("sitemap", "Sitemap", sitemap.status, sitemap.evidence, sitemap.url),
+    signal("canonical", "Preferred page URL", inspected.canonical ? "clear" : "gap", inspected.canonical ? `The preferred public URL is ${inspected.canonical}` : "No preferred public URL was declared on the page.", page.finalUrl.href),
+    signal("metadata", "Page title and description", inspected.title && inspected.description ? "clear" : "gap", inspected.title && inspected.description ? "The page has both a title and a description." : `Title: ${inspected.title || "missing"}; description: ${inspected.description || "missing"}`, page.finalUrl.href),
+    signal("structured_data", "Structured data", inspected.structuredData.types.length && !inspected.structuredData.parseErrors ? "clear" : inspected.structuredData.blocks ? "partial" : "gap", inspected.structuredData.blocks ? `Structured data found: ${inspected.structuredData.types.join(", ") || "no recognised types"}. Parse errors: ${inspected.structuredData.parseErrors}.` : "No JSON-LD structured data was found.", page.finalUrl.href),
+    signal("llms_txt", "Optional AI information file", llms.status, llms.evidence, llms.url)
   ];
 
   const gaps = [];
   const addGap = (condition, id, severity, finding, action) => { if (condition) gaps.push({ id, severity, finding, action }); };
-  addGap(robotsStatus === "blocked", "oai_searchbot_blocked", "high", "OAI-SearchBot is blocked from the homepage.", "Review the OAI-SearchBot rules in robots.txt if search inclusion is intended.");
+  addGap(robotsStatus === "blocked", "oai_searchbot_blocked", "high", "OpenAI's search crawler is blocked from the homepage.", "Review the OpenAI crawler rules in robots.txt if you want the page to appear in AI search.");
   addGap(inspected.noindex, "noindex", "high", "The checked page asks search engines not to index it.", "Remove noindex only if this page is intended to be public and searchable.");
   addGap(page.finalUrl.protocol !== "https:", "https", "high", "The final page is not served over HTTPS.", "Serve the site over HTTPS and redirect HTTP to HTTPS.");
   addGap(!inspected.title || !inspected.description, "metadata", "medium", "The page title or meta description is missing.", "Add a specific title and concise description that accurately state the business and its offer.");
@@ -292,7 +292,7 @@ export async function auditWebsite(input, fetchImpl = fetch) {
   addGap(!inspected.structuredData.types.length, "structured_data", "medium", "No parseable JSON-LD types were found.", "Add accurate Organization or LocalBusiness data and relevant Service or Product entities.");
   addGap(inspected.structuredData.parseErrors > 0, "structured_data_invalid", "medium", "At least one JSON-LD block could not be parsed.", "Validate and correct the page JSON-LD.");
   const missingTerms = termPresence.filter((item) => !item.found).map((item) => item.term);
-  addGap(missingTerms.length, "supplied_terms", "medium", `Supplied business context not found on the checked page: ${missingTerms.join(", ")}.`, "State these facts plainly on the page if they are accurate and important to customers.");
+  addGap(missingTerms.length, "supplied_terms", "medium", `The checked page does not clearly mention: ${missingTerms.join(", ")}.`, "Add these facts in clear customer-facing language if they are accurate and important.");
 
   const blocked = robotsStatus === "blocked" || inspected.noindex || page.finalUrl.protocol !== "https:";
   const partial = gaps.length > 0 || robotsStatus === "unverified";
@@ -305,10 +305,10 @@ export async function auditWebsite(input, fetchImpl = fetch) {
       technical_readiness: technicalReadiness
     },
     summary: technicalReadiness === "clear"
-      ? "The checked page exposes the main technical signals in this audit. This does not prove AI ranking, citation or recommendation."
+      ? "No technical access or indexing problems were found on the page checked. This does not show whether AI services understand the offer or will mention the business."
       : technicalReadiness === "blocked"
-        ? "A high-impact technical condition may prevent or materially limit discovery of the checked page."
-        : "The page is publicly reachable, but one or more technical or representation signals could be clearer.",
+        ? "A technical setting may prevent search and AI systems from accessing or indexing this page. Fix the priority issue below before testing anything else."
+        : "The page is public, but some technical or business information is missing or unclear. Fixing the items below will make it easier for search and AI systems to interpret.",
     observations,
     supplied_context_presence: termPresence,
     supplied_context: {
@@ -317,12 +317,12 @@ export async function auditWebsite(input, fetchImpl = fetch) {
     },
     gaps,
     unknowns: [
-      "This crawl does not measure ChatGPT ranking, citation or recommendation.",
-      "It does not measure customer demand, conversion, revenue or causal impact.",
-      "It does not test every page, external mention, model, search index or user journey.",
-      "llms.txt is supplementary context and is not an official OpenAI inclusion or ranking mechanism."
+      "Whether ChatGPT or another AI service will mention, cite or recommend the business.",
+      "How well the site answers specific customer questions or compares with other providers.",
+      "Customer demand, conversions, revenue or the effect of any future change.",
+      "Every page, external mention, AI model, search index or user journey."
     ],
-    next_action: gaps[0]?.action || "Keep the public facts current and verify important user questions with separate, dated tests.",
-    deeper_analysis: "For evidence-led AI visibility analysis across pages, prompts and outcomes, contact hello@sr3h.uk."
+    next_action: gaps[0]?.action || "Make the main services and locations explicit, connect important claims to supporting evidence, then test five real customer questions.",
+    deeper_analysis: "For an evidence-led review across pages, customer questions and AI responses, contact hello@sr3h.uk."
   };
 }

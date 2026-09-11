@@ -256,7 +256,7 @@ function appendResultList(parent, items) {
     item.append(document.createTextNode(text));
     if (source) {
       item.append(document.createTextNode(" "));
-      const link = makeElement("a", "", "Source");
+      const link = makeElement("a", "", "View source");
       link.href = source;
       link.target = "_blank";
       link.rel = "noreferrer noopener";
@@ -270,30 +270,40 @@ function appendResultList(parent, items) {
 function renderAiCheckResult(container, result, form) {
   const state = result.audit?.technical_readiness || "partial";
   const titles = {
-    clear: "The main technical signals are in place.",
-    partial: "The page is reachable, with some clear improvements.",
-    blocked: "A high-impact issue may be limiting discovery."
+    clear: "AI search crawlers can access your website.",
+    partial: "Your website is accessible, but some information needs attention.",
+    blocked: "A setting may be blocking AI search access."
+  };
+  const stateLabels = {
+    clear: "Accessible",
+    partial: "Review",
+    blocked: "Action needed"
   };
 
   const head = makeElement("div", "ai-check-result-head");
   const headCopy = document.createElement("div");
   headCopy.append(makeElement("h3", "", titles[state] || titles.partial));
   headCopy.append(makeElement("p", "", result.summary));
-  const stateLabel = makeElement("span", "ai-check-state", state);
+  const stateLabel = makeElement("span", "ai-check-state", stateLabels[state] || stateLabels.partial);
   stateLabel.dataset.state = state;
   head.append(headCopy, stateLabel);
 
   const grid = makeElement("div", "ai-check-result-grid");
   const findings = makeElement("div", "ai-check-result-block");
-  findings.append(makeElement("h4", "", "Main findings"));
   const gaps = (result.gaps || []).slice(0, 4).map((gap) => ({
     title: gap.severity === "high" ? "Priority" : "Improvement",
     text: gap.finding
   }));
-  appendResultList(findings, gaps.length ? gaps : [{ text: "No gaps were found in this bounded technical check." }]);
+  const discoverabilityGuidance = [
+    { title: "Make the offer clear", text: "State the main services and locations in the words customers use." },
+    { title: "Show the proof", text: "Connect important claims to accreditations, reviews, case studies or product facts." },
+    { title: "Test customer questions", text: "Check whether AI services mention the business for the questions customers actually ask." }
+  ];
+  findings.append(makeElement("h4", "", gaps.length ? "What to improve" : "How to improve AI discoverability"));
+  appendResultList(findings, gaps.length ? gaps : discoverabilityGuidance);
 
   const evidence = makeElement("div", "ai-check-result-block");
-  evidence.append(makeElement("h4", "", "Evidence checked"));
+  evidence.append(makeElement("h4", "", "What we checked"));
   appendResultList(evidence, (result.observations || []).slice(0, 5).map((item) => ({
     title: item.label,
     text: item.evidence,
@@ -302,15 +312,15 @@ function renderAiCheckResult(container, result, form) {
   grid.append(findings, evidence);
 
   const limits = makeElement("div", "ai-check-result-block");
-  limits.append(makeElement("h4", "", "What this cannot determine"));
+  limits.append(makeElement("h4", "", "What this check does not prove"));
   appendResultList(limits, (result.unknowns || []).slice(0, 3).map((text) => ({ text })));
 
   const next = makeElement("p", "ai-check-next");
-  next.append(makeElement("strong", "", "Best next step"));
+  next.append(makeElement("strong", "", "Next useful step"));
   next.append(document.createTextNode(result.next_action));
 
   const actions = makeElement("div", "ai-check-result-actions");
-  const contact = makeElement("a", "button primary", "Discuss a deeper check");
+  const contact = makeElement("a", "button primary", "Ask about a deeper review");
   contact.href = "mailto:hello@sr3h.uk?subject=AI%20presence%20check";
   const reset = makeElement("button", "ai-check-reset", "Check another website");
   reset.type = "button";
@@ -390,7 +400,7 @@ function initAiPresenceChecker() {
       });
       const body = await response.json().catch(() => ({}));
       if (!response.ok || !body.result) throw new Error(body.error || "The check could not be completed.");
-      status.textContent = "Check complete.";
+      status.textContent = "Website check complete.";
       renderAiCheckResult(resultContainer, body.result, form);
     } catch (error) {
       status.classList.add("is-error");

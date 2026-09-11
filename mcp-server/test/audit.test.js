@@ -61,7 +61,9 @@ test("returns sourced findings, supplied-term evidence and explicit limits", asy
   assert.equal(result.audit.technical_readiness, "clear");
   assert.equal(result.observations.every((item) => item.source_url.startsWith("https://")), true);
   assert.equal(result.supplied_context_presence.every((item) => item.found), true);
-  assert.match(result.unknowns.join(" "), /does not measure ChatGPT ranking/);
+  assert.match(result.unknowns.join(" "), /Whether ChatGPT or another AI service will mention/);
+  assert.match(result.summary, /does not show whether AI services understand the offer/);
+  assert.match(result.next_action, /test five real customer questions/);
   assert.match(result.supplied_context.note, /user-supplied context only/);
 });
 
@@ -101,7 +103,7 @@ test("does not treat HTML fallback pages as robots.txt or llms.txt", async () =>
   });
   const result = await auditWebsite({ website_url: "https://fallback.example.com" }, fetchImpl);
   assert.equal(result.observations.find((item) => item.id === "oai_searchbot").status, "missing");
-  assert.match(result.observations.find((item) => item.id === "oai_searchbot").evidence, /returned HTML/);
+  assert.match(result.observations.find((item) => item.id === "oai_searchbot").evidence, /returned a webpage instead of crawler rules/);
   assert.equal(result.observations.find((item) => item.id === "llms_txt").status, "missing");
 });
 
@@ -112,7 +114,7 @@ test("does not expose subrequest error details in returned evidence", async () =
   });
   const result = await auditWebsite({ website_url: "https://safe-errors.example" }, fetchImpl);
   const robots = result.observations.find((item) => item.id === "oai_searchbot");
-  assert.match(robots.evidence, /could not be checked from the audit service/);
+  assert.match(robots.evidence, /could not be checked from this service/);
   assert.doesNotMatch(JSON.stringify(result), /secret-provider-detail-123/);
 });
 

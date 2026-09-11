@@ -3,7 +3,7 @@ import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/
 import { z } from "zod";
 import { auditWebsite } from "./audit.js";
 
-const SERVICE_VERSION = "0.3.0";
+const SERVICE_VERSION = "0.3.1";
 const MAX_MCP_REQUEST_BYTES = 64_000;
 const MAX_WEB_REQUEST_BYTES = 8_000;
 const WEB_ORIGINS = new Set([
@@ -80,10 +80,15 @@ function publicErrorMessage(code) {
 }
 
 function conciseResult(result) {
-  const lead = `${result.audit.technical_readiness.toUpperCase()}: ${result.summary}`;
-  if (!result.gaps.length) return `${lead}\nNext: ${result.next_action}`;
+  const labels = {
+    clear: "AI search crawlers can access this website",
+    partial: "Website visible, with improvements",
+    blocked: "Access issue found"
+  };
+  const lead = `${labels[result.audit.technical_readiness] || labels.partial}\n${result.summary}`;
+  if (!result.gaps.length) return `${lead}\nNext useful step: ${result.next_action}`;
   const gaps = result.gaps.slice(0, 3).map((gap) => `- ${gap.finding}`).join("\n");
-  return `${lead}\nMain findings:\n${gaps}\nNext: ${result.next_action}`;
+  return `${lead}\nWhat to improve:\n${gaps}\nNext useful step: ${result.next_action}`;
 }
 
 export function createServer(fetchImpl = fetch) {
