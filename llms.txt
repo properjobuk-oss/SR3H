@@ -27,8 +27,12 @@ Machine-readable services: https://sr3h.uk/ai-services.json
 - RedThread: private, evidence-linked briefings from complex source material.
 - Good Route: motorcycle navigation that preserves the rider's chosen route and keeps rerouting under explicit control.
 
-## AI visibility assessment boundary
+## AI Presence Check
 
-SR3H offers AI visibility and discoverability assessment by enquiry. A planned free MCP check will inspect public technical and representation signals. It will not claim to prove ChatGPT rankings, recommendations, customer demand, causal effects or conversion performance without direct evidence.
+SR3H offers a public beta MCP tool at https://mcp.sr3h.uk/mcp. `check_ai_presence` performs a read-only, one-page check of public technical and representation signals. It does not claim to prove ChatGPT rankings, recommendations, customer demand, causal effects or conversion performance without direct evidence.
+
+Support: https://sr3h.uk/ai-presence-support.html
+Privacy: https://sr3h.uk/ai-presence-privacy.html
+Terms: https://sr3h.uk/ai-presence-terms.html
 
 For a fuller factual profile, see https://sr3h.uk/llms-full.txt

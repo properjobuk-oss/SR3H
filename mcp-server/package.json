@@ -1,0 +1,21 @@
+{
+  "name": "@sr3h/ai-presence-checker",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Read-only MCP service for evidence-bounded website AI discoverability checks.",
+  "scripts": {
+    "check": "node --check src/index.js && node --check src/audit.js && node --check src/url-safety.js",
+    "test": "node --test",
+    "verify:remote": "node scripts/verify-remote.mjs",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "wrangler": "4.131.1"
+  }
+}

@@ -64,7 +64,10 @@
     }
   ],
   "freeAiPresenceCheck": {
-    "status": "Planned MCP service",
+    "status": "Public beta MCP service",
+    "mcpEndpoint": "https://mcp.sr3h.uk/mcp",
+    "healthEndpoint": "https://mcp.sr3h.uk/health",
+    "tool": "check_ai_presence",
     "purpose": "Provide a bounded first-pass check of a company's public AI discoverability and representation signals.",
     "plannedChecks": [
       "Public page reachability and crawl directives",
@@ -80,6 +83,9 @@
       "Causal impact of a change",
       "Conversion performance without outcome data"
     ],
-    "contactForHelp": "mailto:hello@sr3h.uk"
+    "contactForHelp": "mailto:hello@sr3h.uk",
+    "support": "https://sr3h.uk/ai-presence-support.html",
+    "privacy": "https://sr3h.uk/ai-presence-privacy.html",
+    "terms": "https://sr3h.uk/ai-presence-terms.html"
   }
 }

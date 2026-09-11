@@ -46,6 +46,6 @@ The tool must not claim to measure ChatGPT ranking, citation, recommendation, cu
 - `openWorldHint: true`
 - `destructiveHint: false`
 
-## Deployment boundary
+## Deployment state
 
-A real plugin requires a stable public HTTPS MCP endpoint, accurate tool schemas and annotations, production logging and rate limits, domain verification, public privacy and terms URLs, test cases, verified publisher identity, review and publication. This document defines the tool boundary; it is not a live plugin endpoint.
+The MCP service is deployed at `https://mcp.sr3h.uk/mcp` with a health endpoint at `https://mcp.sr3h.uk/health`. Its schemas, annotations, rate limits and public support, privacy and terms pages have been tested. ChatGPT developer-mode testing, publisher verification, OpenAI review and public plugin publication remain separate release gates.
