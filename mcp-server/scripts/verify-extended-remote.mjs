@@ -32,18 +32,21 @@ try {
   if (leaked) throw new Error("business name leaked into an unbranded question");
   if (!/no SR3H OpenAI API calls/i.test(pack.usage_note || "")) throw new Error("question pack did not state the API boundary");
 
-  const observations = pack.questions.map((item) => ({
-    question: item.question,
-    kind: item.kind,
+  const observations = [{
+    question_id: pack.questions[0].id,
+    question: pack.questions[0].question,
+    kind: pack.questions[0].kind,
+    checked_at: new Date().toISOString(),
     appearance: "not_seen",
-    answer_summary: "No search was run in this protocol verification."
-  }));
+    answer_summary: "No search was run in this protocol verification.",
+    evidence_urls: []
+  }];
   const summary = await client.callTool({ name: summarise.name, arguments: {
     website_url: websiteUrl,
     business_name: businessName,
     observations
   } });
-  if (summary.isError || summary.structuredContent?.sample?.completed !== 10) throw new Error("summary tool failed");
+  if (!summary.isError) throw new Error("summary accepted an unsupported absence without cited search evidence");
 
   console.log(JSON.stringify({
     ok: true,
@@ -53,7 +56,7 @@ try {
     user_confirmation_required: pack.user_confirmation_required,
     searches_run_by_planner: 0,
     openai_api_calls_by_planner: 0,
-    summary_completed: summary.structuredContent.sample.completed
+    unsupported_summary_rejected: true
   }, null, 2));
 } finally {
   await client.close();

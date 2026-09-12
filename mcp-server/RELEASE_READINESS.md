@@ -4,7 +4,7 @@
 
 The first-party `/check` route performs a read-only technical check of public website signals and, when configured, a six-question API-backed understanding and search sample.
 
-The MCP route is separate. `check_ai_presence` inspects the public site without calling an AI model. Version 0.8 deterministically prepares an optional ten-question workflow without an OpenAI API call, then summarises evidence collected with research tools available in the user's ChatGPT session. The MCP does not claim control of ChatGPT's web-search availability or usage limits, and the summariser refuses to count a positive appearance without a source URL.
+The MCP route is separate. `check_ai_presence` inspects the public site without calling an AI model. Version 0.9 deterministically prepares an optional ten-question workflow without an OpenAI API call, then summarises evidence collected with research tools available in the user's ChatGPT session. The MCP does not claim control of ChatGPT's web-search availability or usage limits. Every completed observation requires dated source evidence, and a mention or recommendation also requires evidence from the target business itself.
 
 ## Required evidence before review submission
 
@@ -40,13 +40,24 @@ These are preparation materials, not evidence that OpenAI review has been reques
 
 ## Current version status
 
-- **Production and repository: `0.8.0`.** Cloudflare deployed Worker version `0b0c10f5-575b-4461-96ab-eb00ce8416ba` on 12 September 2026.
-- The public health endpoint and MCP initialization both report `AIDO Discoverability Check` version `0.8.0` and advertise all three focused tools.
+- **Production and repository: `0.9.0`.** Cloudflare deployed Worker version `4f85da76-710b-4662-88f6-fbb143c5c764` on 12 September 2026.
+- The public health endpoint and MCP initialization both report `AIDO Discoverability Check` version `0.9.0` and advertise all three focused tools.
+- The deployed MCP advertises `io.modelcontextprotocol/skills`, lists the AIDO skill, exposes its three files as MCP resources and verifies each resource against its SHA-256 digest.
 - The deployed MCP advertises all four optional context fields and returns them through the audit result.
 - The restricted `AIDO DISCOVERABILITY TEST` OpenAI key is configured as the encrypted `OPENAI_API_KEY` Cloudflare Worker secret. It has Responses write access and no Chat Completions, embeddings, realtime, images, moderation or other endpoint access.
 - Only the first-party website form can use that secret. Its paid flow creates a bounded six-question plan and runs each question as an isolated required web search. Unbranded prompts never receive the target business name or domain. A positive appearance is counted only when the individual response includes matching source evidence.
 - The MCP server does not receive the Worker environment in its tool handlers and has regression coverage proving that an available `OPENAI_API_KEY` cannot trigger an OpenAI call.
 - A local end-to-end provider test using the production key completed all six isolated searches for Proper Job. It found the branded site and one sourced unbranded recommendation for drawing-based estimating; the four broader unbranded questions did not surface Proper Job.
+
+## Version 0.9.0 evidence
+
+- The skill is now importable through the MCP skills extension rather than relying on a separate manual copy. Its main instructions, reporting reference and ChatGPT metadata are exposed as three digest-verified resources.
+- The workflow separates website readiness, question preparation, independent research and evidence summary. A direct request for an extended check counts as consent; otherwise the user must opt in before searches begin.
+- The question pack contains exactly one branded and nine neutral questions covering category, problem, high intent, differentiator, location, comparison, evidence, use case and alternative intent.
+- The summariser rejects missing evidence, invalid timestamps, duplicate questions, incomplete positive evidence and target leakage. It distinguishes `not_seen`, `source_only`, `mentioned` and `recommended`, and clearly labels partial samples.
+- Ten ChatGPT evaluation cases cover direct, indirect, follow-up, incomplete-input, evidence, unavailable-tool, boundary and out-of-scope behaviour.
+- Static checks and 46 automated tests pass. The skill validator passes, the production Worker bundle builds, and the production dependency audit reports zero known vulnerabilities.
+- Local and production verification confirmed version 0.9.0, three MCP tools, the deterministic ten-question pack, evidence rejection, skill-resource digests and private-network rejection.
 
 ## Version 0.8.0 evidence
 
@@ -62,7 +73,7 @@ These are preparation materials, not evidence that OpenAI review has been reques
 
 ## Remaining release gate
 
-Import or upload the packaged skill, then test the complete opt-in, host-search, evidence-classification and summary journey in ChatGPT developer mode. Run direct, indirect, incomplete-input, unavailable-search and should-not-activate cases. After the website allowance resets, verify one fresh API-backed `/check` sample. Do not claim that the MCP controls ChatGPT web-search availability or usage accounting, and do not submit for OpenAI review until those journeys are recorded.
+In the ChatGPT app draft, run **Scan Tools** or refresh the MCP so the v0.9 skill snapshot is imported. Then test the complete opt-in, host-search, evidence-classification and summary journey in developer mode using the ten recorded cases. After the website allowance resets, verify one fresh API-backed `/check` sample. Do not claim that the MCP controls ChatGPT web-search availability or usage accounting, and do not submit for OpenAI review until those journeys are recorded. OpenAI review has not been requested.
 
 ## Historical version 0.7.0 evidence
 

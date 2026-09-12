@@ -18,7 +18,7 @@ try {
   if (health.headers.get("x-content-type-options") !== "nosniff") throw new Error("health endpoint is missing nosniff");
   const healthBody = await health.json();
   if (healthBody.ok !== true) throw new Error("health endpoint did not report ok");
-  if (healthBody.version !== "0.8.0") throw new Error(`expected version 0.8.0, received ${healthBody.version || "unknown"}`);
+  if (healthBody.version !== "0.9.0") throw new Error(`expected version 0.9.0, received ${healthBody.version || "unknown"}`);
 
   await client.connect(transport);
   const serverVersion = client.getServerVersion();
@@ -40,15 +40,17 @@ try {
     website_url: auditTarget,
     business_name: "Release Test Business",
     observations: [{
+      question_id: "q2",
       question: "Which service should I use for this release test?",
       kind: "category",
+      checked_at: new Date().toISOString(),
       appearance: "not_seen",
       answer_summary: "No target appearance was recorded in this protocol test.",
       evidence_urls: [],
       other_providers: []
     }]
   } });
-  if (summary.isError || summary.structuredContent?.sample?.completed !== 1) throw new Error("extended summary tool did not return the expected structured result");
+  if (!summary.isError) throw new Error("extended summary accepted an unsupported absence without cited search evidence");
   const rejected = await client.callTool({ name: tool.name, arguments: { website_url: "http://127.0.0.1/private" } });
   if (rejected.isError !== true || !rejected.content?.[0]?.text?.includes("invalid_url")) {
     throw new Error("private-network target was not rejected as expected");
@@ -60,7 +62,7 @@ try {
     tools: tools.tools.map((candidate) => candidate.name),
     technical_readiness: result.structuredContent.audit.technical_readiness,
     mcp_openai_api_calls: 0,
-    summary_tool_verified: true,
+    unsupported_summary_rejected: true,
     observations: result.structuredContent.observations.length,
     gaps: result.structuredContent.gaps.length,
     private_network_rejected: true

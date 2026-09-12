@@ -1,66 +1,57 @@
 ---
 name: aido-discoverability-check
-description: Check how clearly AI can access, understand and surface a public business website. Use for AI discoverability, AI visibility, AEO, GEO, answer-engine visibility, branded discovery or customer-question research. Do not use it to claim a fixed ranking, demand or sales impact.
+description: Check whether AI can access, understand and surface a public business website. Use for AI discoverability, AI visibility, AEO, GEO, branded discovery, customer-question research, or why a business is absent from AI answers. Do not use it to claim a fixed ranking or predict demand or sales.
 ---
 
 # AIDO Discoverability Check
 
-Give the user a short, evidence-based view of what can be established now and what needs a broader test. Keep technical readiness, observed AI answers and commercial outcomes separate.
+Give the user a short, sourced view of two separate questions:
 
-## Start with the website
+1. Can AI and search systems access and understand the public website?
+2. Does the business appear when representative customer questions are researched in this ChatGPT session?
 
-Collect:
+The user's instructions take precedence over this workflow. Never claim evidence that the tools or cited sources do not establish.
 
-- the public website URL;
-- the business name when it is not obvious;
-- at least one priority product or service for an extended check;
-- optionally, the real service area and target customer.
+## Website readiness check
 
-Call `check_ai_presence`. This inspects public website evidence only. It does not run an AI model or discovery searches.
+Obtain the public website URL. Use the business name if supplied or clearly stated on the site. Optional service area, priority services and target customer improve relevance but remain user-supplied context.
 
-Present the result in plain English:
+Call `check_ai_presence`. It fetches public website evidence only; it does not run an AI model or discovery searches.
 
-1. what is accessible and clear;
-2. the most useful gaps, if any;
-3. the next practical action;
-4. one quiet sentence explaining that site readiness does not show whether AI will mention or recommend the business.
+Report, in plain English:
 
-Do not turn the result into a score.
+- what is accessible and clearly explained;
+- up to three material gaps;
+- the most useful next action;
+- one quiet note that website readiness does not show whether AI will mention or recommend the business.
 
-## Offer the ten-question check
+Do not invent a score or turn a technical check into a ranking claim.
 
-After presenting the website result, offer an optional ten-question discovery check. Explain that it uses ChatGPT's available research tools and may count towards the user's ChatGPT limits. Do not call `prepare_ai_discovery_research` until the user explicitly agrees.
+## Optional ten-question discovery sample
 
-Once agreed, call `prepare_ai_discovery_research` with the confirmed business context. The returned questions are the test set. The MCP created them without an OpenAI API call and has not searched them.
+Offer the extended sample after the website result. A direct request for the ten-question test already counts as consent; otherwise continue only after the user agrees. Explain briefly that it uses research tools available in their ChatGPT session and may count towards their ChatGPT limits.
 
-If web search is available in the current ChatGPT session:
+Call `prepare_ai_discovery_research` with the confirmed business context. The returned questions are the complete test set. The MCP generated them without an OpenAI API call and has not searched them.
 
-- ask each question independently and exactly as written;
-- do not add the target business or domain to an unbranded question;
-- use the answer and its cited public sources, not prior knowledge about the target;
-- never repeat searches merely to obtain a more favourable result;
-- stop cleanly if research tools or usage limits prevent completion, and report how many questions were completed.
+If web research is available:
 
-For each completed question, classify the target as:
+1. Search each returned question separately and exactly as written.
+2. For unbranded questions, never add the target business, domain or hints about it.
+3. Use only the resulting answer and its cited sources when classifying the target.
+4. Record the question ID, kind, completion time, concise answer summary and up to five cited source URLs.
+5. Stop if research tools or usage limits prevent completion. Summarise only completed, sourced questions and state the completed count.
 
-- `not_seen`: neither the answer nor its cited evidence identifies the business;
-- `source_only`: a target page is cited but the business is not named in the answer;
-- `mentioned`: the business is named but not presented as a suitable choice;
-- `recommended`: the answer explicitly presents the business as a suitable option for that need.
+Do not count a question when the answer has no cited public source. Do not repeat or rephrase a search to obtain a more favourable result. This is a dated within-session sample, not a blind benchmark: the conversation already contains the target business.
 
-Record a concise answer summary, up to five actual source URLs, and only providers that the answer or sources identify. A positive appearance or competing provider requires a source URL. Do not infer either from a search-result snippet alone.
+Before classifying or reporting the discovery sample, read [references/evidence-and-reporting.md](references/evidence-and-reporting.md).
 
-Call `summarise_ai_discovery_research` with the completed observations.
+Call `summarise_ai_discovery_research` only with observations that meet those evidence rules.
 
-## Report the evidence
+If web research is unavailable, give the user the question pack and say the discovery stage could not be completed in this session. Never invent observations, ask for an API key or imply that the MCP ran the searches.
 
-Lead with the returned headline and exact sample counts. Then give up to three useful findings, up to three next actions, and the invitation for a deeper SR3H review. Keep the returned limits as a small closing note.
+## Unsupported requests
 
-Use "appeared", "was mentioned" or "was recommended in this sample" precisely. Never describe the sample as:
-
-- a fixed ChatGPT or AI ranking;
-- proof of future citation or recommendation;
-- customer demand, conversion, revenue or causal impact;
-- a complete test of every model, search index, customer question or journey.
-
-If web search is unavailable, provide the question pack and say that the discovery stage could not be completed in this session. Never invent observations and never ask the user for an API key.
+- For a fixed ChatGPT or AI ranking, explain that this workflow provides dated observations, not a permanent rank.
+- For private, local or authenticated websites, explain that the checker accepts only public HTTP or HTTPS pages.
+- For requests to change a website, return findings only unless the user separately authorises work in a website project.
+- Never claim demand, conversion, revenue or causal impact from this check.

@@ -1,7 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
+import { z } from "zod";
 import { createServer, createWorker, handleRequest } from "../src/index.js";
 
 const page = `<!doctype html><html><head><title>Test Co</title><meta name="description" content="A test service"><link rel="canonical" href="https://test.example/"><script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Test Co"}</script></head><body>Test Co in Oxford</body></html>`;
@@ -29,7 +31,8 @@ test("MCP client initializes and completes its workflow without using the SR3H O
   await client.connect(clientTransport);
   try {
     const listed = await client.listTools();
-    assert.equal(client.getServerVersion().version, "0.8.0");
+    assert.equal(client.getServerVersion().version, "0.9.0");
+    assert.deepEqual(client.getServerCapabilities().extensions?.["io.modelcontextprotocol/skills"], {});
     assert.equal(listed.tools.length, 3);
     const checkTool = listed.tools.find((tool) => tool.name === "check_ai_presence");
     const prepareTool = listed.tools.find((tool) => tool.name === "prepare_ai_discovery_research");
@@ -81,8 +84,10 @@ test("MCP client initializes and completes its workflow without using the SR3H O
       website_url: "https://test.example",
       business_name: "Test Co",
       observations: [{
+        question_id: "q2",
         question: "Which test service should I use?",
         kind: "category",
+        checked_at: "2026-09-12T12:00:00.000Z",
         appearance: "not_seen",
         answer_summary: "Other services were discussed.",
         evidence_urls: ["https://source.example/result"],
@@ -139,7 +144,7 @@ test("HTTP health and error responses carry production safety headers", async ()
   assert.equal(health.status, 200);
   assert.equal(health.headers.get("cache-control"), "no-store");
   assert.equal(health.headers.get("x-content-type-options"), "nosniff");
-  assert.equal((await health.json()).version, "0.8.0");
+  assert.equal((await health.json()).version, "0.9.0");
 
   const missing = await handleRequest(new Request("https://mcp.example/nope"));
   assert.equal(missing.status, 404);
@@ -310,15 +315,49 @@ test("extended summary refuses unsupported positive appearances", async () => {
     const called = await client.callTool({ name: "summarise_ai_discovery_research", arguments: {
       website_url: "https://test.example",
       business_name: "Test Co",
-      observations: [{ question: "Which test service should I use?", kind: "category", appearance: "recommended" }]
+      observations: [{ question_id: "q2", question: "Which test service should I use?", kind: "category", checked_at: "2026-09-12T12:00:00.000Z", appearance: "recommended", evidence_urls: ["https://source.example/result"] }]
     } });
     assert.equal(called.isError, true);
     const unsupportedProvider = await client.callTool({ name: "summarise_ai_discovery_research", arguments: {
       website_url: "https://test.example",
       business_name: "Test Co",
-      observations: [{ question: "Which test service should I use?", kind: "category", appearance: "not_seen", other_providers: ["Another Co"] }]
+      observations: [{ question_id: "q2", question: "Which test service should I use?", kind: "category", checked_at: "2026-09-12T12:00:00.000Z", appearance: "not_seen", evidence_urls: [], other_providers: ["Another Co"] }]
     } });
     assert.equal(unsupportedProvider.isError, true);
+  } finally {
+    await client.close();
+    await server.close();
+  }
+});
+
+test("MCP advertises and serves the importable AIDO skill with verified digests", async () => {
+  const server = createServer(fetchImpl);
+  const client = new Client({ name: "skill-import-test", version: "1.0.0" });
+  const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+  await server.connect(serverTransport);
+  await client.connect(clientTransport);
+  try {
+    const catalog = await client.request(
+      { method: "skills/list", params: {} },
+      z.object({ skills: z.array(z.object({ uri: z.string(), frontmatter: z.record(z.string()), resources: z.array(z.object({ uri: z.string(), digest: z.string() })) })) })
+    );
+    assert.equal(catalog.skills.length, 1);
+    assert.equal(catalog.skills[0].frontmatter.name, "aido-discoverability-check");
+    assert.equal(catalog.skills[0].resources.length, 3);
+
+    const fetched = await client.request(
+      { method: "skills/get", params: { uri: catalog.skills[0].uri } },
+      z.object({ skill: z.object({ uri: z.string(), frontmatter: z.record(z.string()), resources: z.array(z.object({ uri: z.string(), digest: z.string() })) }) })
+    );
+    assert.deepEqual(fetched.skill, catalog.skills[0]);
+
+    for (const item of catalog.skills[0].resources) {
+      const resource = await client.readResource({ uri: item.uri });
+      assert.equal(resource.contents.length, 1);
+      assert.equal(resource.contents[0].uri, item.uri);
+      const digest = `sha256:${createHash("sha256").update(resource.contents[0].text, "utf8").digest("hex")}`;
+      assert.equal(digest, item.digest);
+    }
   } finally {
     await client.close();
     await server.close();

@@ -66,7 +66,7 @@ function cleanResearchPhrase(value, business, target, fallback, limit = 100) {
 function buildQuestionPlan(input, target) {
   const business = cleanString(input.business_name, 120);
   const service = cleanResearchPhrase(input.priority_services?.[0], business, target, "this type of service", 120);
-  const audience = cleanResearchPhrase(input.target_customer, business, target, "people who need this service");
+  const audience = cleanResearchPhrase(input.target_customer, business, target, "someone choosing a provider");
   const rawLocation = cleanResearchPhrase(input.location_or_service_area, business, target, "my area");
   const location = /^(?:united kingdom|united states|united arab emirates|netherlands)$/i.test(rawLocation)
     ? `the ${rawLocation}`
@@ -76,11 +76,11 @@ function buildQuestionPlan(input, target) {
     questions: [
       { kind: "branded", question: `What does ${business} offer, who is it for, and what evidence supports its claims?` },
       { kind: "category", question: `Which providers offer ${service}?` },
-      { kind: "problem", question: `How can ${audience} find reliable help with ${service}?` },
-      { kind: "high_intent", question: `Which provider should I contact for ${service}?` },
+      { kind: "problem", question: `I need ${service}. What should I look for, and which providers could help?` },
+      { kind: "high_intent", question: `Which providers are worth considering for ${service}?` },
       { kind: "differentiator", question: `Which providers for ${service} clearly explain their method, scope and limitations?` },
       { kind: "location", question: `Who provides ${service} in ${location}?` },
-      { kind: "comparison", question: `How should I compare providers of ${service} before choosing one?` },
+      { kind: "comparison", question: `How do the main options for ${service} compare?` },
       { kind: "evidence", question: `Which providers of ${service} show credible examples, independent evidence or results?` },
       { kind: "use_case", question: `Which options for ${service} are best suited to ${audience}?` },
       { kind: "alternative", question: `What are the alternatives to using a specialist provider for ${service}?` }
@@ -121,7 +121,29 @@ function providerCounts(observations) {
   return [...providers.values()].sort((a, b) => b.appearances - a.appearances || a.name.localeCompare(b.name)).slice(0, 5);
 }
 
+function validateObservations(items) {
+  if (!Array.isArray(items) || items.length < 1 || items.length > 10) throw new Error("invalid_observation_count");
+  const ids = new Set();
+  const kinds = new Set();
+  const questions = new Set();
+  for (const item of items) {
+    if (!/^q(?:[1-9]|10)$/.test(item.question_id || "") || ids.has(item.question_id)) throw new Error("invalid_or_duplicate_question_id");
+    if (!RESEARCH_KINDS.includes(item.kind) || kinds.has(item.kind)) throw new Error("invalid_or_duplicate_question_kind");
+    const questionKey = normalise(item.question);
+    if (!questionKey || questions.has(questionKey)) throw new Error("invalid_or_duplicate_question");
+    if (!item.checked_at || Number.isNaN(Date.parse(item.checked_at))) throw new Error("invalid_checked_at");
+    if (!Array.isArray(item.evidence_urls) || item.evidence_urls.length < 1 || item.evidence_urls.length > 5) throw new Error("missing_search_evidence");
+    const positive = item.appearance !== "not_seen";
+    if (positive && (!item.target_evidence_url || !item.evidence_urls.includes(item.target_evidence_url))) throw new Error("missing_target_evidence");
+    if (!positive && item.target_evidence_url) throw new Error("unexpected_target_evidence");
+    ids.add(item.question_id);
+    kinds.add(item.kind);
+    questions.add(questionKey);
+  }
+}
+
 export function summariseExtendedResearch(input) {
+  validateObservations(input.observations);
   const observations = input.observations.map((item) => ({
     ...item,
     question: cleanString(item.question, 280),
@@ -135,32 +157,42 @@ export function summariseExtendedResearch(input) {
   const unbrandedRecommended = unbranded.filter(recommended);
   const branded = observations.filter((item) => item.kind === "branded");
   const brandedFound = branded.filter(appeared).length;
+  const evidenceSources = new Set(observations.flatMap((item) => item.evidence_urls || [])).size;
 
-  const headline = unbrandedRecommended.length
-    ? `${input.business_name} was recommended in ${unbrandedRecommended.length} of ${unbranded.length} customer-need searches.`
-    : unbrandedFound.length
-      ? `${input.business_name} appeared in ${unbrandedFound.length} of ${unbranded.length} customer-need searches, but was not recommended.`
-      : brandedFound
-        ? `${input.business_name} was found by name, but not in ${unbranded.length} customer-need searches.`
-        : `${input.business_name} was not seen in this ${observations.length}-question sample.`;
+  const headline = !unbranded.length
+    ? brandedFound
+      ? `${input.business_name} was found in the branded check; no unbranded customer questions were completed.`
+      : `${input.business_name} was not seen in the only question completed.`
+    : unbrandedRecommended.length
+      ? `${input.business_name} was recommended in ${unbrandedRecommended.length} of ${unbranded.length} customer-need searches.`
+      : unbrandedFound.length
+        ? `${input.business_name} appeared in ${unbrandedFound.length} of ${unbranded.length} customer-need searches, but was not recommended.`
+        : brandedFound
+          ? `${input.business_name} was found by name, but not in ${unbranded.length} customer-need searches.`
+          : `${input.business_name} was not seen in this ${observations.length}-question sample.`;
 
   const notSeen = unbranded.filter((item) => item.appearance === "not_seen");
   const onlyMentioned = unbranded.filter((item) => ["mentioned", "source_only"].includes(item.appearance));
-  const findings = [
+  const findings = unbranded.length ? [
     unbrandedFound.length
-      ? `The business appeared for ${unbrandedFound.length} of ${unbranded.length} unbranded customer questions.`
-      : `The business did not appear for the ${unbranded.length} unbranded customer questions checked.`,
+      ? `It appeared for ${unbrandedFound.length} of ${unbranded.length} unbranded customer questions.`
+      : `It did not appear for the ${unbranded.length} unbranded customer questions completed.`,
     unbrandedRecommended.length
       ? `It was presented as a suitable option ${unbrandedRecommended.length} time${unbrandedRecommended.length === 1 ? "" : "s"}.`
       : onlyMentioned.length
         ? `It was visible in some answers, but none presented it as a suitable option.`
         : `No unbranded answer presented it as a suitable option.`,
     notSeen.length
-      ? `The clearest gaps were: ${notSeen.slice(0, 3).map((item) => item.question).join(" | ")}`
+      ? `It was not seen for questions including “${notSeen.slice(0, 2).map((item) => item.question).join("” and “")}”.`
       : "The business appeared in every unbranded question completed in this sample."
+  ] : [
+    "Discovery beyond the business name remains untested because no unbranded customer question was completed.",
+    brandedFound ? "The branded question returned the business with cited evidence." : "The branded question did not return the business.",
+    "Complete at least one unbranded customer question before drawing a discovery conclusion."
   ];
 
   const nextActions = [];
+  if (!unbranded.length) nextActions.push("Complete the unbranded customer questions with cited web research before changing the website.");
   if (notSeen.length) nextActions.push(`Start with the most commercially important missed question: “${notSeen[0].question}” Check whether one clear public page answers it and supports the answer with evidence.`);
   if (onlyMentioned.length) nextActions.push("Where the business was only mentioned or cited, strengthen the proof that makes it a suitable choice, such as clear scope, evidence, case studies or independent validation.");
   if (notSeen.some((item) => item.kind === "location")) nextActions.push("Make the genuine service area explicit on the relevant service page and in consistent organisation or service details.");
@@ -174,6 +206,9 @@ export function summariseExtendedResearch(input) {
     checked_at: new Date().toISOString(),
     headline,
     sample: {
+      expected: 10,
+      completion_status: observations.length === 10 ? "complete" : "partial",
+      evidence_sources: evidenceSources,
       completed: observations.length,
       branded_found: brandedFound,
       branded_checked: branded.length,

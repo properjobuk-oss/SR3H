@@ -4,11 +4,12 @@ import { z } from "zod";
 import { auditWebsite } from "./audit.js";
 import { checkDiscoverability, combineDiscoverabilityResult } from "./discoverability.js";
 import { prepareExtendedResearch, RESEARCH_KINDS, summariseExtendedResearch } from "./extended-research.js";
+import { registerSkillImport } from "./skill-import.js";
 import { UsageGuard, usageContext } from "./usage-guard.js";
 
 export { UsageGuard };
 
-const SERVICE_VERSION = "0.8.0";
+const SERVICE_VERSION = "0.9.0";
 const MAX_MCP_REQUEST_BYTES = 64_000;
 const MAX_WEB_REQUEST_BYTES = 8_000;
 const WEB_ORIGINS = new Set([
@@ -50,26 +51,33 @@ const extendedResearchResultSchema = z.object({
   next_tool: z.literal("summarise_ai_discovery_research")
 });
 const researchObservationSchema = z.object({
+  question_id: z.string().regex(/^q(?:[1-9]|10)$/),
   question: z.string().trim().min(1).max(280),
   kind: researchKindSchema,
+  checked_at: z.string().datetime(),
   appearance: z.enum(["not_seen", "source_only", "mentioned", "recommended"]),
   answer_summary: z.string().trim().max(600).optional(),
-  evidence_urls: z.array(z.string().url().max(2048)).max(5).optional(),
+  evidence_urls: z.array(z.string().url().max(2048)).min(1).max(5),
+  target_evidence_url: z.string().url().max(2048).optional(),
   other_providers: z.array(z.string().trim().min(1).max(120)).max(5).optional()
 }).strict().superRefine((value, context) => {
-  if (value.appearance !== "not_seen" && !(value.evidence_urls || []).length) {
+  const positive = value.appearance !== "not_seen";
+  if (positive && !value.target_evidence_url) {
     context.addIssue({
       code: z.ZodIssueCode.custom,
-      path: ["evidence_urls"],
-      message: "A source URL is required before an appearance can be counted."
+      path: ["target_evidence_url"],
+      message: "A cited URL identifying the target is required before an appearance can be counted."
     });
   }
-  if ((value.other_providers || []).length && !(value.evidence_urls || []).length) {
+  if (value.target_evidence_url && !value.evidence_urls.includes(value.target_evidence_url)) {
     context.addIssue({
       code: z.ZodIssueCode.custom,
-      path: ["evidence_urls"],
-      message: "A source URL is required before another provider can be counted."
+      path: ["target_evidence_url"],
+      message: "The target evidence URL must also appear in evidence_urls."
     });
+  }
+  if (!positive && value.target_evidence_url) {
+    context.addIssue({ code: z.ZodIssueCode.custom, path: ["target_evidence_url"], message: "A not_seen observation cannot include target evidence." });
   }
 });
 const researchSummarySchema = z.object({
@@ -79,6 +87,7 @@ const researchSummarySchema = z.object({
   checked_at: z.string().datetime(),
   headline: z.string(),
   sample: z.object({
+    expected: z.literal(10), completion_status: z.enum(["complete", "partial"]), evidence_sources: z.number().int(),
     completed: z.number().int(), branded_found: z.number().int(), branded_checked: z.number().int(),
     unbranded_found: z.number().int(), unbranded_checked: z.number().int(), unbranded_recommended: z.number().int()
   }),
@@ -167,16 +176,17 @@ export function createServer(fetchImpl = fetch) {
     version: SERVICE_VERSION,
     websiteUrl: "https://sr3h.uk"
   }, {
-    instructions: "Use check_ai_presence for a read-only inspection of the public website. It checks site evidence only and does not run AI searches. Present that boundary plainly, then offer an optional ten-question discovery check. Do not call prepare_ai_discovery_research until the user explicitly agrees. The pack is generated without an OpenAI API call and does not run searches. If ChatGPT web search is available, ask each question independently, keep unbranded questions neutral, and record only what the answer and cited sources show. Then call summarise_ai_discovery_research. If search is unavailable, say so and never invent results. Report exact dated observations, not a score or a promise about ranking, recommendation, demand or conversion."
+    instructions: "Use check_ai_presence for public website readiness. It does not run AI searches. Offer the optional ten-question discovery sample; a direct request already counts as consent. prepare_ai_discovery_research creates the neutral question pack without an OpenAI API call. Research each question separately with host tools, then send only completed observations with cited sources to summarise_ai_discovery_research. Never invent results or claim a fixed ranking, demand or sales impact."
   });
+  registerSkillImport(server);
 
   server.registerTool("check_ai_presence", {
-    title: "Check AI discoverability",
+    title: "Check website readiness for AI discovery",
     description: "Inspect whether a public business website exposes the technical and content signals that search and AI systems can use. This tool fetches public pages but does not call an AI model or run branded or unbranded searches. Returns observed facts, gaps and explicit limits.",
     inputSchema: auditInputShape,
     outputSchema: technicalAuditResultSchema,
     annotations: {
-      title: "Check AI discoverability",
+      title: "Check website readiness for AI discovery",
       readOnlyHint: true,
       destructiveHint: false,
       idempotentHint: true,
@@ -225,7 +235,7 @@ export function createServer(fetchImpl = fetch) {
 
   server.registerTool("summarise_ai_discovery_research", {
     title: "Summarise an AI discovery check",
-    description: "Summarise one to ten completed, sourced AI-search observations into exact appearance counts, useful gaps and up to three practical next actions. Does not run searches and does not invent a visibility score.",
+    description: "Summarise one to ten completed AI-search observations. Every observation must include cited sources; positive appearances also require a cited target source. Returns exact counts, useful gaps and practical next actions without inventing a visibility score.",
     inputSchema: {
       website_url: z.string().url().max(2048),
       business_name: z.string().trim().min(1).max(120),
@@ -241,8 +251,9 @@ export function createServer(fetchImpl = fetch) {
     }
   }, async (input) => {
     const result = summariseExtendedResearch(input);
+    const completion = result.sample.completion_status === "partial" ? `${result.sample.completed} of ${result.sample.expected} questions were completed.\n` : "";
     return {
-      content: [{ type: "text", text: `${result.headline}\n${result.findings.join("\n")}\nNext step: ${result.next_actions[0]}\n${result.deeper_review}` }],
+      content: [{ type: "text", text: `${result.headline}\n${completion}${result.findings.join("\n")}\nNext step: ${result.next_actions[0]}\n${result.deeper_review}` }],
       structuredContent: result
     };
   });

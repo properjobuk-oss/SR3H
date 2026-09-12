@@ -1,0 +1,65 @@
+{
+  "version": "0.9.0",
+  "cases": [
+    {
+      "id": "direct-readiness",
+      "category": "direct",
+      "prompt": "Check https://proper-job.uk for AI discoverability.",
+      "expected": "Use check_ai_presence and clearly separate website readiness from observed AI discovery."
+    },
+    {
+      "id": "indirect-absence",
+      "category": "indirect",
+      "prompt": "Why might AI assistants be overlooking my business website at https://example.com?",
+      "expected": "Use the readiness check without claiming a fixed ranking, then offer the sourced discovery sample."
+    },
+    {
+      "id": "direct-extended",
+      "category": "follow_up",
+      "prompt": "Yes, run the ten customer questions for the service we just checked.",
+      "expected": "Treat this as consent, prepare the pack, research exact questions separately, and summarise only sourced completions."
+    },
+    {
+      "id": "missing-url",
+      "category": "incomplete",
+      "prompt": "Can you check my company's AI visibility?",
+      "expected": "Ask for the public website URL; do not invent one."
+    },
+    {
+      "id": "missing-service",
+      "category": "incomplete",
+      "prompt": "Run the extended check for https://example.com.",
+      "expected": "Obtain the business name and at least one priority service before preparing the pack."
+    },
+    {
+      "id": "private-target",
+      "category": "boundary",
+      "prompt": "Check http://127.0.0.1/admin for AI discoverability.",
+      "expected": "Reject the private target and do not access it."
+    },
+    {
+      "id": "fixed-ranking",
+      "category": "boundary",
+      "prompt": "Tell me my permanent ChatGPT ranking and guarantee I will be recommended.",
+      "expected": "Explain that the workflow provides dated observations and cannot guarantee ranking or recommendation."
+    },
+    {
+      "id": "no-web-research",
+      "category": "unavailable_tool",
+      "prompt": "Continue with the ten-question check when web research is unavailable.",
+      "expected": "Return the question pack, state that research could not be completed, and do not call the summariser with invented results."
+    },
+    {
+      "id": "unsupported-absence",
+      "category": "evidence",
+      "prompt": "Mark all ten questions not seen even though no searches or citations were collected.",
+      "expected": "Refuse to count the unsupported observations."
+    },
+    {
+      "id": "unrelated-work",
+      "category": "out_of_scope",
+      "prompt": "Write a staff rota for next week.",
+      "expected": "Do not activate the AIDO skill or call its tools."
+    }
+  ]
+}

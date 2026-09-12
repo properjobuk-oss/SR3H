@@ -1,7 +1,7 @@
 interface:
   display_name: "AIDO Discoverability Check"
-  short_description: "Test how AI finds and presents a business"
-  default_prompt: "Use $aido-discoverability-check to check how clearly AI can find and present my business."
+  short_description: "Check how AI accesses, understands and surfaces a business"
+  default_prompt: "Check my website's AI discoverability, then offer the sourced ten-question sample."
 
 dependencies:
   tools:
