@@ -4,7 +4,7 @@
 
 The first-party `/check` route performs a read-only technical check of public website signals and, when configured, a six-question API-backed understanding and search sample.
 
-The MCP route is separate. `check_ai_presence` inspects the public site without calling an AI model. Version 0.10 deterministically prepares an optional ten-question workflow without an OpenAI API call, then summarises evidence collected with research tools available in the user's ChatGPT session. A separate render-only tool presents an already completed result and cannot audit or search. The MCP does not claim control of ChatGPT's web-search availability or usage limits. Every completed observation requires dated source evidence, and a mention or recommendation also requires evidence from the target business itself.
+The MCP route is separate. `check_ai_presence` inspects the public site without calling an AI model. Version 0.11 deterministically prepares an optional ten-question workflow without an OpenAI API call, then summarises evidence collected with research tools available in the user's ChatGPT session. The readiness and summary tools build their own result cards from verified output. The MCP does not claim control of ChatGPT's web-search availability or usage limits. Every completed observation requires a concise answer record and dated source evidence, and a mention or recommendation also requires evidence from the target business itself.
 
 ## Required evidence before review submission
 
@@ -40,18 +40,18 @@ These are preparation materials, not evidence that OpenAI review has been reques
 
 ## Current version status
 
-- **Production: `0.10.5`.** Deployed as Cloudflare Worker version `7709163a-5e5e-43d0-ae27-15869b7d4e5d` on 12 September 2026. The customer-facing app, MCP server and result card are named **AIDO by SR3H**.
-- The MCP has four tools: three UI-independent data tools and one render-only tool. It makes no SR3H OpenAI API calls.
+- **Local candidate: `0.11.0`; production: `0.10.5`.** Production remains on the previously verified release until this candidate is explicitly deployed and remotely checked. The customer-facing app, MCP server and result card are named **AIDO by SR3H**.
+- The MCP has three tools. The readiness and sourced-summary tools attach server-generated component data; question preparation remains text and structured data only. It makes no SR3H OpenAI API calls.
 - The component uses the MCP Apps handshake, a self-contained `text/html;profile=mcp-app` resource and no external scripts, fonts, tracking or network requests.
-- Private ChatGPT tests passed for a direct readiness result and a complete ten-question sourced discovery result. Both rendered the component successfully.
-- A fresh chat launched from the AIDO app page invoked the readiness tool from an indirect “overlooking my business” request. Invocation from an ordinary unconnected chat remains controlled by ChatGPT and is not guaranteed.
+- Earlier-release private ChatGPT tests passed for a direct readiness result and a complete ten-question sourced discovery result. Both rendered the component successfully.
+- An earlier-release fresh chat launched from the AIDO app page invoked the readiness tool from an indirect “overlooking my business” request. Invocation from an ordinary unconnected chat remains controlled by ChatGPT and is not guaranteed.
 - The completed ten-question SR3H sample found the branded site in 1 of 1 questions and did not find it in 9 of 9 unbranded questions. This is a dated sample, not a permanent rank or demand measure.
 - Negative tests passed for a private localhost target, an unsupported ranking guarantee and an unrelated staff-rota request.
 - The separate website checker still uses the restricted, encrypted SR3H OpenAI key for its bounded paid sample. Its technical result remains available when the paid allowance is exhausted.
-- The submission pack contains the name, descriptions, three starter prompts, five positive cases, three negative cases and release notes. This is preparation, not submission or approval.
-- Static checks and all 48 automated tests pass. The production dependency audit reports zero known vulnerabilities, and all three remote MCP verifiers pass.
+- The submission pack contains the name, descriptions, three starter prompts, five positive cases, five negative cases and release notes. This is preparation, not submission or approval.
+- All 48 automated tests, static checks, the Worker dry build, the local HTTP/MCP verifier and the skill-import verifier pass for this candidate. The dependency audit reports zero known vulnerabilities. Production checks remain evidence for the earlier release only.
 - The public support, privacy and terms pages each return HTTP 200.
-- After the 0.10.5 connection refresh, a URL-only attached-app test returned clear technical access signals, no invented location/service/customer context, the exact `clear` status and the v4 result card. Its prose did not describe the crawl result as ready for AI discovery.
+- A fresh private ChatGPT connection test is required after deployment to verify the v5 server-generated card and updated skill behaviour.
 
 ## Version 0.9.0 evidence
 

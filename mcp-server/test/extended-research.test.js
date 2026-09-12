@@ -93,6 +93,7 @@ test("summarises observed results without inventing a score", () => {
     observations
   });
   assert.equal(result.sample.completed, 10);
+  assert.equal(result.status, "complete");
   assert.equal(result.sample.expected, 10);
   assert.equal(result.sample.completion_status, "complete");
   assert.equal(result.sample.evidence_sources, 10);
@@ -118,6 +119,7 @@ test("marks a sourced incomplete run as partial without extrapolating", () => {
     }]
   });
   assert.equal(result.sample.completed, 1);
+  assert.equal(result.status, "partial");
   assert.equal(result.sample.completion_status, "partial");
   assert.match(result.headline, /1-question sample|0 customer-need searches/);
   assert.equal("score" in result, false);
@@ -127,20 +129,27 @@ test("rejects unsupported absences and appearances", () => {
   assert.throws(() => summariseExtendedResearch({
     website_url: input.website_url,
     business_name: input.business_name,
-    observations: [{ ...questions[1], appearance: "not_seen", evidence_urls: [] }]
+    observations: [{ ...questions[1], appearance: "not_seen", answer_summary: "No supported answer was observed.", evidence_urls: [] }]
   }), /missing_search_evidence/);
 
   assert.throws(() => summariseExtendedResearch({
     website_url: input.website_url,
     business_name: input.business_name,
-    observations: [{ ...questions[1], appearance: "recommended", evidence_urls: ["https://evidence.example/result"] }]
+    observations: [{ ...questions[1], appearance: "recommended", answer_summary: "The target was recommended.", evidence_urls: ["https://evidence.example/result"] }]
   }), /missing_target_evidence/);
+
+  assert.throws(() => summariseExtendedResearch({
+    website_url: input.website_url,
+    business_name: input.business_name,
+    observations: [{ ...questions[1], appearance: "not_seen", evidence_urls: ["https://evidence.example/result"] }]
+  }), /missing_answer_summary/);
 });
 
 test("rejects duplicate question identities and kinds", () => {
   const observation = {
     ...questions[1],
     appearance: "not_seen",
+    answer_summary: "The target was not present in the observed answer.",
     evidence_urls: ["https://evidence.example/result"]
   };
   assert.throws(() => summariseExtendedResearch({

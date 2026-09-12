@@ -29,7 +29,7 @@ Do not invent a score or turn a technical check into a ranking claim.
 
 Treat `technical_readiness: clear` only as a result for the access and indexing signals checked. Say “technical access signals are clear” or “the checked technical signals are in place.” Never say the business is “technically ready for AI discovery,” “AI discoverability is clear,” “AI visibility is good,” or any equivalent discovery conclusion. Actual discovery remains unknown until the separate customer-question research has been completed with sources.
 
-After writing the concise readiness conclusion, call `render_aido_report` once with only facts returned by `check_ai_presence`. Use `report_type: technical_readiness`. Set `status` to exactly `audit.technical_readiness`. Missing supplied terms remain clarity gaps; they must not change the technical status or become invented metrics. Include no more than four returned counts, three returned findings and three returned gaps. The limitations note must say plainly that website readiness does not show whether an AI assistant will mention or recommend the business.
+`check_ai_presence` returns its own evidence-bound card presentation. Do not rewrite, strengthen or replace the card fields. Missing supplied terms remain clarity gaps; they must not change the technical status or become invented metrics.
 
 ## Optional ten-question discovery sample
 
@@ -42,7 +42,7 @@ If web research is available:
 1. Search each returned question separately and exactly as written.
 2. For unbranded questions, never add the target business, domain or hints about it.
 3. Use only the resulting answer and its cited sources when classifying the target.
-4. Record the question ID, kind, completion time, concise answer summary and up to five cited source URLs.
+4. Record the question ID, kind, completion time, a concise account of what the answer actually said and up to five cited source URLs.
 5. Stop if research tools or usage limits prevent completion. Summarise only completed, sourced questions and state the completed count.
 
 Do not count a question when the answer has no cited public source. Do not repeat or rephrase a search to obtain a more favourable result. This is a dated within-session sample, not a blind benchmark: the conversation already contains the target business.
@@ -51,9 +51,7 @@ Before classifying or reporting the discovery sample, read [references/evidence-
 
 Call `summarise_ai_discovery_research` only with observations that meet those evidence rules.
 
-After writing the concise discovery conclusion, call `render_aido_report` once with only facts returned by `summarise_ai_discovery_research`. Use `report_type: discovery_sample`; use the returned sample counts as metrics, returned findings as highlights, returned missed questions as gaps, and returned source URLs as sources. Label a partial sample `incomplete`. Never turn the card into a score or add stronger wording than the summary supports.
-
-If the client cannot display component UI, the text returned by the data tools is sufficient. Do not call the render tool repeatedly or use it without a completed data result.
+`summarise_ai_discovery_research` returns its own evidence-bound card presentation. Do not rewrite, strengthen or replace the card fields. If the client cannot display component UI, the text returned by the tool is sufficient.
 
 Credit AIDO as an SR3H tool once at the end of a completed discovery report. Do not turn the result into an advert or add an unsolicited sales pitch. If the user explicitly asks for a broader review or help acting on the findings, link once to https://sr3h.uk/aido-labs.html as further information.
 

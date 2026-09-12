@@ -18,7 +18,7 @@ try {
   if (health.headers.get("x-content-type-options") !== "nosniff") throw new Error("health endpoint is missing nosniff");
   const healthBody = await health.json();
   if (healthBody.ok !== true) throw new Error("health endpoint did not report ok");
-  if (healthBody.version !== "0.10.5") throw new Error(`expected version 0.10.5, received ${healthBody.version || "unknown"}`);
+  if (healthBody.version !== "0.11.0") throw new Error(`expected version 0.11.0, received ${healthBody.version || "unknown"}`);
   if (healthBody.service !== "AIDO by SR3H") throw new Error(`expected service name AIDO by SR3H, received ${healthBody.service || "unknown"}`);
 
   await client.connect(transport);
@@ -28,14 +28,13 @@ try {
   const tool = tools.tools.find((candidate) => candidate.name === "check_ai_presence");
   const prepareTool = tools.tools.find((candidate) => candidate.name === "prepare_ai_discovery_research");
   const summaryTool = tools.tools.find((candidate) => candidate.name === "summarise_ai_discovery_research");
-  const renderTool = tools.tools.find((candidate) => candidate.name === "render_aido_report");
   if (!tool) throw new Error("check_ai_presence was not advertised");
   if (!prepareTool) throw new Error("prepare_ai_discovery_research was not advertised");
   if (!summaryTool) throw new Error("summarise_ai_discovery_research was not advertised");
-  if (!renderTool) throw new Error("render_aido_report was not advertised");
-  if (renderTool._meta?.ui?.resourceUri !== "ui://aido/discoverability-report-v4.html") throw new Error("render tool is missing its AIDO UI resource");
+  if (tools.tools.length !== 3) throw new Error(`expected 3 tools, received ${tools.tools.length}`);
+  if (tool._meta?.ui?.resourceUri !== "ui://aido/discoverability-report-v5.html") throw new Error("check tool is missing its AIDO UI resource");
+  if (summaryTool._meta?.ui?.resourceUri !== "ui://aido/discoverability-report-v5.html") throw new Error("summary tool is missing its AIDO UI resource");
   if (!/never infer/i.test(tool.inputSchema?.properties?.priority_services?.description || "")) throw new Error("check tool does not protect optional context provenance");
-  if (!/copy audit\.technical_readiness exactly/i.test(renderTool.inputSchema?.properties?.status?.description || "")) throw new Error("render tool does not preserve technical status");
   if (!tool.outputSchema) throw new Error("check_ai_presence has no output schema");
   if (tool.annotations?.readOnlyHint !== true || tool.annotations?.openWorldHint !== true || tool.annotations?.destructiveHint !== false) {
     throw new Error("tool safety annotations are incomplete or inaccurate");
@@ -43,6 +42,7 @@ try {
   const result = await client.callTool({ name: tool.name, arguments: { website_url: auditTarget } });
   if (result.isError) throw new Error(result.content?.[0]?.text || "audit call failed");
   if (!result.structuredContent?.audit?.technical_readiness) throw new Error("audit result was not structured as expected");
+  if (result.structuredContent?.presentation?.status !== result.structuredContent.audit.technical_readiness) throw new Error("server-generated card changed the technical status");
   const summary = await client.callTool({ name: summaryTool.name, arguments: {
     website_url: auditTarget,
     business_name: "Release Test Business",
@@ -58,19 +58,8 @@ try {
     }]
   } });
   if (!summary.isError) throw new Error("extended summary accepted an unsupported absence without cited search evidence");
-  const rendered = await client.callTool({ name: renderTool.name, arguments: {
-    report_type: "technical_readiness",
-    website_url: result.structuredContent.audit.final_url,
-    checked_at: result.structuredContent.audit.checked_at,
-    headline: "Release verification result",
-    summary: result.structuredContent.summary,
-    status: result.structuredContent.audit.technical_readiness,
-    next_action: result.structuredContent.next_action,
-    limitations_note: "Website readiness does not show whether an AI assistant will mention or recommend the business."
-  } });
-  if (rendered.isError || rendered.structuredContent?.attribution !== "AIDO by SR3H") throw new Error("AIDO report card did not return its bounded result");
   const resources = await client.listResources();
-  const reportResource = resources.resources.find((item) => item.uri === renderTool._meta.ui.resourceUri);
+  const reportResource = resources.resources.find((item) => item.uri === tool._meta.ui.resourceUri);
   if (!reportResource || reportResource.mimeType !== "text/html;profile=mcp-app") throw new Error("AIDO report UI resource was not advertised correctly");
   const reportContents = await client.readResource({ uri: reportResource.uri });
   if (!reportContents.contents?.[0]?.text?.includes("ui/notifications/tool-result")) throw new Error("AIDO report UI resource was not readable");
@@ -86,7 +75,7 @@ try {
     technical_readiness: result.structuredContent.audit.technical_readiness,
     mcp_openai_api_calls: 0,
     unsupported_summary_rejected: true,
-    report_card_verified: true,
+    server_generated_report_card_verified: true,
     observations: result.structuredContent.observations.length,
     gaps: result.structuredContent.gaps.length,
     private_network_rejected: true

@@ -1,5 +1,5 @@
 {
-  "version": "0.10.5",
+  "version": "0.11.0",
   "cases": [
     {
       "id": "direct-readiness",
@@ -60,6 +60,24 @@
       "category": "out_of_scope",
       "prompt": "Write a staff rota for next week.",
       "expected": "Do not activate the AIDO skill or call its tools."
+    },
+    {
+      "id": "generic-seo-writing",
+      "category": "out_of_scope",
+      "prompt": "Rewrite my homepage copy for SEO.",
+      "expected": "Do not activate AIDO unless the user separately asks for a discoverability audit."
+    },
+    {
+      "id": "general-aeo-question",
+      "category": "out_of_scope",
+      "prompt": "What does AEO mean?",
+      "expected": "Answer the general question without calling a tool because no website check was requested."
+    },
+    {
+      "id": "provider-recommendation",
+      "category": "out_of_scope",
+      "prompt": "Find me a good accountant near Oxford.",
+      "expected": "Do not turn a provider search into an AIDO audit or ask for a target business website."
     }
   ]
 }

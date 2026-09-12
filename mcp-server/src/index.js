@@ -10,7 +10,7 @@ import { UsageGuard, usageContext } from "./usage-guard.js";
 
 export { UsageGuard };
 
-const SERVICE_VERSION = "0.10.5";
+const SERVICE_VERSION = "0.11.0";
 const MAX_MCP_REQUEST_BYTES = 64_000;
 const MAX_WEB_REQUEST_BYTES = 8_000;
 const WEB_ORIGINS = new Set([
@@ -57,7 +57,7 @@ const researchObservationSchema = z.object({
   kind: researchKindSchema,
   checked_at: z.string().datetime(),
   appearance: z.enum(["not_seen", "source_only", "mentioned", "recommended"]),
-  answer_summary: z.string().trim().max(600).optional(),
+  answer_summary: z.string().trim().min(1).max(600).describe("Concise account of what the researched answer actually said; required even when the target was not seen"),
   evidence_urls: z.array(z.string().url().max(2048)).min(1).max(5),
   target_evidence_url: z.string().url().max(2048).optional(),
   other_providers: z.array(z.string().trim().min(1).max(120)).max(5).optional()
@@ -81,8 +81,29 @@ const researchObservationSchema = z.object({
     context.addIssue({ code: z.ZodIssueCode.custom, path: ["target_evidence_url"], message: "A not_seen observation cannot include target evidence." });
   }
 });
+const reportMetricSchema = z.object({
+  label: z.string().trim().min(1).max(40),
+  value: z.string().trim().min(1).max(60)
+}).strict();
+const aidoCardSchema = z.object({
+  report_type: z.enum(["technical_readiness", "discovery_sample"]),
+  business_name: z.string().optional(),
+  website_url: z.string().url(),
+  checked_at: z.string().datetime(),
+  headline: z.string(),
+  summary: z.string(),
+  status: z.enum(["clear", "partial", "blocked", "complete", "incomplete"]),
+  metrics: z.array(reportMetricSchema).max(4),
+  highlights: z.array(z.string()).max(3),
+  gaps: z.array(z.string()).max(3),
+  next_action: z.string(),
+  limitations_note: z.string(),
+  source_urls: z.array(z.string().url()).max(10),
+  attribution: z.literal("AIDO by SR3H"),
+  about_url: z.literal("https://sr3h.uk/aido-labs.html")
+}).strict();
 const researchSummarySchema = z.object({
-  status: z.literal("complete"),
+  status: z.enum(["complete", "partial"]),
   business: z.string(),
   website_url: z.string().url(),
   checked_at: z.string().datetime(),
@@ -99,31 +120,8 @@ const researchSummarySchema = z.object({
   source_urls: z.array(z.string().url()),
   next_actions: z.array(z.string()),
   limits: z.array(z.string()),
-  deeper_review: z.string()
-});
-const reportMetricSchema = z.object({
-  label: z.string().trim().min(1).max(40),
-  value: z.string().trim().min(1).max(60)
-}).strict();
-const reportInputShape = {
-  report_type: z.enum(["technical_readiness", "discovery_sample"]).describe("The completed AIDO workflow being presented: website technical readiness or a sourced AI discovery sample"),
-  business_name: z.string().trim().min(1).max(120).optional().describe("Business name exactly as returned or supplied in the completed result"),
-  website_url: z.string().url().max(2048).describe("Public website URL from the completed result"),
-  checked_at: z.string().datetime().describe("ISO 8601 time from the completed result"),
-  headline: z.string().trim().min(1).max(180).describe("Plain-English conclusion supported by the completed result"),
-  summary: z.string().trim().min(1).max(600).describe("Short explanation using only facts from the completed result"),
-  status: z.enum(["clear", "partial", "blocked", "complete", "incomplete"]).describe("Copy audit.technical_readiness exactly for a technical_readiness report. For a discovery_sample report, use complete only for all ten sourced observations and incomplete otherwise. Never downgrade or strengthen the completed result, and never describe technical readiness as being ready for AI discovery."),
-  metrics: z.array(reportMetricSchema).max(4).optional().describe("Up to four compact counts or observed metrics from the completed result"),
-  highlights: z.array(z.string().trim().min(1).max(240)).max(3).optional().describe("Up to three supported findings from the completed result"),
-  gaps: z.array(z.string().trim().min(1).max(240)).max(3).optional().describe("Up to three observed gaps from the completed result"),
-  next_action: z.string().trim().min(1).max(300).describe("The most useful action returned by or directly grounded in the completed result"),
-  limitations_note: z.string().trim().min(1).max(300).optional().describe("One concise evidence limitation from the completed result"),
-  source_urls: z.array(z.string().url().max(2048)).max(10).optional().describe("Up to ten public evidence URLs from the completed result")
-};
-const reportResultSchema = z.object({
-  ...reportInputShape,
-  attribution: z.literal("AIDO by SR3H"),
-  about_url: z.literal("https://sr3h.uk/aido-labs.html")
+  deeper_review: z.string(),
+  presentation: aidoCardSchema
 });
 const technicalAuditResultSchema = z.object({
   audit: z.object({
@@ -153,8 +151,68 @@ const technicalAuditResultSchema = z.object({
   })),
   unknowns: z.array(z.string()),
   next_action: z.string(),
-  deeper_analysis: z.string()
+  deeper_analysis: z.string(),
+  presentation: aidoCardSchema
 });
+
+function uniqueSources(values) {
+  return [...new Set(values.filter(Boolean))].slice(0, 10);
+}
+
+function technicalPresentation(result, businessName) {
+  const status = result.audit.technical_readiness;
+  const headlines = {
+    clear: "The checked website access signals are in place.",
+    partial: "The website is accessible, with technical gaps to review.",
+    blocked: "A technical setting may be blocking access."
+  };
+  const clearObservations = result.observations.filter((item) => item.status === "clear");
+  return {
+    report_type: "technical_readiness",
+    ...(businessName ? { business_name: businessName } : {}),
+    website_url: result.audit.final_url,
+    checked_at: result.audit.checked_at,
+    headline: headlines[status],
+    summary: result.summary,
+    status,
+    metrics: [
+      { label: "Checks clear", value: `${clearObservations.length} of ${result.observations.length}` },
+      { label: "Gaps found", value: String(result.gaps.length) }
+    ],
+    highlights: clearObservations.slice(0, 3).map((item) => item.evidence),
+    gaps: result.gaps.slice(0, 3).map((item) => item.finding),
+    next_action: result.next_action,
+    limitations_note: "Website readiness does not show whether an AI assistant will mention or recommend the business.",
+    source_urls: uniqueSources(result.observations.map((item) => item.source_url)),
+    attribution: "AIDO by SR3H",
+    about_url: "https://sr3h.uk/aido-labs.html"
+  };
+}
+
+function discoveryPresentation(result) {
+  return {
+    report_type: "discovery_sample",
+    business_name: result.business,
+    website_url: result.website_url,
+    checked_at: result.checked_at,
+    headline: result.headline,
+    summary: result.findings[0] || result.headline,
+    status: result.sample.completion_status === "complete" ? "complete" : "incomplete",
+    metrics: [
+      { label: "Questions checked", value: `${result.sample.completed} of ${result.sample.expected}` },
+      { label: "Unbranded appearances", value: `${result.sample.unbranded_found} of ${result.sample.unbranded_checked}` },
+      { label: "Recommendations", value: String(result.sample.unbranded_recommended) },
+      { label: "Cited sources", value: String(result.sample.evidence_sources) }
+    ],
+    highlights: result.findings.slice(0, 3),
+    gaps: result.missed_questions.slice(0, 3),
+    next_action: result.next_actions[0],
+    limitations_note: result.limits[0],
+    source_urls: uniqueSources(result.source_urls),
+    attribution: "AIDO by SR3H",
+    about_url: "https://sr3h.uk/aido-labs.html"
+  };
+}
 
 function errorCode(error) {
   if (error?.name === "AbortError") return "timeout";
@@ -202,26 +260,31 @@ export function createServer(fetchImpl = fetch) {
     version: SERVICE_VERSION,
     websiteUrl: "https://sr3h.uk"
   }, {
-    instructions: "When a user supplies a public business URL and asks why AI assistants may overlook it, about AI visibility, AEO or GEO, or whether it is ready for AI discovery, use check_ai_presence first. It checks website readiness and does not run AI searches. Never invent optional context: pass location, priority services and target customer only when the user states them in the current conversation. Offer the optional ten-question discovery sample; a direct request already counts as consent. prepare_ai_discovery_research creates the neutral question pack without an OpenAI API call. Research each question separately with host tools, then send only completed observations with cited sources to summarise_ai_discovery_research. After a completed readiness check or discovery summary, use render_aido_report once to present the final facts; never invent card content. For a technical card, copy audit.technical_readiness exactly. Say technical access signals are clear, partial or blocked; never say the business is technically ready for AI discovery. Never claim a fixed ranking, demand or sales impact."
+    instructions: "When a user supplies a public business URL and asks why AI assistants may overlook it, about AI visibility, AEO or GEO, or whether it is ready for AI discovery, use check_ai_presence first. It checks website readiness and does not run AI searches. Never invent optional context: pass location, priority services and target customer only when the user states them in the current conversation. Offer the optional ten-question discovery sample; a direct request already counts as consent. prepare_ai_discovery_research creates the neutral question pack without an OpenAI API call. Research each question separately with host tools, then send only completed observations with cited sources and a concise account of each observed answer to summarise_ai_discovery_research. The result tools supply their own evidence-bound card presentation. Say technical access signals are clear, partial or blocked; never say the business is technically ready for AI discovery. Never claim a fixed ranking, demand or sales impact."
   });
   registerSkillImport(server);
   registerAidoReportUi(server);
 
   server.registerTool("check_ai_presence", {
-    title: "Check website readiness for AI discovery",
+    title: "Check public website access for AI",
     description: "Use this when a user asks why AI assistants may be overlooking a business, asks about AI visibility, AEO or GEO for a public website, or wants to check readiness for AI discovery. It fetches public pages and returns observed access and clarity facts, gaps and limits. Describe its result only as technical access signals, never as being technically ready for AI discovery. It does not call an AI model or run branded or unbranded searches. Do not use it to claim AI ranking, mentions, recommendations, demand or sales impact.",
     inputSchema: auditInputShape,
     outputSchema: technicalAuditResultSchema,
     annotations: {
-      title: "Check website readiness for AI discovery",
+      title: "Check public website access for AI",
       readOnlyHint: true,
       destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true
+    },
+    _meta: {
+      ui: { resourceUri: AIDO_REPORT_URI },
+      "openai/outputTemplate": AIDO_REPORT_URI
     }
   }, async (input) => {
     try {
-      const result = await auditWebsite(input, fetchImpl);
+      const audit = await auditWebsite(input, fetchImpl);
+      const result = { ...audit, presentation: technicalPresentation(audit, input.business_name) };
       return {
         content: [{ type: "text", text: conciseResult(result) }],
         structuredContent: result
@@ -262,7 +325,7 @@ export function createServer(fetchImpl = fetch) {
 
   server.registerTool("summarise_ai_discovery_research", {
     title: "Summarise an AI discovery check",
-    description: "Use this when one to ten AI customer-question searches have actually been completed with cited public evidence. Every observation needs sources; positive appearances also require a cited target source. Returns exact counts, gaps and practical next actions. Do not use it for unsupported, invented or uncited search results or to create a visibility score.",
+    description: "Use this when one to ten AI customer-question searches have actually been completed with cited public evidence. Every observation needs sources and a concise account of the observed answer; positive appearances also require a cited target source. Returns exact counts, gaps, practical next actions and an evidence-bound result card. Do not use it for unsupported, invented or uncited search results or to create a visibility score.",
     inputSchema: {
       website_url: z.string().url().max(2048),
       business_name: z.string().trim().min(1).max(120),
@@ -275,9 +338,14 @@ export function createServer(fetchImpl = fetch) {
       destructiveHint: false,
       idempotentHint: true,
       openWorldHint: false
+    },
+    _meta: {
+      ui: { resourceUri: AIDO_REPORT_URI },
+      "openai/outputTemplate": AIDO_REPORT_URI
     }
   }, async (input) => {
-    const result = summariseExtendedResearch(input);
+    const summary = summariseExtendedResearch(input);
+    const result = { ...summary, presentation: discoveryPresentation(summary) };
     const completion = result.sample.completion_status === "partial" ? `${result.sample.completed} of ${result.sample.expected} questions were completed.\n` : "";
     return {
       content: [{ type: "text", text: `${result.headline}\n${completion}${result.findings.join("\n")}\nNext step: ${result.next_actions[0]}\n${result.deeper_review}` }],
@@ -285,37 +353,6 @@ export function createServer(fetchImpl = fetch) {
     };
   });
 
-  server.registerTool("render_aido_report", {
-    title: "Show an AIDO result card",
-    description: "Use this once after check_ai_presence or summarise_ai_discovery_research has completed to show its final facts in a compact AIDO card. Pass only facts supported by that completed result. For technical_readiness, copy audit.technical_readiness exactly; missing optional marketing context must not change it. Describe clear technical access signals as clear checks, never as being technically ready for AI discovery. This presentation tool performs no audit, search, inference or network request. Do not call it before a result exists or invent, strengthen or advertise through its content.",
-    inputSchema: reportInputShape,
-    outputSchema: reportResultSchema,
-    annotations: {
-      title: "Show an AIDO result card",
-      readOnlyHint: true,
-      destructiveHint: false,
-      idempotentHint: true,
-      openWorldHint: false
-    },
-    _meta: {
-      ui: { resourceUri: AIDO_REPORT_URI },
-      "openai/outputTemplate": AIDO_REPORT_URI
-    }
-  }, async (input) => {
-    const result = {
-      ...input,
-      metrics: input.metrics || [],
-      highlights: input.highlights || [],
-      gaps: input.gaps || [],
-      source_urls: [...new Set(input.source_urls || [])],
-      attribution: "AIDO by SR3H",
-      about_url: "https://sr3h.uk/aido-labs.html"
-    };
-    return {
-      content: [{ type: "text", text: `${result.headline}\nBest next step: ${result.next_action}` }],
-      structuredContent: result
-    };
-  });
   return server;
 }
 

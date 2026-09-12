@@ -1,4 +1,4 @@
-export const AIDO_REPORT_URI = "ui://aido/discoverability-report-v4.html";
+export const AIDO_REPORT_URI = "ui://aido/discoverability-report-v5.html";
 export const AIDO_REPORT_MIME = "text/html;profile=mcp-app";
 
 export const AIDO_REPORT_HTML = String.raw`<!doctype html>
@@ -140,7 +140,8 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
         return list.childElementCount;
       };
       const render = (raw) => {
-        const data = raw && typeof raw === "object" ? raw : {};
+        const root = raw && typeof raw === "object" ? raw : {};
+        const data = root.presentation && typeof root.presentation === "object" ? root.presentation : root;
         const reportType = data.report_type === "discovery_sample" ? "AI discovery sample" : "Website readiness";
         setText("kind", reportType);
         setText("headline", data.headline, "AIDO result");
@@ -216,7 +217,7 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
         try {
           await request("ui/initialize", {
             appCapabilities: { availableDisplayModes: ["inline"] },
-            appInfo: { name: "AIDO by SR3H", version: "0.10.5" },
+            appInfo: { name: "AIDO by SR3H", version: "0.11.0" },
             protocolVersion: "2026-01-26"
           });
           initialized = true;

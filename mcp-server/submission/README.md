@@ -15,7 +15,7 @@ This folder contains the copy and test evidence needed to complete an OpenAI **W
 - Preferred category: Business, subject to the exact categories available in the submission portal
 - Initial availability: United Kingdom
 
-The MCP requires no authentication and performs read-only work on public websites. Its three data tools remain useful without component UI. A separate render-only tool can show a compact final result card.
+The MCP requires no authentication and performs read-only work on public websites. Its three tools remain useful without component UI. The readiness and sourced-summary tools can also show a compact card generated directly from their verified result.
 
 ## Submission order
 

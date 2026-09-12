@@ -1,24 +1,24 @@
 {
-  "version": "0.10.5",
+  "version": "0.11.0",
   "test_context": "Run positive cases with AIDO by SR3H launched from its app page or attached to the chat. Invocation from an ordinary unconnected chat is controlled by ChatGPT and is not guaranteed.",
   "positive": [
     {
       "id": "readiness-direct",
       "prompt": "Check whether https://sr3h.uk is ready for AI discovery.",
-      "expected_tools": ["check_ai_presence", "render_aido_report"],
-      "expected_behavior": "Report public website readiness in plain English, show no invented score, state that actual mentions or recommendations remain untested, and render one final AIDO card using only the returned facts."
+      "expected_tools": ["check_ai_presence"],
+      "expected_behavior": "Report public website readiness in plain English, show no invented score, state that actual mentions or recommendations remain untested, and display the server-generated AIDO card."
     },
     {
       "id": "readiness-with-context",
       "prompt": "Check https://sr3h.uk for SR3H in Oxford. The priority service is AI discoverability testing for UK businesses.",
-      "expected_tools": ["check_ai_presence", "render_aido_report"],
-      "expected_behavior": "Pass the supplied context as optional inputs, distinguish supplied context from verified evidence, report up to three material gaps and render one bounded readiness card."
+      "expected_tools": ["check_ai_presence"],
+      "expected_behavior": "Pass the supplied context as optional inputs, distinguish supplied context from verified evidence, report up to three material gaps and display the server-generated readiness card."
     },
     {
       "id": "indirect-overlooked",
       "prompt": "Why might AI assistants be overlooking my business at https://proper-job.uk?",
-      "expected_tools": ["check_ai_presence", "render_aido_report"],
-      "expected_behavior": "Use the readiness tool without implying it measured AI answers, give one useful next action, render the readiness card, and offer the separate ten-question sample without starting it automatically."
+      "expected_tools": ["check_ai_presence"],
+      "expected_behavior": "Use the readiness tool without implying it measured AI answers, give one useful next action, display its readiness card, and offer the separate ten-question sample without starting it automatically."
     },
     {
       "id": "extended-consent",
@@ -30,8 +30,8 @@
       "id": "sourced-summary",
       "prompt": "Summarise the completed AIDO observations from this conversation and show me the result.",
       "precondition": "The conversation contains one to ten separately researched observations with dates and public source URLs; every positive appearance also cites a target-business source.",
-      "expected_tools": ["summarise_ai_discovery_research", "render_aido_report"],
-      "expected_behavior": "Summarise only supported observations, distinguish mention from recommendation, label an incomplete run as partial, preserve source URLs and render one final discovery card without a score."
+      "expected_tools": ["summarise_ai_discovery_research"],
+      "expected_behavior": "Summarise only supported observations, distinguish mention from recommendation, label an incomplete run as partial, preserve source URLs and display the server-generated discovery card without a score."
     }
   ],
   "negative": [
@@ -52,6 +52,18 @@
       "prompt": "Write a staff rota for next week.",
       "expected_tools": [],
       "expected_behavior": "Do not activate AIDO or call any AIDO tool."
+    },
+    {
+      "id": "generic-seo-copy",
+      "prompt": "Rewrite my homepage copy for SEO.",
+      "expected_tools": [],
+      "expected_behavior": "Do not activate AIDO because the user asked for writing, not a discoverability audit."
+    },
+    {
+      "id": "general-aeo-explanation",
+      "prompt": "What does AEO mean?",
+      "expected_tools": [],
+      "expected_behavior": "Answer normally without calling AIDO because no website check was requested."
     }
   ]
 }

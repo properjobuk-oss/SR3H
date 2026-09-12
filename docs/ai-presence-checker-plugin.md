@@ -44,7 +44,7 @@ After the first result, ChatGPT may offer a broader ten-question check. It must 
 1. `prepare_ai_discovery_research` deterministically creates ten business-specific questions. It calls no model and does not search them.
 2. If the ChatGPT client has web search, it searches each question independently and records only sourced appearances.
 3. `summarise_ai_discovery_research` reports exact mention and recommendation counts, missed questions, recurring alternative providers and up to three next actions.
-4. `render_aido_report` can present the final supported result as a compact card. It has no audit or search capability and is not used until a data result exists.
+4. The readiness and summary tools return a compact card generated directly from their supported result; the model cannot supply or strengthen its status, metrics or findings.
 
 The MCP cannot force ChatGPT's host tools to run or guarantee how that activity counts against the user's plan. If host search is unavailable, it returns the question pack without inventing results. The user is never asked for an OpenAI API key. The question mix is visible, while analysis and prioritisation remain bounded by the MCP result schema and the packaged skill.
 
@@ -64,4 +64,4 @@ The tool must not turn a bounded search observation into a fixed ChatGPT ranking
 
 ## Deployment state
 
-Version 0.10.5 is deployed at `https://mcp.sr3h.uk/mcp`. It separates the API-backed website form from the API-free MCP workflow. Its three data tools are independent of component UI; a fourth render-only tool provides a final result card. Private ChatGPT testing passed after the deployed connection was refreshed. OpenAI review submission and public listing remain separate release states.
+Version 0.11.0 is prepared and verified locally. Production remains on version 0.10.5 until an explicit deployment and remote check. It separates the API-backed website form from the API-free MCP workflow. Its three tools work without component UI; the readiness and summary tools also return a server-generated result card. OpenAI review submission and public listing remain separate release states.

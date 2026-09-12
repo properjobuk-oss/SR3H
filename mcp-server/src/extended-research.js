@@ -132,6 +132,7 @@ function validateObservations(items) {
     const questionKey = normalise(item.question);
     if (!questionKey || questions.has(questionKey)) throw new Error("invalid_or_duplicate_question");
     if (!item.checked_at || Number.isNaN(Date.parse(item.checked_at))) throw new Error("invalid_checked_at");
+    if (!cleanString(item.answer_summary, 600)) throw new Error("missing_answer_summary");
     if (!Array.isArray(item.evidence_urls) || item.evidence_urls.length < 1 || item.evidence_urls.length > 5) throw new Error("missing_search_evidence");
     const positive = item.appearance !== "not_seen";
     if (positive && (!item.target_evidence_url || !item.evidence_urls.includes(item.target_evidence_url))) throw new Error("missing_target_evidence");
@@ -201,7 +202,7 @@ export function summariseExtendedResearch(input) {
   if (nextActions.length < 3) nextActions.push("Repeat the same dated questions after a meaningful change; do not treat a single run as a fixed ranking.");
 
   return {
-    status: "complete",
+    status: observations.length === 10 ? "complete" : "partial",
     business: input.business_name,
     website_url: input.website_url,
     checked_at: new Date().toISOString(),

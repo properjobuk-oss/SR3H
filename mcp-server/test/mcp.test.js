@@ -32,13 +32,12 @@ test("MCP client initializes and completes its workflow without using the SR3H O
   try {
     const listed = await client.listTools();
     assert.equal(client.getServerVersion().name, "AIDO by SR3H");
-    assert.equal(client.getServerVersion().version, "0.10.5");
+    assert.equal(client.getServerVersion().version, "0.11.0");
     assert.deepEqual(client.getServerCapabilities().extensions?.["io.modelcontextprotocol/skills"], {});
-    assert.equal(listed.tools.length, 4);
+    assert.equal(listed.tools.length, 3);
     const checkTool = listed.tools.find((tool) => tool.name === "check_ai_presence");
     const prepareTool = listed.tools.find((tool) => tool.name === "prepare_ai_discovery_research");
     const summaryTool = listed.tools.find((tool) => tool.name === "summarise_ai_discovery_research");
-    const renderTool = listed.tools.find((tool) => tool.name === "render_aido_report");
     assert.equal(checkTool.annotations.readOnlyHint, true);
     assert.equal(checkTool.annotations.openWorldHint, true);
     assert.match(checkTool.description, /overlooking a business/i);
@@ -47,17 +46,13 @@ test("MCP client initializes and completes its workflow without using the SR3H O
     assert.equal(prepareTool.annotations.readOnlyHint, true);
     assert.equal(prepareTool.annotations.openWorldHint, true);
     assert.equal(summaryTool.annotations.openWorldHint, false);
-    assert.equal(renderTool.annotations.openWorldHint, false);
-    assert.equal(renderTool._meta.ui.resourceUri, "ui://aido/discoverability-report-v4.html");
-    assert.equal(renderTool._meta["openai/outputTemplate"], "ui://aido/discoverability-report-v4.html");
+    assert.equal(checkTool._meta.ui.resourceUri, "ui://aido/discoverability-report-v5.html");
+    assert.equal(summaryTool._meta.ui.resourceUri, "ui://aido/discoverability-report-v5.html");
     assert.match(checkTool.inputSchema.properties.location_or_service_area.description, /only when the user explicitly supplied it/i);
     assert.match(checkTool.inputSchema.properties.priority_services.description, /never infer/i);
     assert.match(checkTool.inputSchema.properties.target_customer.description, /never infer/i);
     assert.match(prepareTool.inputSchema.properties.priority_services.description, /explicitly supplied or confirmed/i);
-    assert.match(renderTool.inputSchema.properties.status.description, /copy audit\.technical_readiness exactly/i);
-    assert.equal(checkTool._meta?.ui?.resourceUri, undefined);
     assert.equal(prepareTool._meta?.ui?.resourceUri, undefined);
-    assert.equal(summaryTool._meta?.ui?.resourceUri, undefined);
 
     const called = await client.callTool({ name: "check_ai_presence", arguments: {
       website_url: "https://test.example",
@@ -81,6 +76,8 @@ test("MCP client initializes and completes its workflow without using the SR3H O
     assert.equal(called.content[0].text.length < 500, true);
     assert.equal("discoverability" in called.structuredContent, false);
     assert.equal("snapshot" in called.structuredContent, false);
+    assert.equal(called.structuredContent.presentation.status, "clear");
+    assert.match(called.structuredContent.presentation.limitations_note, /does not show whether an AI assistant will mention or recommend/i);
 
     const prepared = await client.callTool({ name: "prepare_ai_discovery_research", arguments: {
       website_url: "https://test.example",
@@ -113,26 +110,9 @@ test("MCP client initializes and completes its workflow without using the SR3H O
     assert.equal(summarised.structuredContent.sample.completed, 1);
     assert.equal(summarised.structuredContent.sample.unbranded_found, 0);
     assert.deepEqual(summarised.structuredContent.source_urls, ["https://source.example/result"]);
-
-    const rendered = await client.callTool({ name: "render_aido_report", arguments: {
-      report_type: "technical_readiness",
-      business_name: "Test Co",
-      website_url: called.structuredContent.audit.final_url,
-      checked_at: called.structuredContent.audit.checked_at,
-      headline: "Test Co is accessible to AI search crawlers.",
-      summary: called.structuredContent.summary,
-      status: called.structuredContent.audit.technical_readiness,
-      metrics: [{ label: "Access checks", value: "5 of 5" }],
-      highlights: called.structuredContent.observations.slice(0, 2).map((item) => item.evidence),
-      gaps: called.structuredContent.gaps.slice(0, 2).map((item) => item.finding),
-      next_action: called.structuredContent.next_action,
-      limitations_note: "Website readiness does not show whether an AI assistant will mention or recommend the business.",
-      source_urls: ["https://test.example/", "https://test.example/"]
-    } });
-    assert.notEqual(rendered.isError, true);
-    assert.equal(rendered.structuredContent.attribution, "AIDO by SR3H");
-    assert.equal(rendered.structuredContent.about_url, "https://sr3h.uk/aido-labs.html");
-    assert.deepEqual(rendered.structuredContent.source_urls, ["https://test.example/"]);
+    assert.equal(summarised.structuredContent.status, "partial");
+    assert.equal(summarised.structuredContent.presentation.status, "incomplete");
+    assert.equal(summarised.structuredContent.presentation.attribution, "AIDO by SR3H");
   } finally {
     await client.close();
     await server.close();
@@ -182,7 +162,7 @@ test("HTTP health and error responses carry production safety headers", async ()
   assert.equal(health.headers.get("x-content-type-options"), "nosniff");
   const healthBody = await health.json();
   assert.equal(healthBody.service, "AIDO by SR3H");
-  assert.equal(healthBody.version, "0.10.5");
+  assert.equal(healthBody.version, "0.11.0");
 
   const missing = await handleRequest(new Request("https://mcp.example/nope"));
   assert.equal(missing.status, 404);
@@ -402,7 +382,7 @@ test("MCP advertises and serves the importable AIDO skill with verified digests"
   }
 });
 
-test("AIDO report resource is self-contained, safe and linked only to the render tool", async () => {
+test("AIDO report resource is self-contained, safe and linked directly to result tools", async () => {
   const server = createServer(fetchImpl);
   const client = new Client({ name: "ui-resource-test", version: "1.0.0" });
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
@@ -410,7 +390,7 @@ test("AIDO report resource is self-contained, safe and linked only to the render
   await client.connect(clientTransport);
   try {
     const resources = await client.listResources();
-    const report = resources.resources.find((item) => item.uri === "ui://aido/discoverability-report-v4.html");
+    const report = resources.resources.find((item) => item.uri === "ui://aido/discoverability-report-v5.html");
     assert.ok(report);
     assert.equal(report.mimeType, "text/html;profile=mcp-app");
     assert.deepEqual(report._meta.ui.csp, { connectDomains: [], resourceDomains: [] });

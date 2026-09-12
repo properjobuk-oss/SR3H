@@ -86,8 +86,7 @@
     "tools": [
       "check_ai_presence",
       "prepare_ai_discovery_research",
-      "summarise_ai_discovery_research",
-      "render_aido_report"
+      "summarise_ai_discovery_research"
     ],
     "purpose": "Inspect whether a public business website exposes usable access and offer information, then prepare and summarise a sourced ten-question discovery check in a compatible AI client without making OpenAI API calls from the MCP.",
     "checks": [
