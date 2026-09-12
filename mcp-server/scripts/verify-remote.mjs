@@ -18,7 +18,7 @@ try {
   if (health.headers.get("x-content-type-options") !== "nosniff") throw new Error("health endpoint is missing nosniff");
   const healthBody = await health.json();
   if (healthBody.ok !== true) throw new Error("health endpoint did not report ok");
-  if (healthBody.version !== "0.7.0") throw new Error(`expected version 0.7.0, received ${healthBody.version || "unknown"}`);
+  if (healthBody.version !== "0.8.0") throw new Error(`expected version 0.8.0, received ${healthBody.version || "unknown"}`);
 
   await client.connect(transport);
   const serverVersion = client.getServerVersion();
@@ -59,7 +59,7 @@ try {
     server: serverVersion,
     tools: tools.tools.map((candidate) => candidate.name),
     technical_readiness: result.structuredContent.audit.technical_readiness,
-    discoverability_status: result.structuredContent.discoverability?.status,
+    mcp_openai_api_calls: 0,
     summary_tool_verified: true,
     observations: result.structuredContent.observations.length,
     gaps: result.structuredContent.gaps.length,

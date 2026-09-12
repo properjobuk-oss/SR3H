@@ -33,7 +33,7 @@ SR3H publishes a blog on AI, software engineering, product research and the syst
 
 ## AIDO Discoverability Check
 
-SR3H offers a public beta MCP tool at https://mcp.sr3h.uk/mcp. `check_ai_presence` checks public website access and offer clarity and, when available, runs a small dated branded and unbranded AI-assisted search sample. It reports exact observations rather than a score and does not claim to prove fixed rankings, recommendations, demand, causal effects or conversion performance.
+SR3H offers a public beta MCP service at https://mcp.sr3h.uk/mcp. It inspects public website access and offer clarity, prepares a neutral ten-question customer-discovery pack after the user agrees, and summarises sourced observations. The MCP makes no OpenAI API calls and runs no searches itself; compatible ChatGPT sessions can research the questions with their available tools. It reports exact observations rather than a score and does not claim to prove fixed rankings, recommendations, demand, causal effects or conversion performance.
 
 Support: https://sr3h.uk/ai-presence-support.html
 Privacy: https://sr3h.uk/ai-presence-privacy.html

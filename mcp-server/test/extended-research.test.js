@@ -27,52 +27,53 @@ const questions = RESEARCH_KINDS.map((kind, index) => ({
     : `Which service can help with ${kind.replace("_", " ")} when pricing building work question ${index}?`
 }));
 
-test("extended research planner is explicit when it is not configured", async () => {
-  const result = await prepareExtendedResearch(input, audit, {});
-  assert.equal(result.status, "unavailable");
-  assert.equal(result.reason, "not_configured");
-});
-
-test("prepares ten neutral questions without running web search", async () => {
-  const requests = [];
-  const fetchImpl = async (url, init) => {
-    requests.push({ url, body: JSON.parse(init.body) });
-    return Response.json({ output: [{ type: "message", content: [{ type: "output_text", text: JSON.stringify({ business: "Proper Job", questions }) }] }] });
-  };
-  const result = await prepareExtendedResearch(input, audit, { OPENAI_API_KEY: "test-key" }, fetchImpl, { visitor: "test" });
+test("prepares ten neutral questions without an OpenAI API call or web search", async () => {
+  const result = await prepareExtendedResearch(input, audit);
   assert.equal(result.status, "ready");
   assert.equal(result.question_count, 10);
   assert.equal(result.user_confirmation_required, true);
   assert.equal(result.questions.length, 10);
-  assert.equal(requests.length, 1);
-  assert.equal(requests[0].url, "https://api.openai.com/v1/responses");
-  assert.equal(requests[0].body.store, false);
-  assert.equal(requests[0].body.tools, undefined);
-  assert.equal(requests[0].body.max_output_tokens, EXTENDED_RESEARCH_LIMITS.maxOutputTokens);
-  assert.equal(requests[0].body.text.format.strict, true);
+  assert.equal(EXTENDED_RESEARCH_LIMITS.openAiApiCalls, 0);
+  assert.equal(EXTENDED_RESEARCH_LIMITS.webSearchCalls, 0);
+  assert.deepEqual(result.questions.map((item) => item.kind), RESEARCH_KINDS);
   assert.ok(result.questions.filter((item) => item.kind !== "branded").every((item) => !/proper job|proper-job/i.test(item.question)));
-  assert.match(result.search_note, /No extended searches have been run/);
+  assert.match(result.search_note, /No AI searches have been run/);
+  assert.match(result.usage_note, /no SR3H OpenAI API calls/i);
+  assert.match(result.questions.find((item) => item.kind === "location").question, /United Kingdom/);
+  assert.match(result.questions.find((item) => item.kind === "problem").question, /UK builders and homeowners/);
 });
 
-test("rejects a plan that leaks the target into an unbranded question", async () => {
-  const leaked = questions.map((item) => item.kind === "category" ? { ...item, question: "Why should I use Proper Job for an estimate?" } : item);
-  const fetchImpl = async () => Response.json({ output: [{ type: "message", content: [{ type: "output_text", text: JSON.stringify({ business: "Proper Job", questions: leaked }) }] }] });
-  const result = await prepareExtendedResearch(input, audit, { OPENAI_API_KEY: "test-key" }, fetchImpl);
-  assert.equal(result.status, "unavailable");
-  assert.equal(result.reason, "provider_or_output_error");
+test("removes target names supplied inside unbranded research context", async () => {
+  const result = await prepareExtendedResearch({
+    ...input,
+    priority_services: ["Proper Job drawing estimates"],
+    target_customer: "Proper Job customers",
+    location_or_service_area: "proper-job.example coverage area"
+  }, audit);
+  const unbranded = result.questions.filter((item) => item.kind !== "branded");
+  assert.ok(unbranded.every((item) => !/proper job|proper-job|proper job example/i.test(item.question)));
+  assert.ok(unbranded.every((item) => item.question.length > 20));
 });
 
-test("does not call the planner when the persistent allowance is exhausted", async () => {
-  const usageGuard = {
-    idFromName: () => "guard-id",
-    get: () => ({ fetch: async () => Response.json({ allowed: false, reason: "visitor_daily_limit" }) })
-  };
-  const result = await prepareExtendedResearch(input, audit, {
-    OPENAI_API_KEY: "test-key",
-    USAGE_GUARD: usageGuard
-  }, async () => { throw new Error("planner must not be called"); }, { visitor: "visitor-a" });
-  assert.equal(result.status, "unavailable");
-  assert.equal(result.reason, "visitor_daily_limit");
+test("produces a stable question set for the same supplied context", async () => {
+  const first = await prepareExtendedResearch(input, audit);
+  const second = await prepareExtendedResearch(input, audit);
+  assert.deepEqual(first.questions, second.questions);
+  assert.equal(first.business, second.business);
+  assert.equal(first.website_url, second.website_url);
+});
+
+test("bounds long context and supports short business names", async () => {
+  const result = await prepareExtendedResearch({
+    ...input,
+    business_name: "AI",
+    priority_services: ["specialist service ".repeat(20)],
+    target_customer: "organisations with a complex requirement ".repeat(20),
+    location_or_service_area: "a wide service area ".repeat(20)
+  }, { audit: { final_url: "https://ai.example/" } });
+  assert.equal(result.status, "ready");
+  assert.ok(result.questions.every((item) => item.question.length <= 280));
+  assert.equal(result.questions.length, 10);
 });
 
 test("summarises observed results without inventing a score", () => {

@@ -36,7 +36,7 @@ Public overview: https://sr3h.uk/aido-labs.html
 
 ## AIDO Discoverability Check
 
-The free public check tests whether AI systems can access and understand a business website. When the live discovery layer is available, it also runs a small dated sample of one branded and five business-specific unbranded searches. Results use exact observed counts, not a score. They do not establish a fixed ranking, future recommendation, demand or conversion performance.
+The website form tests whether search and AI systems can access and understand a business website. When its live discovery layer is available, it also runs a small dated sample of one branded and five business-specific unbranded searches using SR3H's bounded API service. The separate MCP inspects the website and can prepare and summarise a ten-question check without calling the OpenAI API; compatible ChatGPT sessions perform any optional research with their own available tools. Results use exact observed counts, not a score. They do not establish a fixed ranking, future recommendation, demand or conversion performance.
 
 MCP endpoint: https://mcp.sr3h.uk/mcp
 Support: https://sr3h.uk/ai-presence-support.html

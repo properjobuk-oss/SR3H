@@ -2,9 +2,9 @@
 
 ## Product boundary
 
-`check_ai_presence` performs a read-only technical check of public website signals and, when configured, a six-question AI-assisted understanding and search sample. It reports observed appearances, not a fixed ranking, independent recommendation, customer demand, conversion, revenue or causal impact.
+The first-party `/check` route performs a read-only technical check of public website signals and, when configured, a six-question API-backed understanding and search sample.
 
-Version 0.7 also separates an optional extended workflow into question planning and evidence summarisation. The MCP does not claim control of ChatGPT's own web-search availability or usage limits, and the summariser refuses to count a positive appearance without a source URL.
+The MCP route is separate. `check_ai_presence` inspects the public site without calling an AI model. Version 0.8 deterministically prepares an optional ten-question workflow without an OpenAI API call, then summarises evidence collected with research tools available in the user's ChatGPT session. The MCP does not claim control of ChatGPT's web-search availability or usage limits, and the summariser refuses to count a positive appearance without a source URL.
 
 ## Required evidence before review submission
 
@@ -13,7 +13,7 @@ Version 0.7 also separates an optional extended workflow into question planning 
 - Input and output schemas scanned successfully in the OpenAI submission portal.
 - Accurate read-only, non-destructive and open-world annotations.
 - Rate limiting, bounded fetches, redirect validation, private-address rejection and production failure logging verified.
-- OpenAI requests use `store: false` and strict, bounded output schemas. Each of the six isolated question checks is restricted to one required web-search call; provider failure leaves the technical check usable.
+- Website-form OpenAI requests use `store: false` and strict, bounded output schemas. Each of its six isolated question checks is restricted to one required web-search call; provider failure leaves the technical check usable.
 - Public support, privacy and terms URLs matching the verified publisher:
   - `https://sr3h.uk/ai-presence-support.html`
   - `https://sr3h.uk/ai-presence-privacy.html`
@@ -40,27 +40,35 @@ These are preparation materials, not evidence that OpenAI review has been reques
 
 ## Current version status
 
-- **Production and repository: `0.7.0`.** Cloudflare deployed Worker version `e34255fa-a63d-4002-838b-743096493938` on 12 September 2026.
-- The public health endpoint and MCP initialization both report `AIDO Discoverability Check` version `0.7.0` and advertise all three focused tools.
+- **Production and repository: `0.8.0`.** Cloudflare deployed Worker version `0b0c10f5-575b-4461-96ab-eb00ce8416ba` on 12 September 2026.
+- The public health endpoint and MCP initialization both report `AIDO Discoverability Check` version `0.8.0` and advertise all three focused tools.
 - The deployed MCP advertises all four optional context fields and returns them through the audit result.
-- Version `0.6.0` distinguishes a source appearance, a mention and an explicit recommendation in each sampled AI answer, and moves the report limits into a quiet closing note.
 - The restricted `AIDO DISCOVERABILITY TEST` OpenAI key is configured as the encrypted `OPENAI_API_KEY` Cloudflare Worker secret. It has Responses write access and no Chat Completions, embeddings, realtime, images, moderation or other endpoint access.
-- The discovery flow now creates a bounded six-question plan and runs each question as an isolated required web search. Unbranded prompts never receive the target business name or domain. A positive appearance is counted only when the individual response includes matching source evidence.
+- Only the first-party website form can use that secret. Its paid flow creates a bounded six-question plan and runs each question as an isolated required web search. Unbranded prompts never receive the target business name or domain. A positive appearance is counted only when the individual response includes matching source evidence.
+- The MCP server does not receive the Worker environment in its tool handlers and has regression coverage proving that an available `OPENAI_API_KEY` cannot trigger an OpenAI call.
 - A local end-to-end provider test using the production key completed all six isolated searches for Proper Job. It found the branded site and one sourced unbranded recommendation for drawing-based estimating; the four broader unbranded questions did not surface Proper Job.
 
-## Local evidence for version 0.7.0
+## Version 0.8.0 evidence
 
-- Three focused tools separate the initial check, optional ten-question research plan and deterministic evidence summary.
-- The extended planner requires an explicit business name and at least one priority service, produces one branded and nine neutral unbranded questions, and rejects duplicate kinds or target leakage.
-- Preparing a pack uses one bounded structured model call with storage disabled and no web-search tool. It shares the persistent paid-usage allowance and a 24-hour cache.
+- Three focused tools separate public-site inspection, optional ten-question research preparation and deterministic evidence summary.
+- The extended preparation requires an explicit business name and at least one priority service, produces one branded and nine neutral unbranded questions, and removes target leakage from unbranded context.
+- Preparing a pack uses no model, API key, paid-usage allowance, cache or web-search tool.
 - The returned pack states that no searches have run, requires user confirmation and gives a no-fabrication fallback when host browsing is unavailable.
 - The summary accepts no more than ten observations, requires source evidence for any claimed appearance and returns exact counts rather than a score.
-- Static checks and 41 automated tests pass. The production Worker bundle builds, and the production dependency audit reports zero known vulnerabilities.
-- Remote verification confirmed version 0.7.0, all three schemas, the technical audit, deterministic summary, safety headers and private-network rejection.
+- A packaged ChatGPT skill governs explicit opt-in, neutral searches, observation classification, output language and evidence limits.
+- Static checks and 41 automated tests pass. The skill package validates, the production Worker bundle builds, and the production dependency audit reports zero known vulnerabilities.
+- Local and production verification confirmed version 0.8.0, all three schemas, the technical audit, deterministic question pack, deterministic summary, safety headers and private-network rejection.
+- The production website route returned HTTP 200 with a complete technical result after deployment. Its paid sample correctly returned `visitor_daily_limit`, so a fresh post-deployment six-search sample remains unproven today.
 
-## Version 0.7.0 remaining release gate
+## Remaining release gate
 
-The first live production question-planning verification was correctly refused because the existing daily visitor allowance had already been used. After the UTC allowance resets, verify one real ten-question pack and then test the opt-in, host-search and summary journey in ChatGPT developer mode. Do not claim that the MCP controls ChatGPT web-search availability or usage accounting, and do not submit for OpenAI review until that journey is recorded.
+Import or upload the packaged skill, then test the complete opt-in, host-search, evidence-classification and summary journey in ChatGPT developer mode. Run direct, indirect, incomplete-input, unavailable-search and should-not-activate cases. After the website allowance resets, verify one fresh API-backed `/check` sample. Do not claim that the MCP controls ChatGPT web-search availability or usage accounting, and do not submit for OpenAI review until those journeys are recorded.
+
+## Historical version 0.7.0 evidence
+
+- Version `0.7.0` deployed as Worker `e34255fa-a63d-4002-838b-743096493938` on 12 September 2026.
+- It first separated the optional ten-question research plan from deterministic evidence summarisation, but the question planner still used one SR3H OpenAI API call and shared the paid allowance.
+- Version 0.8 superseded that planner with deterministic, API-free preparation.
 
 ## Production evidence for version 0.3.0 — 11 September 2026
 

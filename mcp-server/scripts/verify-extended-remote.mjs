@@ -30,6 +30,7 @@ try {
   const businessKey = businessName.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   const leaked = pack.questions.some((item) => item.kind !== "branded" && item.question.toLowerCase().replace(/[^a-z0-9]+/g, " ").includes(businessKey));
   if (leaked) throw new Error("business name leaked into an unbranded question");
+  if (!/no SR3H OpenAI API calls/i.test(pack.usage_note || "")) throw new Error("question pack did not state the API boundary");
 
   const observations = pack.questions.map((item) => ({
     question: item.question,
@@ -51,6 +52,7 @@ try {
     kinds: pack.questions.map((item) => item.kind),
     user_confirmation_required: pack.user_confirmation_required,
     searches_run_by_planner: 0,
+    openai_api_calls_by_planner: 0,
     summary_completed: summary.structuredContent.sample.completed
   }, null, 2));
 } finally {

@@ -8,7 +8,7 @@ import { UsageGuard, usageContext } from "./usage-guard.js";
 
 export { UsageGuard };
 
-const SERVICE_VERSION = "0.7.0";
+const SERVICE_VERSION = "0.8.0";
 const MAX_MCP_REQUEST_BYTES = 64_000;
 const MAX_WEB_REQUEST_BYTES = 8_000;
 const WEB_ORIGINS = new Set([
@@ -38,19 +38,16 @@ const extendedResearchInputShape = {
 };
 const researchKindSchema = z.enum(RESEARCH_KINDS);
 const extendedResearchResultSchema = z.object({
-  status: z.enum(["ready", "unavailable"]),
-  reason: z.string().optional(),
-  note: z.string().optional(),
-  cached: z.boolean().optional(),
-  business: z.string().optional(),
-  website_url: z.string().url().optional(),
-  created_at: z.string().datetime().optional(),
-  question_count: z.literal(10).optional(),
-  questions: z.array(z.object({ id: z.string(), kind: researchKindSchema, question: z.string() })).optional(),
-  user_confirmation_required: z.boolean().optional(),
-  search_note: z.string().optional(),
-  usage_note: z.string().optional(),
-  next_tool: z.string().optional()
+  status: z.literal("ready"),
+  business: z.string(),
+  website_url: z.string().url(),
+  created_at: z.string().datetime(),
+  question_count: z.literal(10),
+  questions: z.array(z.object({ id: z.string(), kind: researchKindSchema, question: z.string() })).length(10),
+  user_confirmation_required: z.literal(true),
+  search_note: z.string(),
+  usage_note: z.string(),
+  next_tool: z.literal("summarise_ai_discovery_research")
 });
 const researchObservationSchema = z.object({
   question: z.string().trim().min(1).max(280),
@@ -93,7 +90,7 @@ const researchSummarySchema = z.object({
   limits: z.array(z.string()),
   deeper_review: z.string()
 });
-const auditResultSchema = z.object({
+const technicalAuditResultSchema = z.object({
   audit: z.object({
     requested_url: z.string().url(),
     final_url: z.string().url(),
@@ -121,37 +118,7 @@ const auditResultSchema = z.object({
   })),
   unknowns: z.array(z.string()),
   next_action: z.string(),
-  deeper_analysis: z.string(),
-  discoverability: z.object({
-    status: z.enum(["complete", "unavailable"]),
-    reason: z.string().optional(),
-    note: z.string().optional(),
-    model: z.string().optional(),
-    checked_at: z.string().datetime().optional(),
-    cached: z.boolean().optional(),
-    business: z.string().optional(),
-    summary: z.string().optional(),
-    questions: z.array(z.object({
-      question: z.string(),
-      kind: z.enum(["branded", "unbranded_category", "unbranded_problem", "unbranded_high_intent", "unbranded_differentiator", "unbranded_location"]),
-      site_answered: z.boolean(),
-      site_evidence_url: z.string().url().nullable(),
-      appearance: z.enum(["not_seen", "source_only", "mentioned", "recommended"]),
-      search_evidence_url: z.string().url().nullable(),
-      answer_summary: z.string(),
-      finding: z.string()
-    })),
-    important_findings: z.array(z.string()).optional(),
-    best_next_step: z.string().optional(),
-    sources: z.array(z.string().url()),
-    limits: z.array(z.string()).optional()
-  }),
-  snapshot: z.object({
-    access: z.object({ passed: z.number().int(), checked: z.number().int() }),
-    understanding: z.object({ answered: z.number().int(), checked: z.number().int() }),
-    discovery: z.object({ branded_found: z.number().int(), branded_checked: z.number().int(), unbranded_found: z.number().int(), unbranded_checked: z.number().int(), branded_recommended: z.number().int(), unbranded_recommended: z.number().int() }),
-    outcomes: z.object({ status: z.literal("not_measured") })
-  }).optional()
+  deeper_analysis: z.string()
 });
 
 function errorCode(error) {
@@ -194,20 +161,20 @@ function conciseResult(result) {
   return `${lead}\nWhat to improve:\n${gaps}\nNext useful step: ${result.next_action}`;
 }
 
-export function createServer(fetchImpl = fetch, env = {}, requestContext = {}) {
+export function createServer(fetchImpl = fetch) {
   const server = new McpServer({
     name: "AIDO Discoverability Check",
     version: SERVICE_VERSION,
     websiteUrl: "https://sr3h.uk"
   }, {
-    instructions: "Use check_ai_presence for the initial read-only AIDO check. After presenting that result, offer an optional ten-question extended check. Do not call prepare_ai_discovery_research until the user explicitly agrees. That tool prepares questions but does not run them. If the client provides web search, run each question independently and record only what the answer and cited sources show, then call summarise_ai_discovery_research. If web search is unavailable, say so and never invent results. Report exact dated observations, not a score or a promise about ranking, recommendation, demand or conversion."
+    instructions: "Use check_ai_presence for a read-only inspection of the public website. It checks site evidence only and does not run AI searches. Present that boundary plainly, then offer an optional ten-question discovery check. Do not call prepare_ai_discovery_research until the user explicitly agrees. The pack is generated without an OpenAI API call and does not run searches. If ChatGPT web search is available, ask each question independently, keep unbranded questions neutral, and record only what the answer and cited sources show. Then call summarise_ai_discovery_research. If search is unavailable, say so and never invent results. Report exact dated observations, not a score or a promise about ranking, recommendation, demand or conversion."
   });
 
   server.registerTool("check_ai_presence", {
     title: "Check AI discoverability",
-    description: "Check whether AI systems can access and understand a public business website and, when available, run a small dated branded and unbranded discovery sample. Returns exact observations, useful gaps and explicit limits, never a made-up score or ranking guarantee.",
+    description: "Inspect whether a public business website exposes the technical and content signals that search and AI systems can use. This tool fetches public pages but does not call an AI model or run branded or unbranded searches. Returns observed facts, gaps and explicit limits.",
     inputSchema: auditInputShape,
-    outputSchema: auditResultSchema,
+    outputSchema: technicalAuditResultSchema,
     annotations: {
       title: "Check AI discoverability",
       readOnlyHint: true,
@@ -217,16 +184,7 @@ export function createServer(fetchImpl = fetch, env = {}, requestContext = {}) {
     }
   }, async (input) => {
     try {
-      const audit = await auditWebsite(input, fetchImpl, { includeAnalysisContext: true });
-      let allowed = true;
-      if (env.OPENAI_API_KEY && env.DISCOVERY_RATE_LIMITER) {
-        const target = new URL(audit.audit.final_url).hostname.toLowerCase();
-        allowed = (await env.DISCOVERY_RATE_LIMITER.limit({ key: `mcp-discovery-target:${target}` })).success;
-      }
-      const discovery = allowed
-        ? await checkDiscoverability(input, audit, env, fetchImpl, requestContext)
-        : { status: "unavailable", reason: "rate_limited", note: "The live understanding and discovery sample reached its short-term limit. The technical website check still completed.", questions: [], sources: [] };
-      const result = combineDiscoverabilityResult(audit, discovery);
+      const result = await auditWebsite(input, fetchImpl);
       return {
         content: [{ type: "text", text: conciseResult(result) }],
         structuredContent: result
@@ -243,7 +201,7 @@ export function createServer(fetchImpl = fetch, env = {}, requestContext = {}) {
 
   server.registerTool("prepare_ai_discovery_research", {
     title: "Prepare a 10-question AI discovery check",
-    description: "After the user explicitly opts in, prepare ten business-specific questions for a broader AI discoverability check. This tool creates the question pack only; it does not run searches. The client may run each question separately if web search is available.",
+    description: "After the user explicitly opts in, create ten business-specific customer questions for a broader AI discoverability check. The deterministic pack uses no OpenAI API call and runs no searches. ChatGPT may ask each question separately using research tools available in the user's session.",
     inputSchema: extendedResearchInputShape,
     outputSchema: extendedResearchResultSchema,
     annotations: {
@@ -255,11 +213,9 @@ export function createServer(fetchImpl = fetch, env = {}, requestContext = {}) {
     }
   }, async (input) => {
     try {
-      const audit = await auditWebsite(input, fetchImpl, { includeAnalysisContext: true });
-      const result = await prepareExtendedResearch(input, audit, env, fetchImpl, requestContext);
-      const text = result.status === "ready"
-        ? `The ten-question research pack is ready. No extended searches have been run. Continue only if the user agreed to the extended check. If ChatGPT web search is available, search each question separately; otherwise say that browsing is unavailable. After the searches, call summarise_ai_discovery_research.`
-        : result.note;
+      const audit = await auditWebsite(input, fetchImpl);
+      const result = await prepareExtendedResearch(input, audit);
+      const text = `The ten-question research pack is ready. It used no OpenAI API call and no searches have been run. Continue only if the user agreed to the extended check. If ChatGPT web search is available, search each question separately; otherwise say that browsing is unavailable. After the searches, call summarise_ai_discovery_research.`;
       return { content: [{ type: "text", text }], structuredContent: result };
     } catch (error) {
       const code = errorCode(error);

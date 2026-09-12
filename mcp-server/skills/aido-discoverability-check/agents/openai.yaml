@@ -1,0 +1,15 @@
+interface:
+  display_name: "AIDO Discoverability Check"
+  short_description: "Test how AI finds and presents a business"
+  default_prompt: "Use $aido-discoverability-check to check how clearly AI can find and present my business."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "aido-discoverability-check"
+      description: "Read-only public website evidence and AIDO research analysis"
+      transport: "streamable_http"
+      url: "https://mcp.sr3h.uk/mcp"
+
+policy:
+  allow_implicit_invocation: true

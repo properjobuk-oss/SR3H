@@ -88,15 +88,14 @@
       "prepare_ai_discovery_research",
       "summarise_ai_discovery_research"
     ],
-    "purpose": "Show whether AI systems can access and understand a public business website, observe a small dated discovery sample, and optionally prepare and summarise a broader ten-question check in a compatible AI client.",
+    "purpose": "Inspect whether a public business website exposes usable access and offer information, then prepare and summarise a sourced ten-question discovery check in a compatible AI client without making OpenAI API calls from the MCP.",
     "checks": [
       "Public page reachability and crawl directives",
       "OAI-SearchBot access",
       "Canonical identity and service information",
       "Sitemap, metadata and structured data",
-      "How clearly public pages answer six business-specific customer questions",
-      "A bounded branded and unbranded AI-assisted search sample",
-      "An optional ten-question research pack that requires user agreement and does not itself run the searches",
+      "An optional ten-question customer research pack that requires user agreement and makes no OpenAI API call",
+      "Sourced observations supplied by research tools available in the user's ChatGPT session",
       "Public evidence and representation gaps",
       "Clear separation between technical discoverability and commercial outcome evidence"
     ],

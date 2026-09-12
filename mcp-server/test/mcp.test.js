@@ -14,15 +14,22 @@ const fetchImpl = async (input) => {
   return new Response("missing", { status: 404 });
 };
 
-test("MCP client initializes, lists the annotated tool and calls it", async () => {
-  const server = createServer(fetchImpl);
+test("MCP client initializes and completes its workflow without using the SR3H OpenAI API", async () => {
+  const requestedUrls = [];
+  const trackedFetch = async (input, init) => {
+    const url = input instanceof URL ? input.href : String(input);
+    requestedUrls.push(url);
+    if (url.startsWith("https://api.openai.com/")) throw new Error("MCP must not call the OpenAI API");
+    return fetchImpl(input, init);
+  };
+  const server = createServer(trackedFetch, { OPENAI_API_KEY: "must-not-be-used" });
   const client = new Client({ name: "test-client", version: "1.0.0" });
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
   await server.connect(serverTransport);
   await client.connect(clientTransport);
   try {
     const listed = await client.listTools();
-    assert.equal(client.getServerVersion().version, "0.7.0");
+    assert.equal(client.getServerVersion().version, "0.8.0");
     assert.equal(listed.tools.length, 3);
     const checkTool = listed.tools.find((tool) => tool.name === "check_ai_presence");
     const prepareTool = listed.tools.find((tool) => tool.name === "prepare_ai_discovery_research");
@@ -54,6 +61,21 @@ test("MCP client initializes, lists the annotated tool and calls it", async () =
     });
     assert.match(called.content[0].text, /^AI search crawlers can access this website/);
     assert.equal(called.content[0].text.length < 500, true);
+    assert.equal("discoverability" in called.structuredContent, false);
+    assert.equal("snapshot" in called.structuredContent, false);
+
+    const prepared = await client.callTool({ name: "prepare_ai_discovery_research", arguments: {
+      website_url: "https://test.example",
+      business_name: "Test Co",
+      location_or_service_area: "Oxford",
+      priority_services: ["test services"],
+      target_customer: "Oxford organisations"
+    } });
+    assert.notEqual(prepared.isError, true);
+    assert.equal(prepared.structuredContent.status, "ready");
+    assert.equal(prepared.structuredContent.questions.length, 10);
+    assert.match(prepared.structuredContent.usage_note, /no SR3H OpenAI API calls/i);
+    assert.equal(requestedUrls.some((url) => url.startsWith("https://api.openai.com/")), false);
 
     const summarised = await client.callTool({ name: "summarise_ai_discovery_research", arguments: {
       website_url: "https://test.example",
@@ -117,7 +139,7 @@ test("HTTP health and error responses carry production safety headers", async ()
   assert.equal(health.status, 200);
   assert.equal(health.headers.get("cache-control"), "no-store");
   assert.equal(health.headers.get("x-content-type-options"), "nosniff");
-  assert.equal((await health.json()).version, "0.7.0");
+  assert.equal((await health.json()).version, "0.8.0");
 
   const missing = await handleRequest(new Request("https://mcp.example/nope"));
   assert.equal(missing.status, 404);
