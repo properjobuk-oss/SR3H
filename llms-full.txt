@@ -47,9 +47,9 @@ Conchup is a workspace for complex software projects. It keeps requirements, dec
 
 Public overview: https://sr3h.uk/conchup.html
 
-## Journal
+## Blog
 
-SR3H publishes notes on AI, software engineering, product research and the systems it is building at https://sr3h.uk/journal.html.
+SR3H publishes a blog on AI, software engineering, product research and the systems it is building at https://sr3h.uk/journal.html.
 
 ## Service areas
 

@@ -3,17 +3,30 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Journal | SR3H</title>
-    <meta name="description" content="Notes from SR3H on AI, software engineering, product research and the systems we are building.">
+    <title>Blog | SR3H</title>
+    <meta name="description" content="The SR3H blog on AI, software engineering, product research and the systems we are building.">
     <meta name="robots" content="index, follow, max-snippet:-1">
-    <meta property="og:title" content="Journal | SR3H">
-    <meta property="og:description" content="Notes on AI, software and the products we are building.">
+    <meta property="og:title" content="Blog | SR3H">
+    <meta property="og:description" content="The SR3H blog on AI, software and the products we are building.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://sr3h.uk/journal.html">
     <meta property="og:image" content="https://sr3h.uk/assets/sr3h-logo-og.png">
     <link rel="canonical" href="https://sr3h.uk/journal.html">
     <link rel="icon" href="/favicon.svg?v=20260702-4" type="image/svg+xml">
-    <link rel="stylesheet" href="styles.css?v=20260912-3">
+    <link rel="stylesheet" href="styles.css?v=20260912-4">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "When buyers ask AI, who gets the work?",
+        "datePublished": "2026-09-12",
+        "dateModified": "2026-09-12",
+        "author": { "@type": "Organization", "name": "SR3H", "url": "https://sr3h.uk/" },
+        "publisher": { "@type": "Organization", "name": "SR3H", "url": "https://sr3h.uk/" },
+        "mainEntityOfPage": "https://sr3h.uk/journal.html",
+        "description": "How AI decides when a business is relevant, why suitable suppliers can be overlooked and what businesses can do to improve discovery."
+      }
+    </script>
   </head>
   <body>
     <header class="site-header" aria-label="SR3H">
@@ -22,7 +35,7 @@
         <a href="index.html#work">Work</a>
         <a href="aido-labs.html#ai-check">AI check</a>
         <a href="index.html#platform">Research</a>
-        <a href="journal.html" aria-current="page">Journal</a>
+        <a href="journal.html" aria-current="page">Blog</a>
         <a href="index.html#community">Lunchtime Websites</a>
         <a href="index.html#contact">Contact</a>
       </nav>
@@ -31,15 +44,44 @@
     <main class="journal-main">
       <section class="journal-hero" aria-labelledby="journal-title">
         <div class="journal-inner">
-          <p class="eyebrow">SR3H Journal</p>
+          <p class="eyebrow">SR3H Blog</p>
           <h1 id="journal-title">Notes on AI, software and the products we are building.</h1>
         </div>
       </section>
-      <section class="journal-section" aria-labelledby="journal-coming-soon">
-        <div class="journal-inner journal-empty">
-          <p class="eyebrow">Articles</p>
-          <h2 id="journal-coming-soon">Coming soon.</h2>
-          <p>Future articles will appear here with a clear date, summary and link.</p>
+      <section class="journal-section" aria-labelledby="journal-articles">
+        <div class="journal-inner">
+          <p class="eyebrow">Latest post</p>
+          <h2 class="visually-hidden" id="journal-articles">Blog posts</h2>
+
+          <article class="journal-entry">
+            <details class="journal-article">
+              <summary class="journal-article-summary">
+                <span class="journal-article-date"><time datetime="2026-09-12">12 September 2026</time></span>
+                <span class="journal-article-title">When buyers ask AI, who gets the work?</span>
+                <span class="journal-article-intro">How AI decides when a business is relevant, why suitable suppliers can be overlooked and what businesses can do to improve discovery.</span>
+                <span class="journal-article-action" aria-hidden="true"><span class="journal-action-read">Read post</span><span class="journal-action-close">Close post</span><span class="journal-action-mark"></span></span>
+              </summary>
+              <div class="journal-article-body">
+                <p>An architect asks an AI assistant how to put an early price on a house extension. The assistant might offer a rough figure, recommend a specialist estimating service, or use a connected tool to produce an estimate within the conversation. Whether an outside business becomes involved depends on the response.</p>
+
+                <p>This is an easy part of AI discovery to miss. Before a supplier is brought in, the conversation has to reach a point where its help is needed. Someone asking what an extension might cost could be satisfied with a general answer. Someone needing an estimate from drawings has given the assistant a more specific problem, which might lead it towards a specialist.</p>
+
+                <p>For businesses, that raises a question: under what circumstances does AI bring us into the conversation? AI discoverability optimisation (AIDO) means helping AI find a business, understand what it offers and select it when it fits the need.</p>
+
+                <p>Search engine optimisation still provides much of the groundwork. Pages need to be accessible and useful, with clear information about what a business offers. Google says its <a href="https://developers.google.com/search/docs/appearance/ai-features" rel="noopener noreferrer">existing SEO principles also apply to its AI search features</a>.</p>
+
+                <p>Being absent from an answer can have several explanations. The assistant may have missed the business, misunderstood what it does, or found something better suited to the request. It may have provided enough help itself. Each possibility calls for a different response, so counting mentions alone leaves much of the story unexplained.</p>
+
+                <p>There is a revealing test here. Ask an assistant to suggest services for a particular job. Then introduce a business it left out and ask whether it could help. It may assess the business favourably once named. That suggests it could have been overlooked, and gives us something to investigate. The assessment still needs checking against what the business can actually deliver.</p>
+
+                <p>At SR3H, these questions are shaping AIDO Labs, our work on demand intelligence: understanding where customer needs create opportunities for businesses. We start with the situations that lead people to seek help, then repeat questions across AI systems, with different context and at different times. This helps us see which patterns hold: when AI brings in a specialist, who it considers and where a suitable option seems to be missing. Understanding how often real customers encounter those situations requires further evidence.</p>
+
+                <p>The next step is to investigate what could improve the outcome. Perhaps a service needs a clearer explanation, stronger evidence, or a way for AI to use it directly. Sometimes the product itself needs to change. We record what changed and repeat the tests, with enquiries, trials and purchases helping us judge whether it made a useful difference.</p>
+
+                <p>The opportunity may begin several questions before anyone asks for a supplier. Understanding those earlier questions could change both how a business explains its work and what it chooses to offer.</p>
+              </div>
+            </details>
+          </article>
         </div>
       </section>
     </main>

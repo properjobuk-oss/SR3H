@@ -27,9 +27,9 @@ Machine-readable services: https://sr3h.uk/ai-services.json
 - RedThread: private, evidence-linked briefings from complex source material.
 - Good Route: motorcycle navigation that preserves the rider's chosen route and keeps rerouting under explicit control.
 
-## Journal
+## Blog
 
-SR3H publishes notes on AI, software engineering, product research and the systems it is building at https://sr3h.uk/journal.html.
+SR3H publishes a blog on AI, software engineering, product research and the systems it is building at https://sr3h.uk/journal.html.
 
 ## AIDO Discoverability Check
 
