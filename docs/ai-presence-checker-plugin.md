@@ -1,4 +1,4 @@
-# AIDO Discoverability Check: MCP plugin boundary
+# AIDO by SR3H: MCP app boundary
 
 ## User goal
 
@@ -33,7 +33,7 @@ Output:
 - Technical discoverability status.
 - Explicit unknowns.
 - A short next action.
-- An optional invitation to contact `hello@sr3h.uk` for deeper analysis.
+- A restrained next action, with further SR3H information only when the user asks for broader help.
 
 This MCP tool makes no OpenAI API call and runs no AI search. The separate first-party website form at `sr3h.uk` may run a bounded API-backed six-question sample using SR3H's API project. That website route has separate quotas, storage disclosures and failure handling.
 
@@ -44,6 +44,7 @@ After the first result, ChatGPT may offer a broader ten-question check. It must 
 1. `prepare_ai_discovery_research` deterministically creates ten business-specific questions. It calls no model and does not search them.
 2. If the ChatGPT client has web search, it searches each question independently and records only sourced appearances.
 3. `summarise_ai_discovery_research` reports exact mention and recommendation counts, missed questions, recurring alternative providers and up to three next actions.
+4. `render_aido_report` can present the final supported result as a compact card. It has no audit or search capability and is not used until a data result exists.
 
 The MCP cannot force ChatGPT's host tools to run or guarantee how that activity counts against the user's plan. If host search is unavailable, it returns the question pack without inventing results. The user is never asked for an OpenAI API key. The question mix is visible, while analysis and prioritisation remain bounded by the MCP result schema and the packaged skill.
 
@@ -63,4 +64,4 @@ The tool must not turn a bounded search observation into a fixed ChatGPT ranking
 
 ## Deployment state
 
-Version 0.8 is deployed at `https://mcp.sr3h.uk/mcp` and separates the API-backed website form from the API-free MCP workflow. Health, tool discovery, public-site inspection, question preparation, summary and private-network rejection have been verified remotely. ChatGPT developer-mode journey testing, imported-skill behaviour testing and OpenAI review remain separate release gates.
+Version 0.10.5 is deployed at `https://mcp.sr3h.uk/mcp`. It separates the API-backed website form from the API-free MCP workflow. Its three data tools are independent of component UI; a fourth render-only tool provides a final result card. Private ChatGPT testing passed after the deployed connection was refreshed. OpenAI review submission and public listing remain separate release states.

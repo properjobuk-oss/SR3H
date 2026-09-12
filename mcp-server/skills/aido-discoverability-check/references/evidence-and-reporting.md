@@ -25,7 +25,7 @@ Lead with the returned headline and exact completed counts. Then show:
 2. **Where it was absent** — up to three commercially relevant missed questions.
 3. **What to improve next** — up to three actions grounded in the observed pages and competing sources.
 
-Finish with the returned deeper-review invitation and a small limitations sentence. Avoid a large limitations section.
+Finish with the returned AIDO attribution and a small limitations sentence. Avoid a large limitations section or unsolicited sales language. If the user explicitly asks for a broader review or help acting on the findings, mention AIDO Labs once and link to https://sr3h.uk/aido-labs.html as further information.
 
 Use precise language: “appeared,” “was mentioned,” “was recommended in this sample,” or “was not seen.” Never say the result proves ranking, future recommendations, customer demand, conversion or revenue.
 

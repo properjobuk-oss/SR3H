@@ -157,7 +157,8 @@ export function summariseExtendedResearch(input) {
   const unbrandedRecommended = unbranded.filter(recommended);
   const branded = observations.filter((item) => item.kind === "branded");
   const brandedFound = branded.filter(appeared).length;
-  const evidenceSources = new Set(observations.flatMap((item) => item.evidence_urls || [])).size;
+  const sourceUrls = [...new Set(observations.flatMap((item) => item.evidence_urls || []))].slice(0, 20);
+  const evidenceSources = sourceUrls.length;
 
   const headline = !unbranded.length
     ? brandedFound
@@ -220,12 +221,13 @@ export function summariseExtendedResearch(input) {
     strongest_questions: unbrandedFound.slice(0, 3).map((item) => ({ question: item.question, appearance: item.appearance })),
     missed_questions: notSeen.slice(0, 3).map((item) => item.question),
     other_providers: providerCounts(observations),
+    source_urls: sourceUrls,
     next_actions: nextActions.slice(0, 3),
     limits: [
       "A dated sample of the searches completed in this conversation; results can vary between services and over time.",
       "It does not establish a fixed ranking or measure demand, enquiries, sales or revenue."
     ],
-    deeper_review: "For a fuller picture, SR3H can test more customer segments, competing services and repeat runs, then produce a prioritised implementation plan. Contact hello@sr3h.uk."
+    deeper_review: "AIDO is developed by SR3H. Learn about the method and its limits at https://sr3h.uk/aido-labs.html."
   };
 }
 

@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { z } from "zod";
 import { auditWebsite } from "./audit.js";
+import { AIDO_REPORT_URI, registerAidoReportUi } from "./aido-report-ui.js";
 import { checkDiscoverability, combineDiscoverabilityResult } from "./discoverability.js";
 import { prepareExtendedResearch, RESEARCH_KINDS, summariseExtendedResearch } from "./extended-research.js";
 import { registerSkillImport } from "./skill-import.js";
@@ -9,7 +10,7 @@ import { UsageGuard, usageContext } from "./usage-guard.js";
 
 export { UsageGuard };
 
-const SERVICE_VERSION = "0.9.0";
+const SERVICE_VERSION = "0.10.5";
 const MAX_MCP_REQUEST_BYTES = 64_000;
 const MAX_WEB_REQUEST_BYTES = 8_000;
 const WEB_ORIGINS = new Set([
@@ -21,10 +22,10 @@ const WEB_ORIGINS = new Set([
 const signalStatusSchema = z.enum(["clear", "partial", "gap", "missing", "blocked", "unverified"]);
 const auditInputShape = {
   website_url: z.string().url().max(2048).describe("Complete public website URL beginning with https:// or http://"),
-  business_name: z.string().trim().min(1).max(120).optional().describe("Business or organisation name to look for on the checked page"),
-  location_or_service_area: z.string().trim().min(1).max(160).optional().describe("Important location or service area to look for"),
-  priority_services: z.array(z.string().trim().min(1).max(120)).max(8).optional().describe("Up to eight priority products or services to look for"),
-  target_customer: z.string().trim().min(1).max(300).optional().describe("Optional target customer context for interpreting clarity; it is not used to infer demand")
+  business_name: z.string().trim().min(1).max(120).optional().describe("Business or organisation name explicitly supplied by the user or plainly stated on the checked website"),
+  location_or_service_area: z.string().trim().min(1).max(160).optional().describe("Location or service area only when the user explicitly supplied it in the current conversation; never infer it"),
+  priority_services: z.array(z.string().trim().min(1).max(120)).max(8).optional().describe("Up to eight products or services only when the user explicitly supplied them in the current conversation; never infer them"),
+  target_customer: z.string().trim().min(1).max(300).optional().describe("Target customer only when the user explicitly supplied it in the current conversation; never infer it or use it to infer demand")
 };
 const webAuditInputSchema = z.object({
   ...auditInputShape,
@@ -32,10 +33,10 @@ const webAuditInputSchema = z.object({
 }).strict();
 const extendedResearchInputShape = {
   website_url: z.string().url().max(2048).describe("Complete public website URL beginning with https:// or http://"),
-  business_name: z.string().trim().min(1).max(120).describe("Business or organisation being researched"),
-  location_or_service_area: z.string().trim().min(1).max(160).optional().describe("Important location or service area"),
-  priority_services: z.array(z.string().trim().min(1).max(120)).min(1).max(8).describe("One to eight priority products or services customers should find"),
-  target_customer: z.string().trim().min(1).max(300).optional().describe("Optional description of the main customer")
+  business_name: z.string().trim().min(1).max(120).describe("Business or organisation explicitly confirmed for this research"),
+  location_or_service_area: z.string().trim().min(1).max(160).optional().describe("Location or service area only when the user explicitly supplied it in the current conversation; never infer it"),
+  priority_services: z.array(z.string().trim().min(1).max(120)).min(1).max(8).describe("One to eight products or services explicitly supplied or confirmed by the user for this research; never infer them"),
+  target_customer: z.string().trim().min(1).max(300).optional().describe("Main customer only when explicitly supplied or confirmed by the user; never infer it")
 };
 const researchKindSchema = z.enum(RESEARCH_KINDS);
 const extendedResearchResultSchema = z.object({
@@ -95,9 +96,34 @@ const researchSummarySchema = z.object({
   strongest_questions: z.array(z.object({ question: z.string(), appearance: z.enum(["source_only", "mentioned", "recommended"]) })),
   missed_questions: z.array(z.string()),
   other_providers: z.array(z.object({ name: z.string(), appearances: z.number().int() })),
+  source_urls: z.array(z.string().url()),
   next_actions: z.array(z.string()),
   limits: z.array(z.string()),
   deeper_review: z.string()
+});
+const reportMetricSchema = z.object({
+  label: z.string().trim().min(1).max(40),
+  value: z.string().trim().min(1).max(60)
+}).strict();
+const reportInputShape = {
+  report_type: z.enum(["technical_readiness", "discovery_sample"]).describe("The completed AIDO workflow being presented: website technical readiness or a sourced AI discovery sample"),
+  business_name: z.string().trim().min(1).max(120).optional().describe("Business name exactly as returned or supplied in the completed result"),
+  website_url: z.string().url().max(2048).describe("Public website URL from the completed result"),
+  checked_at: z.string().datetime().describe("ISO 8601 time from the completed result"),
+  headline: z.string().trim().min(1).max(180).describe("Plain-English conclusion supported by the completed result"),
+  summary: z.string().trim().min(1).max(600).describe("Short explanation using only facts from the completed result"),
+  status: z.enum(["clear", "partial", "blocked", "complete", "incomplete"]).describe("Copy audit.technical_readiness exactly for a technical_readiness report. For a discovery_sample report, use complete only for all ten sourced observations and incomplete otherwise. Never downgrade or strengthen the completed result, and never describe technical readiness as being ready for AI discovery."),
+  metrics: z.array(reportMetricSchema).max(4).optional().describe("Up to four compact counts or observed metrics from the completed result"),
+  highlights: z.array(z.string().trim().min(1).max(240)).max(3).optional().describe("Up to three supported findings from the completed result"),
+  gaps: z.array(z.string().trim().min(1).max(240)).max(3).optional().describe("Up to three observed gaps from the completed result"),
+  next_action: z.string().trim().min(1).max(300).describe("The most useful action returned by or directly grounded in the completed result"),
+  limitations_note: z.string().trim().min(1).max(300).optional().describe("One concise evidence limitation from the completed result"),
+  source_urls: z.array(z.string().url().max(2048)).max(10).optional().describe("Up to ten public evidence URLs from the completed result")
+};
+const reportResultSchema = z.object({
+  ...reportInputShape,
+  attribution: z.literal("AIDO by SR3H"),
+  about_url: z.literal("https://sr3h.uk/aido-labs.html")
 });
 const technicalAuditResultSchema = z.object({
   audit: z.object({
@@ -172,17 +198,18 @@ function conciseResult(result) {
 
 export function createServer(fetchImpl = fetch) {
   const server = new McpServer({
-    name: "AIDO Discoverability Check",
+    name: "AIDO by SR3H",
     version: SERVICE_VERSION,
     websiteUrl: "https://sr3h.uk"
   }, {
-    instructions: "Use check_ai_presence for public website readiness. It does not run AI searches. Offer the optional ten-question discovery sample; a direct request already counts as consent. prepare_ai_discovery_research creates the neutral question pack without an OpenAI API call. Research each question separately with host tools, then send only completed observations with cited sources to summarise_ai_discovery_research. Never invent results or claim a fixed ranking, demand or sales impact."
+    instructions: "When a user supplies a public business URL and asks why AI assistants may overlook it, about AI visibility, AEO or GEO, or whether it is ready for AI discovery, use check_ai_presence first. It checks website readiness and does not run AI searches. Never invent optional context: pass location, priority services and target customer only when the user states them in the current conversation. Offer the optional ten-question discovery sample; a direct request already counts as consent. prepare_ai_discovery_research creates the neutral question pack without an OpenAI API call. Research each question separately with host tools, then send only completed observations with cited sources to summarise_ai_discovery_research. After a completed readiness check or discovery summary, use render_aido_report once to present the final facts; never invent card content. For a technical card, copy audit.technical_readiness exactly. Say technical access signals are clear, partial or blocked; never say the business is technically ready for AI discovery. Never claim a fixed ranking, demand or sales impact."
   });
   registerSkillImport(server);
+  registerAidoReportUi(server);
 
   server.registerTool("check_ai_presence", {
     title: "Check website readiness for AI discovery",
-    description: "Inspect whether a public business website exposes the technical and content signals that search and AI systems can use. This tool fetches public pages but does not call an AI model or run branded or unbranded searches. Returns observed facts, gaps and explicit limits.",
+    description: "Use this when a user asks why AI assistants may be overlooking a business, asks about AI visibility, AEO or GEO for a public website, or wants to check readiness for AI discovery. It fetches public pages and returns observed access and clarity facts, gaps and limits. Describe its result only as technical access signals, never as being technically ready for AI discovery. It does not call an AI model or run branded or unbranded searches. Do not use it to claim AI ranking, mentions, recommendations, demand or sales impact.",
     inputSchema: auditInputShape,
     outputSchema: technicalAuditResultSchema,
     annotations: {
@@ -211,7 +238,7 @@ export function createServer(fetchImpl = fetch) {
 
   server.registerTool("prepare_ai_discovery_research", {
     title: "Prepare a 10-question AI discovery check",
-    description: "After the user explicitly opts in, create ten business-specific customer questions for a broader AI discoverability check. The deterministic pack uses no OpenAI API call and runs no searches. ChatGPT may ask each question separately using research tools available in the user's session.",
+    description: "Use this when the user has agreed to a broader AI discoverability sample and supplied a public website, business name and at least one priority service. It creates ten business-specific customer questions without an OpenAI API call or searches. Do not call it without consent or imply that the questions have already been researched.",
     inputSchema: extendedResearchInputShape,
     outputSchema: extendedResearchResultSchema,
     annotations: {
@@ -235,7 +262,7 @@ export function createServer(fetchImpl = fetch) {
 
   server.registerTool("summarise_ai_discovery_research", {
     title: "Summarise an AI discovery check",
-    description: "Summarise one to ten completed AI-search observations. Every observation must include cited sources; positive appearances also require a cited target source. Returns exact counts, useful gaps and practical next actions without inventing a visibility score.",
+    description: "Use this when one to ten AI customer-question searches have actually been completed with cited public evidence. Every observation needs sources; positive appearances also require a cited target source. Returns exact counts, gaps and practical next actions. Do not use it for unsupported, invented or uncited search results or to create a visibility score.",
     inputSchema: {
       website_url: z.string().url().max(2048),
       business_name: z.string().trim().min(1).max(120),
@@ -254,6 +281,38 @@ export function createServer(fetchImpl = fetch) {
     const completion = result.sample.completion_status === "partial" ? `${result.sample.completed} of ${result.sample.expected} questions were completed.\n` : "";
     return {
       content: [{ type: "text", text: `${result.headline}\n${completion}${result.findings.join("\n")}\nNext step: ${result.next_actions[0]}\n${result.deeper_review}` }],
+      structuredContent: result
+    };
+  });
+
+  server.registerTool("render_aido_report", {
+    title: "Show an AIDO result card",
+    description: "Use this once after check_ai_presence or summarise_ai_discovery_research has completed to show its final facts in a compact AIDO card. Pass only facts supported by that completed result. For technical_readiness, copy audit.technical_readiness exactly; missing optional marketing context must not change it. Describe clear technical access signals as clear checks, never as being technically ready for AI discovery. This presentation tool performs no audit, search, inference or network request. Do not call it before a result exists or invent, strengthen or advertise through its content.",
+    inputSchema: reportInputShape,
+    outputSchema: reportResultSchema,
+    annotations: {
+      title: "Show an AIDO result card",
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false
+    },
+    _meta: {
+      ui: { resourceUri: AIDO_REPORT_URI },
+      "openai/outputTemplate": AIDO_REPORT_URI
+    }
+  }, async (input) => {
+    const result = {
+      ...input,
+      metrics: input.metrics || [],
+      highlights: input.highlights || [],
+      gaps: input.gaps || [],
+      source_urls: [...new Set(input.source_urls || [])],
+      attribution: "AIDO by SR3H",
+      about_url: "https://sr3h.uk/aido-labs.html"
+    };
+    return {
+      content: [{ type: "text", text: `${result.headline}\nBest next step: ${result.next_action}` }],
       structuredContent: result
     };
   });
@@ -396,7 +455,7 @@ export async function handleRequest(request, env = {}, fetchImpl = fetch) {
   if (url.pathname === "/check") return handleWebCheck(request, env, fetchImpl);
   if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }));
   if (url.pathname === "/health" && ["GET", "HEAD"].includes(request.method)) {
-    return cors(new Response(request.method === "HEAD" ? null : JSON.stringify({ ok: true, service: "AIDO Discoverability Check", version: SERVICE_VERSION }), {
+    return cors(new Response(request.method === "HEAD" ? null : JSON.stringify({ ok: true, service: "AIDO by SR3H", version: SERVICE_VERSION }), {
       headers: { "content-type": "application/json; charset=utf-8" }
     }));
   }

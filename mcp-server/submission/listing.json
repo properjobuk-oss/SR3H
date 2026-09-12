@@ -1,0 +1,20 @@
+{
+  "name": "AIDO by SR3H",
+  "publisher": "SR3H LTD",
+  "short_description": "Find why AI may overlook a business, check website readiness and test customer questions with cited evidence.",
+  "long_description": "AIDO gives businesses an evidence-based view of AI discoverability. It first checks whether a public website is accessible and clearly explains the business, its services and relevant evidence. With the user's agreement, it can prepare ten realistic customer questions for ChatGPT to research separately, then distinguish whether the business was absent, cited, mentioned or recommended. Results use dated sources, exact counts and practical next steps. AIDO does not claim a permanent AI ranking, customer demand or sales impact.",
+  "category_preference": "Business",
+  "website_url": "https://sr3h.uk/aido-labs.html",
+  "support_url": "https://sr3h.uk/ai-presence-support.html",
+  "privacy_url": "https://sr3h.uk/ai-presence-privacy.html",
+  "terms_url": "https://sr3h.uk/ai-presence-terms.html",
+  "mcp_url": "https://mcp.sr3h.uk/mcp",
+  "authentication": "None",
+  "availability": ["United Kingdom"],
+  "logo_path": "../../assets/projects/aido-demand-intelligence.png",
+  "starter_prompts": [
+    "Check whether my business website is ready for AI discovery.",
+    "Why might AI assistants be overlooking my business?",
+    "Test ten customer questions to see when my business appears."
+  ]
+}

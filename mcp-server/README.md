@@ -1,4 +1,4 @@
-# AIDO Discoverability Check
+# AIDO by SR3H
 
 AIDO is the product. This repository contains two deliberately separate routes. The SR3H website checker inspects public-site evidence and, when configured, uses SR3H's OpenAI API project for a bounded six-question search sample. The MCP inspects the public site, prepares a ten-question pack and summarises sourced observations without calling the OpenAI API. In ChatGPT, the optional searches use research tools available in the user's own session.
 
@@ -8,7 +8,7 @@ The only required input is the public website URL. Optional business name, locat
 
 ## Version status
 
-- Production and the repository report `0.9.0`.
+- Version `0.10.5` is deployed and remotely verified. The private ChatGPT app and MCP are named **AIDO by SR3H**.
 - The public health endpoint is `https://mcp.sr3h.uk/health` and the MCP endpoint is `https://mcp.sr3h.uk/mcp`.
 - The website form's technical check remains available if its optional paid discovery layer is unavailable.
 - The MCP tools do not use the SR3H OpenAI API key.
@@ -26,6 +26,9 @@ See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the evidence boundary and r
 - `check_ai_presence` inspects public website evidence. It runs no model or AI search.
 - `prepare_ai_discovery_research` deterministically prepares ten tailored questions after the user explicitly opts in. It runs no model or search.
 - `summarise_ai_discovery_research` converts one to ten sourced observations into exact counts, gaps and practical next actions. Every completed observation needs dated source evidence; a claimed mention or recommendation must also cite the target business itself.
+- `render_aido_report` presents an already completed readiness or discovery result in one compact inline card. It performs no audit, search, inference or network request.
+
+Only the render tool is linked to the component UI. The three data tools remain useful in clients that do not support the card. The component is self-contained, loads no external assets, makes no network requests and treats tool output as untrusted text.
 
 The extended workflow deliberately separates question preparation, ChatGPT-session research and evidence reporting. If the connected ChatGPT client provides web search, it can search each question independently. The MCP cannot force that host tool to run or guarantee its usage accounting. If browsing is unavailable, the client must say so and must not fabricate observations. AIDO never asks for the user's OpenAI API key.
 

@@ -4,7 +4,7 @@
 
 The first-party `/check` route performs a read-only technical check of public website signals and, when configured, a six-question API-backed understanding and search sample.
 
-The MCP route is separate. `check_ai_presence` inspects the public site without calling an AI model. Version 0.9 deterministically prepares an optional ten-question workflow without an OpenAI API call, then summarises evidence collected with research tools available in the user's ChatGPT session. The MCP does not claim control of ChatGPT's web-search availability or usage limits. Every completed observation requires dated source evidence, and a mention or recommendation also requires evidence from the target business itself.
+The MCP route is separate. `check_ai_presence` inspects the public site without calling an AI model. Version 0.10 deterministically prepares an optional ten-question workflow without an OpenAI API call, then summarises evidence collected with research tools available in the user's ChatGPT session. A separate render-only tool presents an already completed result and cannot audit or search. The MCP does not claim control of ChatGPT's web-search availability or usage limits. Every completed observation requires dated source evidence, and a mention or recommendation also requires evidence from the target business itself.
 
 ## Required evidence before review submission
 
@@ -40,14 +40,18 @@ These are preparation materials, not evidence that OpenAI review has been reques
 
 ## Current version status
 
-- **Production and repository: `0.9.0`.** Cloudflare deployed Worker version `4f85da76-710b-4662-88f6-fbb143c5c764` on 12 September 2026.
-- The public health endpoint and MCP initialization both report `AIDO Discoverability Check` version `0.9.0` and advertise all three focused tools.
-- The deployed MCP advertises `io.modelcontextprotocol/skills`, lists the AIDO skill, exposes its three files as MCP resources and verifies each resource against its SHA-256 digest.
-- The deployed MCP advertises all four optional context fields and returns them through the audit result.
-- The restricted `AIDO DISCOVERABILITY TEST` OpenAI key is configured as the encrypted `OPENAI_API_KEY` Cloudflare Worker secret. It has Responses write access and no Chat Completions, embeddings, realtime, images, moderation or other endpoint access.
-- Only the first-party website form can use that secret. Its paid flow creates a bounded six-question plan and runs each question as an isolated required web search. Unbranded prompts never receive the target business name or domain. A positive appearance is counted only when the individual response includes matching source evidence.
-- The MCP server does not receive the Worker environment in its tool handlers and has regression coverage proving that an available `OPENAI_API_KEY` cannot trigger an OpenAI call.
-- A local end-to-end provider test using the production key completed all six isolated searches for Proper Job. It found the branded site and one sourced unbranded recommendation for drawing-based estimating; the four broader unbranded questions did not surface Proper Job.
+- **Production: `0.10.5`.** Deployed as Cloudflare Worker version `7709163a-5e5e-43d0-ae27-15869b7d4e5d` on 12 September 2026. The customer-facing app, MCP server and result card are named **AIDO by SR3H**.
+- The MCP has four tools: three UI-independent data tools and one render-only tool. It makes no SR3H OpenAI API calls.
+- The component uses the MCP Apps handshake, a self-contained `text/html;profile=mcp-app` resource and no external scripts, fonts, tracking or network requests.
+- Private ChatGPT tests passed for a direct readiness result and a complete ten-question sourced discovery result. Both rendered the component successfully.
+- A fresh chat launched from the AIDO app page invoked the readiness tool from an indirect “overlooking my business” request. Invocation from an ordinary unconnected chat remains controlled by ChatGPT and is not guaranteed.
+- The completed ten-question SR3H sample found the branded site in 1 of 1 questions and did not find it in 9 of 9 unbranded questions. This is a dated sample, not a permanent rank or demand measure.
+- Negative tests passed for a private localhost target, an unsupported ranking guarantee and an unrelated staff-rota request.
+- The separate website checker still uses the restricted, encrypted SR3H OpenAI key for its bounded paid sample. Its technical result remains available when the paid allowance is exhausted.
+- The submission pack contains the name, descriptions, three starter prompts, five positive cases, three negative cases and release notes. This is preparation, not submission or approval.
+- Static checks and all 48 automated tests pass. The production dependency audit reports zero known vulnerabilities, and all three remote MCP verifiers pass.
+- The public support, privacy and terms pages each return HTTP 200.
+- After the 0.10.5 connection refresh, a URL-only attached-app test returned clear technical access signals, no invented location/service/customer context, the exact `clear` status and the v4 result card. Its prose did not describe the crawl result as ready for AI discovery.
 
 ## Version 0.9.0 evidence
 
@@ -73,7 +77,7 @@ These are preparation materials, not evidence that OpenAI review has been reques
 
 ## Remaining release gate
 
-In the ChatGPT app draft, run **Scan Tools** or refresh the MCP so the v0.9 skill snapshot is imported. Then test the complete opt-in, host-search, evidence-classification and summary journey in developer mode using the ten recorded cases. After the website allowance resets, verify one fresh API-backed `/check` sample. Do not claim that the MCP controls ChatGPT web-search availability or usage accounting, and do not submit for OpenAI review until those journeys are recorded. OpenAI review has not been requested.
+The OpenAI submission draft must show the verified publisher **SR3H LTD**; the unexplained `SRTH` identity label must be resolved before submission. Ask for explicit approval before pressing **Submit for review**. OpenAI review has not been requested.
 
 ## Historical version 0.7.0 evidence
 

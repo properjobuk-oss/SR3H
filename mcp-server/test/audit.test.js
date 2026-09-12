@@ -63,7 +63,8 @@ test("returns sourced findings, supplied-term evidence and explicit limits", asy
   assert.equal(result.supplied_context_presence.every((item) => item.found), true);
   assert.match(result.unknowns.join(" "), /Whether ChatGPT or another AI service will mention/);
   assert.match(result.summary, /does not show whether AI services understand the offer/);
-  assert.match(result.next_action, /test five real customer questions/);
+  assert.match(result.next_action, /measure actual discovery/);
+  assert.doesNotMatch(result.next_action, /make the main services and locations explicit/i);
   assert.match(result.supplied_context.note, /user-supplied context only/);
 });
 

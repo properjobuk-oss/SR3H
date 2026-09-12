@@ -1,6 +1,6 @@
 interface:
-  display_name: "AIDO Discoverability Check"
-  short_description: "Check how AI accesses, understands and surfaces a business"
+  display_name: "AIDO by SR3H"
+  short_description: "Find why AI may overlook a business and test its discoverability"
   default_prompt: "Check my website's AI discoverability, then offer the sourced ten-question sample."
 
 dependencies:

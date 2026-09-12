@@ -373,8 +373,8 @@ export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisCo
       "Customer demand, conversions, revenue or the effect of any future change.",
       "Every page, external mention, AI model, search index or user journey."
     ],
-    next_action: gaps[0]?.action || "Make the main services and locations explicit, connect important claims to supporting evidence, then test five real customer questions.",
-    deeper_analysis: "For an evidence-led review across pages, customer questions and AI responses, contact hello@sr3h.uk."
+    next_action: gaps[0]?.action || "Technical access signals are in place. To measure actual discovery, run the separate ten-question sample using representative customer questions.",
+    deeper_analysis: "AIDO is developed by SR3H. Learn about the method and its limits at https://sr3h.uk/aido-labs.html."
   };
   if (includeAnalysisContext) result._analysis_context = await collectWebsiteContext(page, html, inspected, fetchImpl);
   return result;
