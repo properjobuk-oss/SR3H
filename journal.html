@@ -32,6 +32,14 @@
           },
           {
             "@type": "BlogPosting",
+            "headline": "Who owns the context?",
+            "datePublished": "2026-09-10",
+            "dateModified": "2026-09-10",
+            "author": { "@type": "Organization", "name": "SR3H", "url": "https://sr3h.uk/" },
+            "description": "Brane, local AI and the emerging layer between people and models."
+          },
+          {
+            "@type": "BlogPosting",
             "headline": "The road we meant to take",
             "datePublished": "2026-09-08",
             "dateModified": "2026-09-08",
@@ -93,6 +101,124 @@
                 <p>The next step is to investigate what could improve the outcome. Perhaps a service needs a clearer explanation, stronger evidence, or a way for AI to use it directly. Sometimes the product itself needs to change. We record what changed and repeat the tests, with enquiries, trials and purchases helping us judge whether it made a useful difference.</p>
 
                 <p>The opportunity may begin several questions before anyone asks for a supplier. Understanding those earlier questions could change both how a business explains its work and what it chooses to offer.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="journal-entry">
+            <details class="journal-article">
+              <summary class="journal-article-summary">
+                <span class="journal-article-date"><time datetime="2026-09-10">10 September 2026</time></span>
+                <span class="journal-article-title">Who owns the context?</span>
+                <span class="journal-article-intro">Brane, local AI and the emerging layer between people and models.</span>
+                <span class="journal-article-action" aria-hidden="true"><span class="journal-action-read">Read post</span><span class="journal-action-close">Close post</span><span class="journal-action-mark"></span></span>
+              </summary>
+              <div class="journal-article-body">
+                <p>A small computer on a desk can now do something that, until recently, belonged in a data centre.</p>
+
+                <p>Apple’s new Mac mini uses the M6, its first 2-nanometre chip. It combines a 12-core GPU, dedicated neural hardware and up to 32GB of unified memory, which the processor and graphics system can draw from as one pool. Apple explicitly presents it as a machine for running secure, private AI work locally. <a href="https://www.apple.com/newsroom/2026/08/apple-introduces-m6-and-m5-ultra-for-a-big-leap-in-performance-and-ai-compute/" rel="noopener noreferrer">Apple</a></p>
+
+                <p>On that machine, a suitably compressed version of Qwen3.8‑27B sits within practical reach. Qwen’s open-weight model has 27 billion parameters, can work with text, images and video, supports tools and extended reasoning, and has a native context window of more than 260,000 tokens. Its official release reports substantial gains in coding, research and multi-step agent work. It can be run through open software rather than a metered cloud API. <a href="https://huggingface.co/Qwen/Qwen3.8-27B" rel="noopener noreferrer">Hugging Face</a></p>
+
+                <p>That does not make the computer free. The hardware, electricity, setup and maintenance still exist. Nor is there good evidence yet that a local Qwen model matches GPT‑5.6 Sol or Codex across the hardest, longest and most complicated jobs. Some routine coding and professional tasks may feel surprisingly close; difficult end-to-end work will still expose the difference.</p>
+
+                <p>But the boundary has moved. A model capable of useful reasoning, coding, visual understanding and tool use can now run entirely in a room, with no per-token charge and no requirement for the prompt, source code or private documents to leave the machine.</p>
+
+                <p>At almost the same moment, conversational context has become visibly valuable in another way.</p>
+
+                <p>OpenAI now offers advertising in ChatGPT. With personalised ads enabled, selection can draw on the current conversation, past chats and memory. OpenAI says those conversations and memories remain inside ChatGPT and are not disclosed to advertisers, who receive aggregated performance information rather than personal chat histories. The distinction matters. This is not evidence that conversations are being sold. It is evidence that a detailed understanding of someone’s interests, circumstances and present intention has commercial value. <a href="https://help.openai.com/en/articles/20001047" rel="noopener noreferrer">OpenAI Help Center</a></p>
+
+                <p>One development makes personal context increasingly practical to process privately. The other makes its economic value more explicit.</p>
+
+                <p>The important question is no longer only how intelligent an AI model can become. It is who owns the information that makes that intelligence useful.</p>
+
+                <p>Brane is an SR3H Lab project exploring that boundary. Its working proposition is to give a model the smallest safe amount of context that measurably improves its answer, while keeping the richer personal and project state under the user’s control.</p>
+
+                <p>That sounds simple until it meets the capabilities of a current frontier model.</p>
+
+                <p>GPT‑5.6 Sol already has a context window of more than one million tokens. It can search the web and files, use computers, discover tools, call MCP services and coordinate work across several stages. OpenAI says it can write and run small programs that choose tools, process intermediate results and decide what to do next. A claim that Brane is innovative merely because it “chooses useful context” would therefore be weak. The model and its surrounding platform are already doing sophisticated versions of that. <a href="https://developers.openai.com/api/docs/models/gpt-5.6-sol" rel="noopener noreferrer">OpenAI Developers</a></p>
+
+                <p>This is the uncomfortable but useful test of the idea. If GPT‑5.6 Sol already understands the task, searches the right sources and remembers the right details, what is Brane for?</p>
+
+                <p>The answer may be that Brane is not another reasoning layer inside the model. It is the user’s side of the system.</p>
+
+                <p>A frontier model can decide how to reason over the information available to it. It cannot independently decide which private sources should have been made available in the first place. It cannot protect material that has already been sent to it. It cannot guarantee that a project decision is current rather than merely similar to the question. It cannot provide continuity across competing model providers unless that continuity exists outside them. Nor can it give the user an independent, inspectable account of which personal information was disclosed and why.</p>
+
+                <p>Brane’s possible role sits before the main inference. It would maintain a user-owned state of evidence, decisions, relationships, permissions and history, then decide what temporary view—if any—a particular model should receive.</p>
+
+                <p>That makes it less like a second brain competing with GPT‑5.6 and more like a private control plane around whichever model is best for the task.</p>
+
+                <p>The distinction becomes important because memory is not automatically beneficial.</p>
+
+                <p>An old project decision may be highly relevant and completely wrong. A preference may still be true but inappropriate in the present role. A previous solution may create continuity while preventing a better idea from appearing. A system can become more personalised and, at the same time, more repetitive.</p>
+
+                <p>Memory can preserve understanding. It can also preserve error.</p>
+
+                <p>This is one of the more interesting parts of the Brane enquiry. A useful memory system should not only know how to retrieve. It should understand supersession, decay and contradiction. It should know that a later accepted decision may replace an earlier one without erasing the historical record. It should recognise that an unconfirmed personal inference becomes less trustworthy with time. It should be able to expose two conflicting records rather than quietly averaging them into a false certainty.</p>
+
+                <p>It should also be able to abstain.</p>
+
+                <p>For an open design question, a piece of personal history might make the answer more familiar but less original. Continually reminding a model of previous tastes, products and conclusions could gradually turn it into an echo of the user’s past. A genuine novelty safeguard would sometimes leave relevant history out, not because the system had failed to find it, but because a new answer needed room to form.</p>
+
+                <p>Relevance is not the same as authority. Authority is not the same as usefulness.</p>
+
+                <p>The correct result may occasionally be no added context at all.</p>
+
+                <p>This is where the familiar technical labels become less important. RAG retrieves material when a request arrives. CAG keeps a limited body of stable knowledge ready for reuse. A knowledge graph preserves relationships that ordinary text similarity may miss. MCP gives a model a standard way to call live tools and services. Each is useful, but none is a complete description of the product.</p>
+
+                <p>The more durable layer is the policy that decides which approach is appropriate now.</p>
+
+                <p>Research is already moving in this direction. <a href="https://arxiv.org/abs/2403.14403" rel="noopener noreferrer">Adaptive-RAG</a> uses a smaller model to choose between no retrieval, simple retrieval and a more involved process according to the question. <a href="https://arxiv.org/abs/2604.14473" rel="noopener noreferrer">Response-Aware User Memory Selection</a> goes further by estimating how a memory would change the answer, rather than selecting it only because its wording resembles the request. <a href="https://arxiv.org/abs/2410.10813" rel="noopener noreferrer">LongMemEval</a> found that commercial assistants and long-context models suffered a substantial accuracy drop when required to maintain information across extended, changing interactions.</p>
+
+                <p>Brane has not invented these component ideas. Its possible value lies in combining them around a different ownership model, then testing whether the combination produces a worthwhile improvement.</p>
+
+                <p>The calculation is not simply whether a memory is relevant. It is closer to a balance:</p>
+
+                <p>Expected improvement, uncertainty removed and useful continuity must outweigh staleness, privacy exposure, delay, token use and the risk of narrowing the answer.</p>
+
+                <p>The first version need not involve an elaborate new model. Much of the decision could begin with clear rules. Is the request personal or generic? Is it factual or exploratory? Does the active project contain an accepted constraint? Is the information recent? Does it conflict with anything newer? Is the local machine able to complete the work without disclosure?</p>
+
+                <p>A local model could handle the less mechanical parts: searching private files, identifying contradictions, compressing a project state, masking sensitive values and estimating whether a piece of history is likely to help. The final task could remain local when that is sufficient. When it is not, Brane could send a small, permission-checked packet to GPT‑5.6, Codex or another specialist system.</p>
+
+                <p>The value of the local model is therefore not limited to trying to beat the frontier model.</p>
+
+                <p>It can decide when the frontier model is necessary, prepare better material for it and reduce what must cross the boundary.</p>
+
+                <p>For an individual, this could mean keeping personal history, messages and documents on their own hardware. For a company, it could mean that product plans, source code, commercial assumptions, internal discussions and client material are searched and organised locally, while only the minimum necessary abstraction is sent to an external model.</p>
+
+                <p>That does not remove every privacy concern. A local knowledge store is itself a sensitive asset and needs strong security, deletion, export and access controls. A hybrid system still requires trust in any external service it uses. But it changes privacy from a broad promise into a series of concrete computational decisions: what stayed local, what was transformed, what left the machine and why.</p>
+
+                <p>This work also connects with a wider line of enquiry inside SR3H.</p>
+
+                <p>Across Brane, Conchup, Red Thread and Clarity, a related design problem keeps returning: how to turn scattered, incomplete and changing human input into a state that is current enough to trust and structured enough to improve the next output.</p>
+
+                <p>Conchup approaches this through requirements, authority, provenance and accepted product state in software development. Red Thread explores useful association across material that would otherwise remain fragmented. Clarity examines how private personal patterns might support bounded reflection without becoming intrusive. Brane applies the same broad concern to the boundary between a person and an AI model.</p>
+
+                <p>These are not yet one finished platform, and it would be misleading to describe them as one. What they share is a research direction.</p>
+
+                <p>The quality of an AI-assisted product often depends less on the final generation than on the condition of the information entering it. A coding model working from an obsolete requirement can produce excellent code for the wrong product. An estimate built from incomplete assumptions can be precise without being useful. A personal assistant can remember every conversation and still misunderstand which parts remain true.</p>
+
+                <p>Better output often begins further upstream.</p>
+
+                <p>Brane could become a practical test bed for that idea across SR3H’s work: not a universal memory attached indiscriminately to every product, but a way of testing whether governed state, selective context and local processing improve software, estimates, decisions and workflows.</p>
+
+                <p>The standard of proof needs to be demanding.</p>
+
+                <p>Brane should not be tested against an artificially forgetful chatbot. It should be tested against GPT‑5.6 Sol working normally, with the platform’s existing memory, tools and long context. The same real tasks should be run with no additional context, a broad profile, conventional retrieval and a minimal packet selected by Brane.</p>
+
+                <p>The comparison should include more than factual accuracy. Did the answer apply the current constraint? Did it avoid an obsolete decision? Did it feel appropriately continuous without becoming over-personalised? Did it retain originality? How many private details were exposed? How many tokens and tool calls were added? Would a blind reviewer actually prefer the result?</p>
+
+                <p>Individual layers should earn their place. If a novelty safeguard makes no difference, it should not remain because it sounds intelligent. If a local model adds delay but makes the same selections as three simple rules, the rules are better. If GPT‑5.6 already handles the task perfectly, Brane should stay out of the way.</p>
+
+                <p>That is the more interesting version of the project. Not a claim that every answer needs more history, but an attempt to discover when context has positive value and when it becomes a liability.</p>
+
+                <p>The present moment makes that enquiry unusually practical. Capable open models can now run on modest personal hardware. Frontier cloud systems are becoming more autonomous and more context-aware. Conversational history is becoming commercially significant. The technical and economic pressures are moving in opposite directions: towards richer profiles inside platforms, and towards more powerful private computation outside them.</p>
+
+                <p>Brane sits in the space between those movements.</p>
+
+                <p>Its strongest possibility is not that it remembers more than the model. It is that it allows the person to retain authority over what is remembered, what is current, what may be shared and what should be allowed to fade.</p>
+
+                <p>The next improvement in AI may not come from placing an entire life inside a larger context window. It may come from a quieter discipline: knowing what to reveal, what to withhold, and when the most intelligent use of memory is to leave some space unknown.</p>
               </div>
             </details>
           </article>

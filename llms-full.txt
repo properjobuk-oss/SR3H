@@ -51,7 +51,7 @@ Public overview: https://sr3h.uk/conchup.html
 
 SR3H publishes a blog on AI, software engineering, product research and the systems it is building at https://sr3h.uk/journal.html.
 
-Published posts include “When buyers ask AI, who gets the work?” on AI discoverability and “The road we meant to take” on Good Route, route choice and navigation that respects a rider's intent.
+Published posts include “When buyers ask AI, who gets the work?” on AI discoverability; “Who owns the context?” on Brane, local AI and user-controlled context; and “The road we meant to take” on Good Route, route choice and navigation that respects a rider's intent.
 
 ## Service areas
 
