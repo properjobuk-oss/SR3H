@@ -34,7 +34,7 @@ Verify a deployed endpoint with the same SDK client used by MCP consumers:
 npm run verify:remote -- https://your-worker.example/mcp https://sr3h.uk
 ```
 
-Production uses separate Cloudflare burst limits for technical checks and paid discovery samples, plus a persistent daily allowance for the paid layer: 20 samples in total, no more than two per visitor and two per target website per UTC day. Once an allowance is reached, the technical check remains available but no paid model call is made. Requests also have a 64 KB MCP limit, bounded website fetches, at most six web-search tool calls, a short structured response and no-store OpenAI API requests. Completed discovery results may be cached for 24 hours to avoid paying for the same check repeatedly. Submitted page contents and raw visitor IP addresses are not written to application logs or an application database.
+Production uses separate Cloudflare burst limits for technical checks and paid discovery samples, plus a persistent daily allowance for the paid layer: 20 samples in total, no more than two per visitor and two per target website per UTC day. Once an allowance is reached, the technical check remains available but no paid model call is made. Requests also have a 64 KB MCP limit and bounded website fetches. A completed sample plans six relevant questions, then runs six isolated web searches: one branded and five unbranded. Each search is limited to one web-search tool call and a short structured response. OpenAI API storage is disabled. Completed discovery results may be cached for 24 hours to avoid paying for the same check repeatedly. Submitted page contents and raw visitor IP addresses are not written to application logs or an application database.
 
 Set the OpenAI secret without committing it:
 
@@ -42,7 +42,7 @@ Set the OpenAI secret without committing it:
 npx wrangler secret put OPENAI_API_KEY
 ```
 
-Without that secret, the deterministic technical check still completes and explicitly marks the live discovery sample unavailable.
+Without that secret, the deterministic technical check still completes and explicitly marks the live discovery sample unavailable. Production stores this value only as an encrypted Cloudflare Worker secret; it is not present in this repository or browser code.
 
 Public information: [support](https://sr3h.uk/ai-presence-support.html), [privacy](https://sr3h.uk/ai-presence-privacy.html), and [terms](https://sr3h.uk/ai-presence-terms.html).
 

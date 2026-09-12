@@ -39,6 +39,11 @@ const modelResult = {
   important_findings: ["The offer is clear.", "Unbranded discovery is the main gap."],
   best_next_step: "Check indexing and impressions for the existing service pages."
 };
+const planResult = {
+  business: modelResult.business,
+  summary: modelResult.summary,
+  questions: modelResult.questions.map(({ question, kind, site_answered, site_evidence_url }) => ({ question, kind, site_answered, site_evidence_url }))
+};
 
 test("returns a clear fallback when the model service is not configured", async () => {
   const result = await checkDiscoverability(input, audit, {});
@@ -61,31 +66,47 @@ test("does not call the paid provider when the persistent allowance is exhausted
 });
 
 test("uses bounded search, structured output and disabled API storage", async () => {
-  let requestBody;
+  const requestBodies = [];
   const fetchImpl = async (url, init) => {
     assert.equal(url, "https://api.openai.com/v1/responses");
-    requestBody = JSON.parse(init.body);
+    const requestBody = JSON.parse(init.body);
+    requestBodies.push(requestBody);
+    if (!requestBody.tools) {
+      return new Response(JSON.stringify({
+        output: [{ type: "message", content: [{ type: "output_text", text: JSON.stringify(planResult) }] }]
+      }), { headers: { "content-type": "application/json" } });
+    }
+    const isBranded = requestBody.input.includes("What does Proper Job do?");
     return new Response(JSON.stringify({
       output: [
-        { type: "web_search_call", action: { sources: [{ url: "https://search.example/proper-job" }] } },
-        { type: "message", content: [{ type: "output_text", text: JSON.stringify(modelResult) }] }
+        { type: "web_search_call", action: { sources: [{ url: isBranded ? "https://search.example/proper-job" : "https://competitor.example/result" }] } },
+        { type: "message", content: [{ type: "output_text", text: JSON.stringify({
+          answer: isBranded ? "Proper Job provides building estimates." : "Several estimating services are available.",
+          providers: isBranded ? [{ name: "Proper Job", url: "https://search.example/proper-job", appearance: "mentioned" }] : []
+        }) }] }
       ]
     }), { headers: { "content-type": "application/json" } });
   };
   const result = await checkDiscoverability(input, audit, { OPENAI_API_KEY: "not-a-real-key" }, fetchImpl);
   assert.equal(result.status, "complete");
   assert.equal(result.questions.length, 6);
-  assert.deepEqual(result.sources, ["https://search.example/proper-job"]);
-  assert.equal(requestBody.store, false);
-  assert.equal(requestBody.max_tool_calls, DISCOVERABILITY_LIMITS.maxToolCalls);
-  assert.equal(requestBody.max_output_tokens, DISCOVERABILITY_LIMITS.maxOutputTokens);
-  assert.deepEqual(requestBody.tools, [{ type: "web_search" }]);
-  assert.equal(requestBody.text.format.strict, true);
-  assert.match(requestBody.input, /Proper Job/);
-  assert.match(requestBody.input, /United Kingdom/);
-  assert.match(requestBody.input, /building estimates from architectural drawings/);
-  assert.match(requestBody.input, /UK builders and homeowners planning building work/);
-  assert.doesNotMatch(requestBody.input, /generic example searches/i);
+  assert.equal(requestBodies.length, 7);
+  const [planBody, ...searchBodies] = requestBodies;
+  assert.equal(planBody.store, false);
+  assert.equal(planBody.max_output_tokens, DISCOVERABILITY_LIMITS.maxOutputTokens);
+  assert.equal(planBody.tools, undefined);
+  assert.equal(planBody.text.format.strict, true);
+  assert.match(planBody.input, /Proper Job/);
+  assert.match(planBody.input, /United Kingdom/);
+  assert.match(planBody.input, /building estimates from architectural drawings/);
+  assert.match(planBody.input, /UK builders and homeowners planning building work/);
+  for (const searchBody of searchBodies) {
+    assert.equal(searchBody.store, false);
+    assert.equal(searchBody.max_tool_calls, DISCOVERABILITY_LIMITS.maxToolCalls);
+    assert.equal(searchBody.max_output_tokens, DISCOVERABILITY_LIMITS.searchOutputTokens);
+    assert.deepEqual(searchBody.tools, [{ type: "web_search" }]);
+    assert.equal(searchBody.tool_choice, "required");
+  }
 });
 
 test("provider or invalid-output errors do not break the technical result", async () => {
@@ -98,16 +119,18 @@ test("provider or invalid-output errors do not break the technical result", asyn
   assert.doesNotMatch(JSON.stringify(result), /provider detail secret/);
 });
 
-test("rejects unsupported positive discovery claims", async () => {
-  const fetchImpl = async () => new Response(JSON.stringify({
-    output: [
+test("does not count provider claims without matching returned source evidence", async () => {
+  const fetchImpl = async (_url, init) => {
+    const body = JSON.parse(init.body);
+    if (!body.tools) return Response.json({ output: [{ type: "message", content: [{ type: "output_text", text: JSON.stringify(planResult) }] }] });
+    return Response.json({ output: [
       { type: "web_search_call", action: { sources: [{ url: "https://different.example/result" }] } },
-      { type: "message", content: [{ type: "output_text", text: JSON.stringify(modelResult) }] }
-    ]
-  }), { headers: { "content-type": "application/json" } });
+      { type: "message", content: [{ type: "output_text", text: JSON.stringify({ answer: "Proper Job is recommended.", providers: [{ name: "Proper Job", url: "https://unsupported.example/proper-job", appearance: "recommended" }] }) }] }
+    ] });
+  };
   const result = await checkDiscoverability(input, audit, { OPENAI_API_KEY: "not-a-real-key" }, fetchImpl);
-  assert.equal(result.status, "unavailable");
-  assert.equal(result.reason, "provider_or_output_error");
+  assert.equal(result.status, "complete");
+  assert.ok(result.questions.every((question) => question.appearance === "not_seen"));
 });
 
 test("combines exact counts without inventing a score", () => {

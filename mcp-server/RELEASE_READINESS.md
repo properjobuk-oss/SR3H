@@ -11,7 +11,7 @@
 - Input and output schemas scanned successfully in the OpenAI submission portal.
 - Accurate read-only, non-destructive and open-world annotations.
 - Rate limiting, bounded fetches, redirect validation, private-address rejection and production failure logging verified.
-- OpenAI requests use `store: false`, a strict output schema, a six-call tool limit and bounded output; provider failure leaves the technical check usable.
+- OpenAI requests use `store: false` and strict, bounded output schemas. Each of the six isolated question checks is restricted to one required web-search call; provider failure leaves the technical check usable.
 - Public support, privacy and terms URLs matching the verified publisher:
   - `https://sr3h.uk/ai-presence-support.html`
   - `https://sr3h.uk/ai-presence-privacy.html`
@@ -38,11 +38,13 @@ These are preparation materials, not evidence that OpenAI review has been reques
 
 ## Current version status
 
-- **Production and repository: `0.6.0`.** Cloudflare deployed Worker version `db9e6dc6-5d8a-44d6-bae5-b749fe004978` on 12 September 2026.
+- **Production and repository: `0.6.0`.** Cloudflare deployed Worker version `82fedc93-dd69-4587-8d02-14005de03e7a` on 12 September 2026.
 - The public health endpoint and MCP initialization both report `AIDO Discoverability Check` version `0.6.0`.
 - The deployed MCP advertises all four optional context fields and returns them through the audit result.
 - Version `0.6.0` distinguishes a source appearance, a mention and an explicit recommendation in each sampled AI answer, and moves the report limits into a quiet closing note.
-- The OpenAI API secret is not yet configured in Cloudflare. Production therefore returns a truthful technical-only result and marks the AI-assisted discovery sample unavailable.
+- The restricted `AIDO DISCOVERABILITY TEST` OpenAI key is configured as the encrypted `OPENAI_API_KEY` Cloudflare Worker secret. It has Responses write access and no Chat Completions, embeddings, realtime, images, moderation or other endpoint access.
+- The discovery flow now creates a bounded six-question plan and runs each question as an isolated required web search. Unbranded prompts never receive the target business name or domain. A positive appearance is counted only when the individual response includes matching source evidence.
+- A local end-to-end provider test using the production key completed all six isolated searches for Proper Job. It found the branded site and one sourced unbranded recommendation for drawing-based estimating; the four broader unbranded questions did not surface Proper Job.
 
 ## Production evidence for version 0.3.0 — 11 September 2026
 
@@ -72,6 +74,6 @@ These are preparation materials, not evidence that OpenAI review has been reques
 
 ## Version 0.6.0 remaining release gate
 
-Deployment, health, MCP connection, schema and technical-result checks are complete. Before plugin submission, configure the production OpenAI secret, run the full remote verifier, complete one real branded and one real unbranded check, confirm the plain-English output and review the provider cost and latency logs. Do not submit the plugin for review until those checks are recorded.
+Deployment, health, MCP connection, schema, technical-result checks, key configuration and a real six-search provider test are complete. Today's remote verifier retries reached the intentionally strict per-visitor daily allowance before the final deployment could be sampled through the public endpoint. After the UTC allowance resets, run the full remote verifier and one browser-form check, confirm the rendered plain-English output, and review provider cost and latency. Do not submit the plugin for review until those final public-path checks are recorded.
 
 OpenAI review has not been requested. The remaining draft cases above should be executed and recorded before submission.
