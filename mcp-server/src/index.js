@@ -7,7 +7,7 @@ import { UsageGuard, usageContext } from "./usage-guard.js";
 
 export { UsageGuard };
 
-const SERVICE_VERSION = "0.5.0";
+const SERVICE_VERSION = "0.6.0";
 const MAX_MCP_REQUEST_BYTES = 64_000;
 const MAX_WEB_REQUEST_BYTES = 8_000;
 const WEB_ORIGINS = new Set([
@@ -71,8 +71,9 @@ const auditResultSchema = z.object({
       kind: z.enum(["branded", "unbranded_category", "unbranded_problem", "unbranded_high_intent", "unbranded_differentiator", "unbranded_location"]),
       site_answered: z.boolean(),
       site_evidence_url: z.string().url().nullable(),
-      observed_in_search: z.boolean(),
+      appearance: z.enum(["not_seen", "source_only", "mentioned", "recommended"]),
       search_evidence_url: z.string().url().nullable(),
+      answer_summary: z.string(),
       finding: z.string()
     })),
     important_findings: z.array(z.string()).optional(),
@@ -83,7 +84,7 @@ const auditResultSchema = z.object({
   snapshot: z.object({
     access: z.object({ passed: z.number().int(), checked: z.number().int() }),
     understanding: z.object({ answered: z.number().int(), checked: z.number().int() }),
-    discovery: z.object({ branded_found: z.number().int(), branded_checked: z.number().int(), unbranded_found: z.number().int(), unbranded_checked: z.number().int() }),
+    discovery: z.object({ branded_found: z.number().int(), branded_checked: z.number().int(), unbranded_found: z.number().int(), unbranded_checked: z.number().int(), branded_recommended: z.number().int(), unbranded_recommended: z.number().int() }),
     outcomes: z.object({ status: z.literal("not_measured") })
   }).optional()
 });

@@ -292,10 +292,12 @@ function renderAiCheckResult(container, result, form) {
 
   const head = makeElement("div", "ai-check-result-head");
   const headCopy = document.createElement("div");
-  headCopy.append(makeElement("h3", "", discovery.status === "complete" ? result.summary : titles[state] || titles.partial));
+  headCopy.append(makeElement("h3", "", discovery.status === "complete" ? result.summary : "Website readiness check complete."));
   headCopy.append(makeElement("p", "", discovery.status === "complete"
-    ? "A small, dated sample of what the website explains and what appeared in AI-assisted search."
-    : discovery.note || result.summary));
+    ? "A dated sample of six AI-assisted answers: one branded question and five questions based on customer needs."
+    : quotaNotice
+      ? "The AI answer sample was not run today. The technical website check below still completed."
+      : "The AI answer sample was not run. This result only checks whether AI search can access the site and understand its public information."));
   const stateLabel = makeElement("span", "ai-check-state", stateLabels[state] || stateLabels.partial);
   stateLabel.dataset.state = state;
   head.append(headCopy, stateLabel);
@@ -306,8 +308,8 @@ function renderAiCheckResult(container, result, form) {
     [
       ["Website access", `${access.passed} of ${access.checked} checks passed`],
       ["Offer clarity", `${understanding.answered} of ${understanding.checked} questions answered`],
-      ["Observed discovery", `Branded ${observed.branded_found} of ${observed.branded_checked} · Unbranded ${observed.unbranded_found} of ${observed.unbranded_checked}`],
-      ["Customer outcomes", "Not measured"]
+      ["AI visibility", `Appeared in ${observed.branded_found + observed.unbranded_found} of ${observed.branded_checked + observed.unbranded_checked} answers`],
+      ["Recommendations", `Recommended in ${(observed.branded_recommended || 0) + (observed.unbranded_recommended || 0)} of ${observed.branded_checked + observed.unbranded_checked} answers`]
     ].forEach(([label, value]) => {
       const item = makeElement("div", "ai-check-snapshot-item");
       item.append(makeElement("span", "", label), makeElement("strong", "", value));
@@ -329,22 +331,28 @@ function renderAiCheckResult(container, result, form) {
   const sampledFindings = discovery.status === "complete"
     ? (discovery.important_findings || []).map((text) => ({ text }))
     : [];
-  findings.append(makeElement("h4", "", sampledFindings.length ? "What this suggests" : gaps.length ? "What to improve" : "How to improve AI discoverability"));
+  findings.append(makeElement("h4", "", sampledFindings.length ? "What matters" : gaps.length ? "What to improve first" : "How to improve AI readiness"));
   appendResultList(findings, sampledFindings.length ? sampledFindings : gaps.length ? gaps : discoverabilityGuidance);
 
   const evidence = makeElement("div", "ai-check-result-block");
   evidence.append(makeElement("h4", "", discovery.status === "complete" ? "Questions sampled" : "What we checked"));
+  const appearanceLabels = {
+    not_seen: "Not seen",
+    source_only: "Source only",
+    mentioned: "Mentioned",
+    recommended: "Recommended"
+  };
   appendResultList(evidence, discovery.status === "complete"
-    ? (discovery.questions || []).slice(0, 6).map((item) => ({ title: item.question, text: item.finding, source: item.search_evidence_url || item.site_evidence_url }))
+    ? (discovery.questions || []).slice(0, 6).map((item) => ({
+      title: `${appearanceLabels[item.appearance] || "Checked"} · ${item.question}`,
+      text: item.answer_summary || item.finding,
+      source: item.search_evidence_url || item.site_evidence_url
+    }))
     : (result.observations || []).slice(0, 5).map((item) => ({ title: item.label, text: item.evidence, source: item.source_url })));
   grid.append(findings, evidence);
 
-  const limits = makeElement("div", "ai-check-result-block");
-  limits.append(makeElement("h4", "", "Limits of this check"));
-  appendResultList(limits, (discovery.limits || result.unknowns || []).slice(0, 3).map((text) => ({ text })));
-
   const next = makeElement("p", "ai-check-next");
-  next.append(makeElement("strong", "", "Next useful step"));
+  next.append(makeElement("strong", "", "What to do next"));
   next.append(document.createTextNode(result.next_action));
 
   const actions = makeElement("div", "ai-check-result-actions");
@@ -362,8 +370,12 @@ function renderAiCheckResult(container, result, form) {
   });
   actions.append(contact, reset);
 
-  const fuller = makeElement("p", "ai-check-fuller", "Want the full picture? We can test more customer questions, compare competing services and connect discoverability with search impressions, referrals and enquiries.");
-  container.replaceChildren(...[quotaNotice, head, snapshot, grid, limits, next, fuller, actions].filter(Boolean));
+  const fuller = makeElement("p", "ai-check-fuller", discovery.status === "complete"
+    ? "A deeper AIDO review tests more customer questions across AI services, separates mentions from genuine recommendations, compares competing businesses and checks which changes improve visibility."
+    : "To understand actual AI visibility, the next stage is to test the questions customers ask, record whether the business is mentioned or recommended, and compare it with the alternatives that appear instead.");
+  const limitItems = (discovery.limits || result.unknowns || []).slice(0, 3);
+  const limits = makeElement("p", "ai-check-limits", `About this check: ${limitItems.join(" ")}`);
+  container.replaceChildren(...[quotaNotice, head, snapshot, grid, next, fuller, actions, limits].filter(Boolean));
   container.hidden = false;
   form.hidden = true;
   container.focus?.();

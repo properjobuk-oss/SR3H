@@ -38,9 +38,10 @@ These are preparation materials, not evidence that OpenAI review has been reques
 
 ## Current version status
 
-- **Production and repository: `0.5.0`.** Cloudflare deployed Worker version `624d1d48-7d86-4fb4-8ae8-5ea67e996a53` on 12 September 2026.
-- The public health endpoint and MCP initialization both report `AIDO Discoverability Check` version `0.5.0`.
+- **Production and repository: `0.6.0`.** Cloudflare deployed Worker version `db9e6dc6-5d8a-44d6-bae5-b749fe004978` on 12 September 2026.
+- The public health endpoint and MCP initialization both report `AIDO Discoverability Check` version `0.6.0`.
 - The deployed MCP advertises all four optional context fields and returns them through the audit result.
+- Version `0.6.0` distinguishes a source appearance, a mention and an explicit recommendation in each sampled AI answer, and moves the report limits into a quiet closing note.
 - The OpenAI API secret is not yet configured in Cloudflare. Production therefore returns a truthful technical-only result and marks the AI-assisted discovery sample unavailable.
 
 ## Production evidence for version 0.3.0 — 11 September 2026
@@ -64,12 +65,12 @@ These are preparation materials, not evidence that OpenAI review has been reques
 - The live technical audit completed and returned structured output.
 - The AI-assisted sample returned `unavailable`, as designed, because the production OpenAI secret is not configured.
 
-## Local evidence for version 0.5.0
+## Local evidence for version 0.6.0
 
 - A SQLite-backed Durable Object is implemented to enforce the paid layer's exact daily ceiling and per-visitor and per-target allowances. Quota-storage failure disables only the paid layer rather than failing open.
 - Dependency audit reported zero known vulnerabilities; 35 automated tests passed, including the Cloudflare execution-context regression, website request limits and persistent daily usage ceilings.
 
-## Version 0.5.0 remaining release gate
+## Version 0.6.0 remaining release gate
 
 Deployment, health, MCP connection, schema and technical-result checks are complete. Before plugin submission, configure the production OpenAI secret, run the full remote verifier, complete one real branded and one real unbranded check, confirm the plain-English output and review the provider cost and latency logs. Do not submit the plugin for review until those checks are recorded.
 

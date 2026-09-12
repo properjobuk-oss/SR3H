@@ -8,7 +8,7 @@ The only required input is the public website URL. Optional business name, locat
 
 ## Version status
 
-- Production and the repository report `0.5.0`.
+- Production and the repository report `0.6.0`.
 - The public health endpoint is `https://mcp.sr3h.uk/health` and the MCP endpoint is `https://mcp.sr3h.uk/mcp`.
 - The technical check remains available if the optional paid discovery layer is unavailable.
 

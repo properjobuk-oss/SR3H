@@ -31,8 +31,9 @@ const modelResult = {
     kind,
     site_answered: index < 5,
     site_evidence_url: "https://proper-job.example/",
-    observed_in_search: index === 0,
+    appearance: index === 0 ? "mentioned" : "not_seen",
     search_evidence_url: index === 0 ? "https://search.example/proper-job" : null,
+    answer_summary: index === 0 ? "The answer named Proper Job and described its estimating service." : "The answer discussed other ways to compare building estimates.",
     finding: index === 0 ? "Proper Job appeared in the branded search." : "Proper Job was not observed in this search sample."
   })),
   important_findings: ["The offer is clear.", "Unbranded discovery is the main gap."],
@@ -112,8 +113,9 @@ test("rejects unsupported positive discovery claims", async () => {
 test("combines exact counts without inventing a score", () => {
   const discovery = { status: "complete", checked_at: new Date().toISOString(), model: "test", sources: [], limits: [], ...modelResult };
   const result = combineDiscoverabilityResult(audit, discovery);
-  assert.deepEqual(result.snapshot.discovery, { branded_found: 1, branded_checked: 1, unbranded_found: 0, unbranded_checked: 5 });
+  assert.deepEqual(result.snapshot.discovery, { branded_found: 1, branded_checked: 1, unbranded_found: 0, unbranded_checked: 5, branded_recommended: 0, unbranded_recommended: 0 });
   assert.deepEqual(result.snapshot.understanding, { answered: 5, checked: 6 });
   assert.equal("score" in result.snapshot.discovery, false);
   assert.equal("_analysis_context" in result, false);
+  assert.equal(result.summary, "Proper Job was found by name, but did not appear in five customer-need questions.");
 });

@@ -1,6 +1,6 @@
 {
   "name": "@sr3h/ai-presence-checker",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "type": "module",
   "description": "Read-only AIDO website access, understanding and AI discoverability checks.",

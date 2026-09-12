@@ -22,7 +22,7 @@ test("MCP client initializes, lists the annotated tool and calls it", async () =
   await client.connect(clientTransport);
   try {
     const listed = await client.listTools();
-    assert.equal(client.getServerVersion().version, "0.5.0");
+    assert.equal(client.getServerVersion().version, "0.6.0");
     assert.equal(listed.tools.length, 1);
     assert.equal(listed.tools[0].name, "check_ai_presence");
     assert.equal(listed.tools[0].annotations.readOnlyHint, true);
@@ -96,7 +96,7 @@ test("HTTP health and error responses carry production safety headers", async ()
   assert.equal(health.status, 200);
   assert.equal(health.headers.get("cache-control"), "no-store");
   assert.equal(health.headers.get("x-content-type-options"), "nosniff");
-  assert.equal((await health.json()).version, "0.5.0");
+  assert.equal((await health.json()).version, "0.6.0");
 
   const missing = await handleRequest(new Request("https://mcp.example/nope"));
   assert.equal(missing.status, 404);
