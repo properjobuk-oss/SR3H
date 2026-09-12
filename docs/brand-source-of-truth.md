@@ -36,6 +36,8 @@ Brane: Personal knowledge for more useful AI, with control over what is shared a
 
 Conchup: Software engineering with a lasting record of requirements, decisions and the evidence behind a build.
 
+Conchup page: Conchup is a workspace for complex software projects. It keeps requirements, decisions, implementation, tests and evidence connected, so a product can change without losing why it was built that way.
+
 NextUp: A personal viewing log for keeping track and deciding what to watch next.
 
 Drift: A place-discovery tool for exploring nearby destinations and deciding where to go next.
@@ -52,6 +54,8 @@ Clarity: A space for reflection, meditation and Buddhist learning, bringing dail
 
 AIDO Labs: AIDO Labs helps companies understand when AI finds and recommends them, and what influences the result. It tests changes to see what improves their visibility.
 
+AIDO Labs page: AIDO Labs helps a company understand when AI finds and recommends it, what influences the result and whether a tested change improves visibility. It records the question, system, date, sources and limits behind each result. Visibility alone is not proof of commercial value.
+
 ## Research Language
 
 How AI understands a task and finds the right help.
@@ -59,6 +63,8 @@ How AI understands a task and finds the right help.
 Our research spans human–AI interfaces, specialist knowledge and how AI finds and recommends products and services. We test whether changes lead to better decisions and real-world outcomes.
 
 Conchup: We explore how AI-assisted development can carry requirements and decisions from an idea through to a tested build, without losing why things changed.
+
+Conchup future direction: A governed engineering system that can assess changed requirements, rebuild affected parts and return evidence for human review before release. Present this as direction, not an existing released capability.
 
 Brane: We explore how personal knowledge can make AI more useful without treating every part of a person’s life as one shared memory.
 

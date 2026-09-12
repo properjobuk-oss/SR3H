@@ -43,7 +43,7 @@
     <link rel="manifest" href="/site.webmanifest?v=20260703-1">
     <link rel="preload" href="assets/sr3h-quiet-material.jpg" as="image">
     <link rel="preload" href="assets/sr3h-logo-reveal.mp4?v=20260702-6" as="video" type="video/mp4">
-    <link rel="stylesheet" href="styles.css?v=20260911-2">
+    <link rel="stylesheet" href="styles.css?v=20260912-2">
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -223,13 +223,14 @@
     </div>
 
     <header class="site-header" aria-label="SR3H">
-      <a class="brand" href="./" aria-label="SR3H home">
+      <a class="brand" href="index.html" aria-label="SR3H home">
         <img src="assets/sr3h-logo-header.png" width="940" height="380" alt="SR3H">
       </a>
-      <nav class="nav" aria-label="Primary">
+      <nav class="nav nav--full" aria-label="Primary">
         <a href="#work">Work</a>
         <a href="#ai-check">AI check</a>
         <a href="#platform">Research</a>
+        <a href="journal.html">Journal</a>
         <a href="#community">Lunchtime Websites</a>
         <a href="#contact">Contact</a>
       </nav>
@@ -259,7 +260,7 @@
           </div>
 
           <div class="project-grid featured-projects">
-            <article class="work-item project-card project-card--conchup project-card--phone project-card--hover-preview">
+            <a class="work-item project-card project-card--conchup project-card--phone project-card--hover-preview project-card--linked" href="conchup.html" aria-label="Explore Conchup">
               <div class="project-media project-media--conchup">
                 <img src="assets/projects/conchup-mark.png" alt="Conchup identity mark" loading="lazy" decoding="async">
                 <img class="project-media-alt" src="assets/projects/conchup-hover.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
@@ -267,9 +268,9 @@
               <div class="project-content">
                 <p class="project-label">Persistent engineering context</p>
                 <h3>Conchup</h3>
-                <p>Software engineering with a lasting record of requirements, decisions and the evidence behind a build.</p>
+                <p>Software engineering with a lasting record of requirements, decisions and the evidence behind a build. <span class="project-page-link">Explore ↗</span></p>
               </div>
-            </article>
+            </a>
 
             <article class="work-item project-card project-card--brane project-card--hover-preview">
               <div class="project-media">
@@ -291,20 +292,20 @@
               <div class="project-content">
                 <p class="project-label">Construction pricing</p>
                 <h3>Proper Job</h3>
-                <p>Clear guide-price ranges for UK building work, showing the assumptions and cost drivers behind each estimate. Also available as an MCP app for AI assistants.</p>
+                <p>Clear guide-price ranges for UK building work, showing the assumptions and cost drivers behind each estimate. Also available as an MCP app for AI assistants. <a class="project-link" href="https://www.proper-job.uk/" target="_blank" rel="noopener noreferrer" aria-label="Visit the Proper Job website">Website ↗</a></p>
               </div>
             </article>
-            <article class="work-item project-card project-card--nextup project-card--phone project-card--hover-preview">
+            <a class="work-item project-card project-card--aido project-card--hover-preview project-card--linked" href="aido-labs.html" aria-label="Explore AIDO Labs">
               <div class="project-media">
-                <img src="assets/projects/nextup-welcome.jpg" alt="NextUp welcome screen" loading="lazy" decoding="async">
-                <img class="project-media-alt" src="assets/projects/nextup-hover.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="assets/projects/aido-demand-intelligence.png" alt="AIDO Demand Intelligence" loading="lazy" decoding="async">
+                <img class="project-media-alt" src="assets/projects/aido-discovery-result.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
               </div>
               <div class="project-content">
-                <p class="project-label">Viewing tracker</p>
-                <h3>NextUp</h3>
-                <p>A personal viewing log for keeping track and deciding what to watch next.</p>
+                <p class="project-label">Demand intelligence</p>
+                <h3>AIDO Labs</h3>
+                <p>AIDO Labs helps companies understand when AI finds and recommends them, and what influences the result. It tests changes to see what improves their visibility. <span class="project-page-link">Explore ↗</span></p>
               </div>
-            </article>
+            </a>
 
             <article class="work-item project-card project-card--redthread project-card--phone project-card--hover-preview">
               <div class="project-media project-media--phone">
@@ -326,7 +327,7 @@
               <div class="project-content">
                 <p class="project-label">Route navigation</p>
                 <h3>Good Route</h3>
-                <p>Navigation that preserves the rider’s chosen route and makes rerouting an explicit decision.</p>
+                <p>Navigation that preserves the rider’s chosen route and makes rerouting an explicit decision. <a class="project-link" href="https://goodroute.app/" target="_blank" rel="noopener noreferrer" aria-label="Visit the Good Route website">Website ↗</a></p>
               </div>
             </article>
 
@@ -350,19 +351,19 @@
               <div class="project-content">
                 <p class="project-label">Reflection and practice</p>
                 <h3>Clarity</h3>
-                <p>A space for reflection, meditation and Buddhist learning, bringing daily practice into everyday life.</p>
+                <p>A space for reflection, meditation and Buddhist learning, bringing daily practice into everyday life. <a class="project-link" href="https://clarityapp.uk/" target="_blank" rel="noopener noreferrer" aria-label="Visit the Clarity website">Website ↗</a></p>
               </div>
             </article>
 
-            <article class="work-item project-card project-card--aido project-card--hover-preview">
+            <article class="work-item project-card project-card--nextup project-card--phone project-card--hover-preview">
               <div class="project-media">
-                <img src="assets/projects/aido-demand-intelligence.png" alt="AIDO Demand Intelligence" loading="lazy" decoding="async">
-                <img class="project-media-alt" src="assets/projects/aido-discovery-result.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                <img src="assets/projects/nextup-welcome.jpg" alt="NextUp welcome screen" loading="lazy" decoding="async">
+                <img class="project-media-alt" src="assets/projects/nextup-hover.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
               </div>
               <div class="project-content">
-                <p class="project-label">Demand intelligence</p>
-                <h3>AIDO Labs</h3>
-                <p>AIDO Labs helps companies understand when AI finds and recommends them, and what influences the result. It tests changes to see what improves their visibility.</p>
+                <p class="project-label">Viewing tracker</p>
+                <h3>NextUp</h3>
+                <p>A personal viewing log for keeping track and deciding what to watch next.</p>
               </div>
             </article>
           </div>
@@ -472,11 +473,11 @@
 
     <footer class="site-footer">
       <p class="footer-note">
-        <img class="footer-mark" src="/favicon.svg?v=20260702-4" width="50" height="54" alt="" aria-hidden="true">
+        <img class="footer-mark" src="favicon.svg?v=20260702-4" width="50" height="54" alt="" aria-hidden="true">
         <span>SR3H LTD. Company number 17281224. Registered in England and Wales. Registered office: 2 Pavilion Court, 600 Pavilion Drive, Northampton, United Kingdom, NN4 7SL.</span>
       </p>
-      <nav class="footer-links" aria-label="AI Presence Check information">
-        <a href="ai-presence-support.html">AI Presence Check support</a>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="mailto:hello@sr3h.uk">Contact</a>
         <a href="ai-presence-privacy.html">Privacy</a>
         <a href="ai-presence-terms.html">Terms</a>
       </nav>

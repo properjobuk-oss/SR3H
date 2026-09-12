@@ -17,15 +17,19 @@ Machine-readable services: https://sr3h.uk/ai-services.json
 
 - Signal: controlled, evidence-led research into how AI systems find, interpret and recommend businesses, products and services, and whether measured changes improve real outcomes.
 - Market Loop: helps businesses understand how AI finds and recommends them, improve how they are represented, and learn from which customers actually convert.
-- AIDO Labs: helps companies understand when AI finds and recommends them, what influences the result and which tested changes improve visibility.
+- AIDO Labs: helps companies understand when AI finds and recommends them, what influences the result and which tested changes improve visibility. https://sr3h.uk/aido-labs.html
 
 ## Selected products
 
-- Conchup: software engineering with a lasting record of requirements, decisions and the evidence behind a build.
+- Conchup: keeps software requirements, decisions, implementation, tests and evidence connected as a product changes. https://sr3h.uk/conchup.html
 - Brane: personal knowledge for more useful AI, with control over what is shared and what stays private.
 - Proper Job: explainable guide-price ranges for UK building work, also available through MCP tools for AI assistants.
 - RedThread: private, evidence-linked briefings from complex source material.
 - Good Route: motorcycle navigation that preserves the rider's chosen route and keeps rerouting under explicit control.
+
+## Journal
+
+SR3H publishes notes on AI, software engineering, product research and the systems it is building at https://sr3h.uk/journal.html.
 
 ## AI Visibility Check
 
