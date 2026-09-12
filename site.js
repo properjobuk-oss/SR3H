@@ -48,7 +48,10 @@ function initFreshPageStart() {
     window.history.scrollRestoration = "manual";
   }
 
-  if (window.location.hash) {
+  const requestedHash = window.location.hash;
+  const isSilentHomeNavigation = requestedHash === "#home";
+
+  if (isSilentHomeNavigation) {
     window.history.replaceState(
       null,
       "",
@@ -56,8 +59,10 @@ function initFreshPageStart() {
     );
   }
 
-  window.scrollTo(0, 0);
-  window.addEventListener("pageshow", () => window.scrollTo(0, 0), { once: true });
+  if (!requestedHash || isSilentHomeNavigation) {
+    window.scrollTo(0, 0);
+    window.addEventListener("pageshow", () => window.scrollTo(0, 0), { once: true });
+  }
 }
 
 function initIntro() {
