@@ -36,6 +36,25 @@
       }
     }
   ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "USAGE_GUARD",
+        "class_name": "UsageGuard"
+      }
+    ]
+  },
+  "exports": {
+    "UsageGuard": {
+      "type": "durable-object",
+      "storage": "sqlite"
+    }
+  },
+  "vars": {
+    "DAILY_DISCOVERY_LIMIT": "20",
+    "DAILY_DISCOVERY_VISITOR_LIMIT": "2",
+    "DAILY_DISCOVERY_TARGET_LIMIT": "2"
+  },
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1

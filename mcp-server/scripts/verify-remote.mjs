@@ -18,7 +18,7 @@ try {
   if (health.headers.get("x-content-type-options") !== "nosniff") throw new Error("health endpoint is missing nosniff");
   const healthBody = await health.json();
   if (healthBody.ok !== true) throw new Error("health endpoint did not report ok");
-  if (healthBody.version !== "0.4.0") throw new Error(`expected version 0.4.0, received ${healthBody.version || "unknown"}`);
+  if (healthBody.version !== "0.5.0") throw new Error(`expected version 0.5.0, received ${healthBody.version || "unknown"}`);
 
   await client.connect(transport);
   const serverVersion = client.getServerVersion();

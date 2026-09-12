@@ -44,6 +44,20 @@ test("returns a clear fallback when the model service is not configured", async 
   assert.equal(result.reason, "not_configured");
 });
 
+test("does not call the paid provider when the persistent allowance is exhausted", async () => {
+  const usageGuard = {
+    idFromName: () => "guard-id",
+    get: () => ({ fetch: async () => Response.json({ allowed: false, reason: "global_daily_limit" }) })
+  };
+  const result = await checkDiscoverability(input, audit, {
+    OPENAI_API_KEY: "test-key",
+    USAGE_GUARD: usageGuard
+  }, async () => { throw new Error("provider must not be called"); }, { visitor: "visitor-a" });
+  assert.equal(result.status, "unavailable");
+  assert.equal(result.reason, "global_daily_limit");
+  assert.match(result.note, /allowance has been used/i);
+});
+
 test("uses bounded search, structured output and disabled API storage", async () => {
   let requestBody;
   const fetchImpl = async (url, init) => {

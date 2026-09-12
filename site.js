@@ -281,6 +281,15 @@ function renderAiCheckResult(container, result, form) {
     blocked: "Action needed"
   };
 
+  const quotaMessages = {
+    global_daily_limit: "Today’s free AI checks have been used. Please try again tomorrow.",
+    visitor_daily_limit: "You’ve used today’s free AI checks. Please try again tomorrow.",
+    target_daily_limit: "This website has reached today’s free check limit. Please try again tomorrow."
+  };
+  const quotaNotice = quotaMessages[discovery.reason]
+    ? makeElement("p", "ai-check-quota-notice", quotaMessages[discovery.reason])
+    : null;
+
   const head = makeElement("div", "ai-check-result-head");
   const headCopy = document.createElement("div");
   headCopy.append(makeElement("h3", "", discovery.status === "complete" ? result.summary : titles[state] || titles.partial));
@@ -354,7 +363,7 @@ function renderAiCheckResult(container, result, form) {
   actions.append(contact, reset);
 
   const fuller = makeElement("p", "ai-check-fuller", "Want the full picture? We can test more customer questions, compare competing services and connect discoverability with search impressions, referrals and enquiries.");
-  container.replaceChildren(head, snapshot, grid, limits, next, fuller, actions);
+  container.replaceChildren(...[quotaNotice, head, snapshot, grid, limits, next, fuller, actions].filter(Boolean));
   container.hidden = false;
   form.hidden = true;
   container.focus?.();

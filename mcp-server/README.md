@@ -22,7 +22,7 @@ Verify a deployed endpoint with the same SDK client used by MCP consumers:
 npm run verify:remote -- https://your-worker.example/mcp https://sr3h.uk
 ```
 
-Production uses separate Cloudflare rate limits for technical checks and paid discovery samples, a 64 KB MCP request limit, bounded website fetches, at most six web-search tool calls, a short structured response and no-store OpenAI API requests. Completed discovery results may be cached for 24 hours to avoid paying for the same check repeatedly. Submitted page contents are not written to application logs or an application database. Cloudflare rate limits are abuse controls rather than exact accounting limits.
+Production uses separate Cloudflare burst limits for technical checks and paid discovery samples, plus a persistent daily allowance for the paid layer: 20 samples in total, no more than two per visitor and two per target website per UTC day. Once an allowance is reached, the technical check remains available but no paid model call is made. Requests also have a 64 KB MCP limit, bounded website fetches, at most six web-search tool calls, a short structured response and no-store OpenAI API requests. Completed discovery results may be cached for 24 hours to avoid paying for the same check repeatedly. Submitted page contents and raw visitor IP addresses are not written to application logs or an application database.
 
 Set the OpenAI secret without committing it:
 

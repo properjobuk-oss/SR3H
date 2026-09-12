@@ -3,8 +3,11 @@ import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/
 import { z } from "zod";
 import { auditWebsite } from "./audit.js";
 import { checkDiscoverability, combineDiscoverabilityResult } from "./discoverability.js";
+import { UsageGuard, usageContext } from "./usage-guard.js";
 
-const SERVICE_VERSION = "0.4.0";
+export { UsageGuard };
+
+const SERVICE_VERSION = "0.5.0";
 const MAX_MCP_REQUEST_BYTES = 64_000;
 const MAX_WEB_REQUEST_BYTES = 8_000;
 const WEB_ORIGINS = new Set([
@@ -125,7 +128,7 @@ function conciseResult(result) {
   return `${lead}\nWhat to improve:\n${gaps}\nNext useful step: ${result.next_action}`;
 }
 
-export function createServer(fetchImpl = fetch, env = {}) {
+export function createServer(fetchImpl = fetch, env = {}, requestContext = {}) {
   const server = new McpServer({
     name: "AIDO Discoverability Check",
     version: SERVICE_VERSION,
@@ -155,7 +158,7 @@ export function createServer(fetchImpl = fetch, env = {}) {
         allowed = (await env.DISCOVERY_RATE_LIMITER.limit({ key: `mcp-discovery-target:${target}` })).success;
       }
       const discovery = allowed
-        ? await checkDiscoverability(input, audit, env, fetchImpl)
+        ? await checkDiscoverability(input, audit, env, fetchImpl, requestContext)
         : { status: "unavailable", reason: "rate_limited", note: "The live understanding and discovery sample reached its short-term limit. The technical website check still completed.", questions: [], sources: [] };
       const result = combineDiscoverabilityResult(audit, discovery);
       return {
@@ -286,14 +289,15 @@ async function handleWebCheck(request, env, fetchImpl) {
 
   try {
     const audit = await auditWebsite(input, fetchImpl, { includeAnalysisContext: true });
+    const requestContext = await usageContext(request, env);
     let discovery;
     if (env.OPENAI_API_KEY && env.DISCOVERY_RATE_LIMITER) {
       const allowed = await rateLimitAudit(env, target, request, "discovery");
       discovery = allowed
-        ? await checkDiscoverability(input, audit, env, fetchImpl)
+        ? await checkDiscoverability(input, audit, env, fetchImpl, requestContext)
         : { status: "unavailable", reason: "rate_limited", note: "The live understanding and discovery sample reached its short-term limit. The technical website check still completed.", questions: [], sources: [] };
     } else {
-      discovery = await checkDiscoverability(input, audit, env, fetchImpl);
+      discovery = await checkDiscoverability(input, audit, env, fetchImpl, requestContext);
     }
     const result = combineDiscoverabilityResult(audit, discovery);
     return webCors(jsonResponse({ result }), origin);
@@ -348,7 +352,7 @@ export async function handleRequest(request, env = {}, fetchImpl = fetch) {
   }
 
   try {
-    const server = createServer(fetchImpl, env);
+    const server = createServer(fetchImpl, env, await usageContext(request, env));
     const transport = new WebStandardStreamableHTTPServerTransport({ enableJsonResponse: true });
     await server.connect(transport);
     return cors(await transport.handleRequest(request));

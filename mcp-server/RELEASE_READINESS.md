@@ -36,7 +36,7 @@
 
 These are preparation materials, not evidence that OpenAI review has been requested or passed.
 
-## Version 0.4.0 release gate
+## Version 0.5.0 release gate
 
 The implementation and local tests are not deployment evidence. Before release, configure the production OpenAI secret, deploy the Worker, run the remote verifier, complete one real branded and one real unbranded check, confirm the plain-English output and review the provider cost/latency logs. Do not submit the MCP for review until those checks are recorded.
 
@@ -52,6 +52,7 @@ The implementation and local tests are not deployment evidence. Before release, 
 - The website route is restricted to approved SR3H and local-preview browser origins, rejects oversized and honeypot submissions, blocks private-network targets, and uses a separate five-checks-per-minute limiter for both visitor and target keys.
 - The complete local website form was verified in a browser against the deployed route, returning a sourced `clear` result for `sr3h.uk` with explicit unknowns and no score.
 - Cloudflare's rate-limit bindings are deployed and their rejection branches are unit tested. Platform limits are intentionally eventually consistent, so burst tests are not treated as proof of a hard quota.
-- Dependency audit reported zero known vulnerabilities; 23 automated tests passed, including the Cloudflare execution-context regression and website request-limit checks.
+- A SQLite-backed Durable Object enforces the paid layer's exact daily ceiling and per-visitor and per-target allowances. Quota-storage failure disables only the paid layer rather than failing open.
+- Dependency audit reported zero known vulnerabilities; 35 automated tests passed, including the Cloudflare execution-context regression, website request limits and persistent daily usage ceilings.
 
 OpenAI review has not been requested. The remaining draft cases above should be executed and recorded before submission.

@@ -1,3 +1,5 @@
+import { reserveDiscoveryUsage } from "./usage-guard.js";
+
 const OPENAI_URL = "https://api.openai.com/v1/responses";
 const DEFAULT_MODEL = "gpt-5.4-mini";
 const MAX_OUTPUT_TOKENS = 1800;
@@ -98,11 +100,11 @@ function validateResult(value, fallbackBusiness) {
   };
 }
 
-function unavailable(reason = "not_configured") {
+function unavailable(reason = "not_configured", note = "The live understanding and discovery sample was not available. The technical website check still completed.") {
   return {
     status: "unavailable",
     reason,
-    note: "The live understanding and discovery sample was not available. The technical website check still completed.",
+    note,
     questions: [],
     sources: []
   };
@@ -146,12 +148,21 @@ async function writeCache(input, auditResult, result) {
   }
 }
 
-export async function checkDiscoverability(input, auditResult, env = {}, fetchImpl = fetch) {
+export async function checkDiscoverability(input, auditResult, env = {}, fetchImpl = fetch, context = {}) {
   if (!env.OPENAI_API_KEY) return unavailable();
   const pages = auditResult._analysis_context?.pages || [];
   if (!pages.length) return unavailable("no_page_context");
   const cached = await readCache(input, auditResult);
   if (cached) return { ...cached, cached: true };
+
+  const target = new URL(auditResult.audit.final_url).hostname.toLowerCase();
+  const reservation = await reserveDiscoveryUsage(env, target, context);
+  if (!reservation.allowed) {
+    const note = reservation.reason === "quota_unavailable"
+      ? "The live discovery sample is temporarily unavailable. The technical website check still completed."
+      : "The live discovery allowance has been used for now. The technical website check still completed.";
+    return unavailable(reservation.reason || "daily_limit", note);
+  }
 
   const supplied = {
     business_name: input.business_name || null,
