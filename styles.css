@@ -262,6 +262,7 @@ h3 { margin: 0 0 12px; font-size: clamp(26px, 2.2vw, 36px); font-weight: 570; le
 .journal-hero h1 { max-width: 1050px; margin-bottom: 0; font-size: clamp(50px, 7.6vw, 108px); }
 .journal-section { padding: clamp(80px, 10vw, 140px) max(var(--page-pad), env(safe-area-inset-right)) clamp(100px, 14vw, 200px) max(var(--page-pad), env(safe-area-inset-left)); background: #fff; }
 .journal-entry { margin-top: clamp(30px, 5vw, 60px); border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); }
+.journal-entry + .journal-entry { margin-top: 0; border-top: 0; }
 .journal-article-summary { display: grid; position: relative; padding: clamp(34px, 5vw, 66px) clamp(48px, 7vw, 112px) clamp(34px, 5vw, 66px) 0; cursor: pointer; list-style: none; }
 .journal-article-summary::-webkit-details-marker { display: none; }
 .journal-article-summary::marker { display: none; content: ""; }
