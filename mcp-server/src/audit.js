@@ -1,13 +1,19 @@
 import { validatePublicUrl } from "./url-safety.js";
+import { readBoundedText } from "./bounded-body.js";
 
 export const LIMITS = Object.freeze({ redirects: 4, bytes: 1_000_000, timeoutMs: 10_000, contextPages: 5, contextChars: 50_000 });
 const USER_AGENT = "AIDO-DiscoverabilityCheck/0.4 (+https://sr3h.uk/ai-presence-support.html)";
 
+function codePoint(value) {
+  return Number.isInteger(value) && value > 0 && value <= 0x10ffff && !(value >= 0xd800 && value <= 0xdfff)
+    ? String.fromCodePoint(value) : '\ufffd';
+}
+
 function compactSpace(value = "") {
   return value.replace(/&amp;/gi, "&").replace(/&quot;/gi, '"')
     .replace(/&#39;|&apos;/gi, "'").replace(/&lt;/gi, "<")
-    .replace(/&gt;/gi, ">").replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
-    .replace(/&#x([\da-f]+);/gi, (_, code) => String.fromCodePoint(Number.parseInt(code, 16)))
+    .replace(/&gt;/gi, ">").replace(/&#(\d+);/g, (_, code) => codePoint(Number(code)))
+    .replace(/&#x([\da-f]+);/gi, (_, code) => codePoint(Number.parseInt(code, 16)))
     .replace(/\s+/g, " ").trim();
 }
 
@@ -52,6 +58,7 @@ async function readLimitedText(response, limit = LIMITS.bytes) {
 async function safeFetch(startUrl, fetchImpl, { accept = "text/html,*/*;q=0.8" } = {}) {
   let current = validatePublicUrl(startUrl);
   for (let redirects = 0; redirects <= LIMITS.redirects; redirects += 1) {
+    const started = Date.now();
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), LIMITS.timeoutMs);
     let response;
@@ -62,17 +69,22 @@ async function safeFetch(startUrl, fetchImpl, { accept = "text/html,*/*;q=0.8" }
         headers: { accept, "user-agent": USER_AGENT },
         signal: controller.signal
       });
-    } finally {
-      clearTimeout(timeout);
-    }
     if ([301, 302, 303, 307, 308].includes(response.status)) {
+      void response.body?.cancel().catch(() => {});
       const location = response.headers.get("location");
       if (!location) throw new Error("Website returned a redirect without a destination.");
       if (redirects === LIMITS.redirects) throw new Error("Website exceeded the redirect limit.");
       current = validatePublicUrl(new URL(location, current).href);
       continue;
     }
-    return { response, finalUrl: current };
+    let body;
+    try { body = await readBoundedText(response, LIMITS.bytes, Math.max(1, LIMITS.timeoutMs - (Date.now() - started))); }
+    catch (error) {
+      if (error.message === 'request_too_large') throw new Error('Response is larger than the 1 MB audit limit.');
+      throw error;
+    }
+    return { response: new Response(body || null, { status: response.status, headers: response.headers }), finalUrl: current };
+    } finally { clearTimeout(timeout); }
   }
   throw new Error("Website exceeded the redirect limit.");
 }

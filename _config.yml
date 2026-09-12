@@ -1,0 +1,7 @@
+# Keep server code and internal working documents out of the GitHub Pages build.
+# This does not make files in the GitHub repository private.
+exclude:
+  - mcp-server
+  - docs
+  - README.md
+  - SECURITY.md

@@ -259,7 +259,7 @@ function appendResultList(parent, items) {
     const item = document.createElement("li");
     if (title) item.append(makeElement("strong", "", title));
     item.append(document.createTextNode(text));
-    if (source) {
+    if (typeof source === 'string' && /^https?:\/\//i.test(source)) {
       item.append(document.createTextNode(" "));
       const link = makeElement("a", "", "View source");
       link.href = source;

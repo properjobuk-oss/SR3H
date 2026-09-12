@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { z } from "zod";
+import { readBoundedText } from "./bounded-body.js";
 import { auditWebsite } from "./audit.js";
 import { AIDO_REPORT_URI, registerAidoReportUi } from "./aido-report-ui.js";
 import { checkDiscoverability, combineDiscoverabilityResult } from "./discoverability.js";
@@ -391,31 +392,7 @@ function jsonResponse(payload, status = 200, headers = {}) {
 }
 
 async function readJsonBodyLimited(request, limit) {
-  const declaredBytes = Number(request.headers.get("content-length"));
-  if (Number.isFinite(declaredBytes) && declaredBytes > limit) throw new Error("request_too_large");
-  if (!request.body) return {};
-
-  const reader = request.body.getReader();
-  const chunks = [];
-  let total = 0;
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    total += value.byteLength;
-    if (total > limit) {
-      await reader.cancel();
-      throw new Error("request_too_large");
-    }
-    chunks.push(value);
-  }
-
-  const joined = new Uint8Array(total);
-  let offset = 0;
-  for (const chunk of chunks) {
-    joined.set(chunk, offset);
-    offset += chunk.byteLength;
-  }
-  return JSON.parse(new TextDecoder().decode(joined));
+  return JSON.parse(await readBoundedText(request, limit));
 }
 
 async function rateLimitAudit(env, target, request, prefix = "audit") {
@@ -499,19 +476,22 @@ export async function handleRequest(request, env = {}, fetchImpl = fetch) {
   if (url.pathname !== "/mcp") return cors(new Response("Not found", { status: 404 }));
 
   if (request.method === "POST") {
-    const declaredBytes = Number(request.headers.get("content-length"));
-    if (Number.isFinite(declaredBytes) && declaredBytes > MAX_MCP_REQUEST_BYTES) {
+    try {
+      const body = await readBoundedText(request, MAX_MCP_REQUEST_BYTES);
+      request = new Request(request.url, { method: request.method, headers: request.headers, body });
+    } catch (error) {
+      const timeout = error?.name === 'AbortError';
       return cors(new Response(JSON.stringify({
         jsonrpc: "2.0",
         id: null,
-        error: { code: -32600, message: "MCP request exceeds the 64 KB limit." }
-      }), { status: 413, headers: { "content-type": "application/json" } }));
+        error: { code: -32600, message: timeout ? 'Request timed out.' : "MCP request exceeds the 64 KB limit." }
+      }), { status: timeout ? 408 : 413, headers: { "content-type": "application/json" } }));
     }
   }
 
   if (request.method === "POST" && env.AUDIT_RATE_LIMITER) {
     try {
-      const rpc = await request.clone().json();
+      const rpc = await request.clone().json().catch(() => null);
       if (rpc?.method === "tools/call") {
         let target = "invalid-target";
         try { target = new URL(rpc?.params?.arguments?.website_url).hostname.toLowerCase() || target; } catch { /* invalid input shares a bounded key */ }
@@ -526,7 +506,7 @@ export async function handleRequest(request, env = {}, fetchImpl = fetch) {
         }
       }
     } catch {
-      // Let the MCP transport return the protocol-level parse or validation error.
+      return cors(jsonResponse({ jsonrpc: '2.0', id: null, error: { code: -32603, message: 'The checker is temporarily unavailable. Try again shortly.' } }, 503));
     }
   }
 

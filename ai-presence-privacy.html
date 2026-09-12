@@ -2,6 +2,7 @@
 <html lang="en-GB">
   <head>
     <meta charset="utf-8">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>AIDO Discoverability Check Privacy | SR3H</title>
     <meta name="description" content="Privacy information for the AIDO Discoverability Check website checker and MCP tool.">
@@ -23,7 +24,8 @@
         <h2>AI-assisted analysis</h2>
         <p>When the live sample in the SR3H website form is available, bounded public-page extracts and the optional context you supplied are sent to OpenAI to assess six relevant questions and run a small web-search sample. The request is sent with API response storage disabled. The MCP tools do not use SR3H's OpenAI API key. An optional extended check in ChatGPT uses research tools available in that user's ChatGPT session. Do not submit personal, private or confidential information.</p>
         <h2>Storage and logs</h2>
-        <p>The tool has no user accounts and does not write submitted URLs, supplied business context or fetched page contents to an application database. A completed discovery result may be held in Cloudflare’s edge cache for up to 24 hours to avoid repeating the same paid check. Cloudflare and OpenAI may process service and operational data under their own terms.</p>
+        <p>The tool has no user accounts. Daily usage controls store counters, checked website hostnames and a visitor identifier. When configured, this identifier is derived from your IP address using a secret key and changes each UTC day; otherwise requests share a common limit. Raw IP addresses, full submitted URLs, business context and fetched page contents are not written to this quota store. Its previous daily record is replaced when the next day's check arrives.</p>
+        <p>A completed website discovery result, including its questions and findings, may be held in Cloudflare’s edge cache for up to 24 hours to avoid repeating the same paid check. Application error messages use general error codes. Cloudflare and OpenAI may process network and operational data under their own terms. Disabling API response storage does not remove their separate operational processing.</p>
         <p>SR3H does not sell submitted information or use it for advertising or user profiling.</p>
         <h2>Use public information only</h2>
         <p>Do not submit private URLs, credentials, personal data or confidential information. Local, private-network and credential-bearing URLs are rejected.</p>

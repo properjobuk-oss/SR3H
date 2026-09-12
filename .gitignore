@@ -1,0 +1,10 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+.dev.vars*
+*.pem
+*.key
+*.p12
+*.p8
+*.log

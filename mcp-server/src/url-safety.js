@@ -34,6 +34,12 @@ export function validatePublicUrl(value) {
   if (url.username || url.password) {
     throw new Error("URLs containing credentials are not accepted.");
   }
+  if (url.port) throw new Error('Only public HTTP and HTTPS websites on standard ports can be checked.');
+  for (const name of url.searchParams.keys()) {
+    if (/(?:token|password|secret|api[_-]?key|authorization|signature)/i.test(name)) {
+      throw new Error('URLs containing credentials or access tokens are not accepted.');
+    }
+  }
 
   const hostname = url.hostname.toLowerCase().replace(/\.$/, "");
   const blockedName = hostname === "localhost" || hostname.endsWith(".localhost") ||
@@ -46,5 +52,6 @@ export function validatePublicUrl(value) {
   }
 
   url.hash = "";
+  url.hostname = hostname;
   return url;
 }

@@ -66,10 +66,14 @@ export class UsageGuard {
   }
 }
 
-async function visitorDigest(request, secret = "aido-usage-v1") {
+async function visitorDigest(request, secret) {
+  // Missing configuration shares a conservative quota; never hash with a public salt.
+  if (!secret) return 'unknown';
   const ip = request?.headers?.get("cf-connecting-ip") || "unknown";
-  const material = new TextEncoder().encode(`${secret}:${ip}`);
-  const digest = await crypto.subtle.digest("SHA-256", material);
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey('raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const material = encoder.encode(`${new Date().toISOString().slice(0, 10)}:${ip}`);
+  const digest = await crypto.subtle.sign('HMAC', key, material);
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
@@ -78,7 +82,7 @@ export async function usageContext(request, env = {}) {
 }
 
 export async function reserveDiscoveryUsage(env, target, context = {}) {
-  if (!env.USAGE_GUARD) return { allowed: true, unconfigured: true };
+  if (!env.USAGE_GUARD) return { allowed: false, reason: 'quota_unavailable' };
   try {
     const id = env.USAGE_GUARD.idFromName("aido-discovery-budget");
     const stub = env.USAGE_GUARD.get(id);

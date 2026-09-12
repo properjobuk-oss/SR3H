@@ -9,6 +9,10 @@ const input = {
   priority_services: ["building estimates from architectural drawings"],
   target_customer: "UK builders and homeowners planning building work"
 };
+const paidEnv = {
+  OPENAI_API_KEY: 'not-a-real-key',
+  USAGE_GUARD: { idFromName: () => 'test', get: () => ({ fetch: async () => Response.json({ allowed: true }) }) }
+};
 const audit = {
   audit: { requested_url: input.website_url, final_url: "https://proper-job.example/", checked_at: new Date().toISOString(), technical_readiness: "clear" },
   summary: "Technical check complete.",
@@ -87,7 +91,7 @@ test("uses bounded search, structured output and disabled API storage", async ()
       ]
     }), { headers: { "content-type": "application/json" } });
   };
-  const result = await checkDiscoverability(input, audit, { OPENAI_API_KEY: "not-a-real-key" }, fetchImpl);
+  const result = await checkDiscoverability(input, audit, paidEnv, fetchImpl);
   assert.equal(result.status, "complete");
   assert.equal(result.questions.length, 6);
   assert.equal(requestBodies.length, 7);
@@ -111,7 +115,7 @@ test("uses bounded search, structured output and disabled API storage", async ()
 
 test("provider or invalid-output errors do not break the technical result", async () => {
   const fetchImpl = async () => new Response("provider detail secret", { status: 500 });
-  const discovery = await checkDiscoverability(input, audit, { OPENAI_API_KEY: "not-a-real-key" }, fetchImpl);
+  const discovery = await checkDiscoverability(input, audit, paidEnv, fetchImpl);
   const result = combineDiscoverabilityResult(audit, discovery);
   assert.equal(result.discoverability.status, "unavailable");
   assert.equal(result.audit.technical_readiness, "clear");
@@ -128,7 +132,7 @@ test("does not count provider claims without matching returned source evidence",
       { type: "message", content: [{ type: "output_text", text: JSON.stringify({ answer: "Proper Job is recommended.", providers: [{ name: "Proper Job", url: "https://unsupported.example/proper-job", appearance: "recommended" }] }) }] }
     ] });
   };
-  const result = await checkDiscoverability(input, audit, { OPENAI_API_KEY: "not-a-real-key" }, fetchImpl);
+  const result = await checkDiscoverability(input, audit, paidEnv, fetchImpl);
   assert.equal(result.status, "complete");
   assert.ok(result.questions.every((question) => question.appearance === "not_seen"));
 });

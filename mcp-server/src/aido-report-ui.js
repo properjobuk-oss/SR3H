@@ -190,7 +190,7 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
         byId("details").hidden = !(clean(data.limitations_note) || sources.childElementCount);
         const date = Date.parse(data.checked_at);
         setText("checkedAt", Number.isNaN(date) ? "" : new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(date));
-        if (typeof data.about_url === "string") byId("about").href = data.about_url;
+        byId("about").href = "https://sr3h.uk/aido-labs.html";
       };
       window.addEventListener("message", (event) => {
         if (event.source !== window.parent) return;

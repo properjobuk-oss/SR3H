@@ -49,7 +49,17 @@ These are preparation materials, not evidence that OpenAI review has been reques
 - Negative tests passed for a private localhost target, an unsupported ranking guarantee and an unrelated staff-rota request.
 - The separate website checker still uses the restricted, encrypted SR3H OpenAI key for its bounded paid sample. Its technical result remains available when the paid allowance is exhausted.
 - The submission pack contains the name, descriptions, three starter prompts, five positive cases, five negative cases and release notes. This is preparation, not submission or approval.
-- All 48 automated tests, static checks, the Worker dry build, the local HTTP/MCP verifier and the skill-import verifier pass for this candidate. The dependency audit reports zero known vulnerabilities. Production checks remain evidence for the earlier release only.
+- All 54 automated tests, static checks and the Worker dry build pass. The dependency audit reports zero known vulnerabilities. HTTP/MCP and skill-import verification previously passed for the card changes; repeat after deployment of the security fixes. Production checks remain evidence for the earlier release only.
+
+## Security hardening in the local candidate
+
+- Streamed request size and read deadlines; MCP limiter errors refuse work.
+- Missing daily quota storage prevents paid calls. Visitor identifiers use a daily HMAC when the secret is configured; otherwise requests share a conservative quota.
+- Website fetch deadlines include response bodies. Nonstandard ports and common credential query parameters are rejected; redirects are revalidated.
+- Safe source links, fixed card attribution URL, invalid HTML entity handling and explicit untrusted-evidence skill instructions.
+- Quota storage and cached-result privacy disclosures; query-string redaction and automatic invocation logs disabled in deployment configuration.
+- Root secret-file ignore rules and GitHub Pages exclusions for server/internal source. Repository visibility itself is unchanged.
+- Still requires hosting-level verification of DNS rebinding and private-IP resolution protection, plus a refreshed ChatGPT conversation test before review submission.
 - The public support, privacy and terms pages each return HTTP 200.
 - A fresh private ChatGPT connection test is required after deployment to verify the v5 server-generated card and updated skill behaviour.
 
