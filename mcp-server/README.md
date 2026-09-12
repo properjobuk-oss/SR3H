@@ -8,7 +8,7 @@ The only required input is the public website URL. Optional business name, locat
 
 ## Version status
 
-- Version `0.11.0` is prepared and verified locally. Production remains on version `0.10.5` until this version is explicitly deployed and checked. The private ChatGPT app and MCP are named **AIDO by SR3H**.
+- Version `0.11.0` is deployed and remotely verified. The private ChatGPT app and MCP are named **AIDO by SR3H**. Refresh imported tools and skills before testing the updated ChatGPT experience.
 - The public health endpoint is `https://mcp.sr3h.uk/health` and the MCP endpoint is `https://mcp.sr3h.uk/mcp`.
 - The website form's technical check remains available if its optional paid discovery layer is unavailable.
 - The MCP tools do not use the SR3H OpenAI API key.

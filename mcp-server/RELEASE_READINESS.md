@@ -40,7 +40,7 @@ These are preparation materials, not evidence that OpenAI review has been reques
 
 ## Current version status
 
-- **Local candidate: `0.11.0`; production: `0.10.5`.** Production remains on the previously verified release until this candidate is explicitly deployed and remotely checked. The customer-facing app, MCP server and result card are named **AIDO by SR3H**.
+- **Production: `0.11.0`.** Deployed on 12 September 2026 as Worker version `55045cb0-0ed2-4cc3-a929-7b1a90a73252` from commit `1a231b5`. Remote MCP, ten-question planner and skill-integrity checks pass. The customer-facing app, MCP server and result card are named **AIDO by SR3H**.
 - The MCP has three tools. The readiness and sourced-summary tools attach server-generated component data; question preparation remains text and structured data only. It makes no SR3H OpenAI API calls.
 - The component uses the MCP Apps handshake, a self-contained `text/html;profile=mcp-app` resource and no external scripts, fonts, tracking or network requests.
 - Earlier-release private ChatGPT tests passed for a direct readiness result and a complete ten-question sourced discovery result. Both rendered the component successfully.
@@ -49,9 +49,9 @@ These are preparation materials, not evidence that OpenAI review has been reques
 - Negative tests passed for a private localhost target, an unsupported ranking guarantee and an unrelated staff-rota request.
 - The separate website checker still uses the restricted, encrypted SR3H OpenAI key for its bounded paid sample. Its technical result remains available when the paid allowance is exhausted.
 - The submission pack contains the name, descriptions, three starter prompts, five positive cases, five negative cases and release notes. This is preparation, not submission or approval.
-- All 54 automated tests, static checks and the Worker dry build pass. The dependency audit reports zero known vulnerabilities. HTTP/MCP and skill-import verification previously passed for the card changes; repeat after deployment of the security fixes. Production checks remain evidence for the earlier release only.
+- All 54 automated tests, static checks and the Worker build pass. The dependency audit reports zero known vulnerabilities. Production MCP, planner and skill-import verification pass for this release. The website form returned a valid technical result, but its paid discovery layer returned `provider_or_output_error`; that paid sample remains unresolved.
 
-## Security hardening in the local candidate
+## Security hardening in this release
 
 - Streamed request size and read deadlines; MCP limiter errors refuse work.
 - Missing daily quota storage prevents paid calls. Visitor identifiers use a daily HMAC when the secret is configured; otherwise requests share a conservative quota.

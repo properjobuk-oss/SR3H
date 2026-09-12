@@ -64,4 +64,4 @@ The tool must not turn a bounded search observation into a fixed ChatGPT ranking
 
 ## Deployment state
 
-Version 0.11.0 is prepared and verified locally. Production remains on version 0.10.5 until an explicit deployment and remote check. It separates the API-backed website form from the API-free MCP workflow. Its three tools work without component UI; the readiness and summary tools also return a server-generated result card. OpenAI review submission and public listing remain separate release states.
+Version 0.11.0 is deployed and remotely verified. It separates the API-backed website form from the API-free MCP workflow. Its three tools work without component UI; the readiness and summary tools also return a server-generated result card. Refresh imported tools and skills before testing the updated ChatGPT experience. OpenAI review submission and public listing remain separate release states.
