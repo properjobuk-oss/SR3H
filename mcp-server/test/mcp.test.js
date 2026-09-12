@@ -22,12 +22,17 @@ test("MCP client initializes, lists the annotated tool and calls it", async () =
   await client.connect(clientTransport);
   try {
     const listed = await client.listTools();
-    assert.equal(client.getServerVersion().version, "0.6.0");
-    assert.equal(listed.tools.length, 1);
-    assert.equal(listed.tools[0].name, "check_ai_presence");
-    assert.equal(listed.tools[0].annotations.readOnlyHint, true);
-    assert.equal(listed.tools[0].annotations.openWorldHint, true);
-    assert.equal(listed.tools[0].outputSchema.type, "object");
+    assert.equal(client.getServerVersion().version, "0.7.0");
+    assert.equal(listed.tools.length, 3);
+    const checkTool = listed.tools.find((tool) => tool.name === "check_ai_presence");
+    const prepareTool = listed.tools.find((tool) => tool.name === "prepare_ai_discovery_research");
+    const summaryTool = listed.tools.find((tool) => tool.name === "summarise_ai_discovery_research");
+    assert.equal(checkTool.annotations.readOnlyHint, true);
+    assert.equal(checkTool.annotations.openWorldHint, true);
+    assert.equal(checkTool.outputSchema.type, "object");
+    assert.equal(prepareTool.annotations.readOnlyHint, true);
+    assert.equal(prepareTool.annotations.openWorldHint, true);
+    assert.equal(summaryTool.annotations.openWorldHint, false);
 
     const called = await client.callTool({ name: "check_ai_presence", arguments: {
       website_url: "https://test.example",
@@ -49,6 +54,22 @@ test("MCP client initializes, lists the annotated tool and calls it", async () =
     });
     assert.match(called.content[0].text, /^AI search crawlers can access this website/);
     assert.equal(called.content[0].text.length < 500, true);
+
+    const summarised = await client.callTool({ name: "summarise_ai_discovery_research", arguments: {
+      website_url: "https://test.example",
+      business_name: "Test Co",
+      observations: [{
+        question: "Which test service should I use?",
+        kind: "category",
+        appearance: "not_seen",
+        answer_summary: "Other services were discussed.",
+        evidence_urls: ["https://source.example/result"],
+        other_providers: ["Another Co"]
+      }]
+    } });
+    assert.notEqual(summarised.isError, true);
+    assert.equal(summarised.structuredContent.sample.completed, 1);
+    assert.equal(summarised.structuredContent.sample.unbranded_found, 0);
   } finally {
     await client.close();
     await server.close();
@@ -96,7 +117,7 @@ test("HTTP health and error responses carry production safety headers", async ()
   assert.equal(health.status, 200);
   assert.equal(health.headers.get("cache-control"), "no-store");
   assert.equal(health.headers.get("x-content-type-options"), "nosniff");
-  assert.equal((await health.json()).version, "0.6.0");
+  assert.equal((await health.json()).version, "0.7.0");
 
   const missing = await handleRequest(new Request("https://mcp.example/nope"));
   assert.equal(missing.status, 404);
@@ -251,6 +272,31 @@ test("MCP schema rejects unsupported protocols and excessive service lists", asy
     assert.equal(protocol.isError, true);
     const tooMany = await client.callTool({ name: "check_ai_presence", arguments: { website_url: "https://test.example", priority_services: Array.from({ length: 9 }, (_, index) => `Service ${index}`) } });
     assert.equal(tooMany.isError, true);
+  } finally {
+    await client.close();
+    await server.close();
+  }
+});
+
+test("extended summary refuses unsupported positive appearances", async () => {
+  const server = createServer(fetchImpl);
+  const client = new Client({ name: "test-client", version: "1.0.0" });
+  const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+  await server.connect(serverTransport);
+  await client.connect(clientTransport);
+  try {
+    const called = await client.callTool({ name: "summarise_ai_discovery_research", arguments: {
+      website_url: "https://test.example",
+      business_name: "Test Co",
+      observations: [{ question: "Which test service should I use?", kind: "category", appearance: "recommended" }]
+    } });
+    assert.equal(called.isError, true);
+    const unsupportedProvider = await client.callTool({ name: "summarise_ai_discovery_research", arguments: {
+      website_url: "https://test.example",
+      business_name: "Test Co",
+      observations: [{ question: "Which test service should I use?", kind: "category", appearance: "not_seen", other_providers: ["Another Co"] }]
+    } });
+    assert.equal(unsupportedProvider.isError, true);
   } finally {
     await client.close();
     await server.close();

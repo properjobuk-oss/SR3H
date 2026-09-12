@@ -1,14 +1,15 @@
 {
   "name": "@sr3h/ai-presence-checker",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "type": "module",
   "description": "Read-only AIDO website access, understanding and AI discoverability checks.",
   "scripts": {
-    "check": "node --check src/index.js && node --check src/audit.js && node --check src/discoverability.js && node --check src/usage-guard.js && node --check src/url-safety.js",
+    "check": "node --check src/index.js && node --check src/audit.js && node --check src/discoverability.js && node --check src/extended-research.js && node --check src/usage-guard.js && node --check src/url-safety.js",
     "test": "node --test",
     "probe:remote": "node scripts/probe-remote.mjs",
     "verify:remote": "node scripts/verify-remote.mjs",
+    "verify:extended:remote": "node scripts/verify-extended-remote.mjs",
     "dev": "wrangler dev",
     "deploy": "wrangler deploy"
   },

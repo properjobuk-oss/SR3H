@@ -3,11 +3,12 @@ import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/
 import { z } from "zod";
 import { auditWebsite } from "./audit.js";
 import { checkDiscoverability, combineDiscoverabilityResult } from "./discoverability.js";
+import { prepareExtendedResearch, RESEARCH_KINDS, summariseExtendedResearch } from "./extended-research.js";
 import { UsageGuard, usageContext } from "./usage-guard.js";
 
 export { UsageGuard };
 
-const SERVICE_VERSION = "0.6.0";
+const SERVICE_VERSION = "0.7.0";
 const MAX_MCP_REQUEST_BYTES = 64_000;
 const MAX_WEB_REQUEST_BYTES = 8_000;
 const WEB_ORIGINS = new Set([
@@ -28,6 +29,70 @@ const webAuditInputSchema = z.object({
   ...auditInputShape,
   company_website: z.literal("").optional()
 }).strict();
+const extendedResearchInputShape = {
+  website_url: z.string().url().max(2048).describe("Complete public website URL beginning with https:// or http://"),
+  business_name: z.string().trim().min(1).max(120).describe("Business or organisation being researched"),
+  location_or_service_area: z.string().trim().min(1).max(160).optional().describe("Important location or service area"),
+  priority_services: z.array(z.string().trim().min(1).max(120)).min(1).max(8).describe("One to eight priority products or services customers should find"),
+  target_customer: z.string().trim().min(1).max(300).optional().describe("Optional description of the main customer")
+};
+const researchKindSchema = z.enum(RESEARCH_KINDS);
+const extendedResearchResultSchema = z.object({
+  status: z.enum(["ready", "unavailable"]),
+  reason: z.string().optional(),
+  note: z.string().optional(),
+  cached: z.boolean().optional(),
+  business: z.string().optional(),
+  website_url: z.string().url().optional(),
+  created_at: z.string().datetime().optional(),
+  question_count: z.literal(10).optional(),
+  questions: z.array(z.object({ id: z.string(), kind: researchKindSchema, question: z.string() })).optional(),
+  user_confirmation_required: z.boolean().optional(),
+  search_note: z.string().optional(),
+  usage_note: z.string().optional(),
+  next_tool: z.string().optional()
+});
+const researchObservationSchema = z.object({
+  question: z.string().trim().min(1).max(280),
+  kind: researchKindSchema,
+  appearance: z.enum(["not_seen", "source_only", "mentioned", "recommended"]),
+  answer_summary: z.string().trim().max(600).optional(),
+  evidence_urls: z.array(z.string().url().max(2048)).max(5).optional(),
+  other_providers: z.array(z.string().trim().min(1).max(120)).max(5).optional()
+}).strict().superRefine((value, context) => {
+  if (value.appearance !== "not_seen" && !(value.evidence_urls || []).length) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["evidence_urls"],
+      message: "A source URL is required before an appearance can be counted."
+    });
+  }
+  if ((value.other_providers || []).length && !(value.evidence_urls || []).length) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["evidence_urls"],
+      message: "A source URL is required before another provider can be counted."
+    });
+  }
+});
+const researchSummarySchema = z.object({
+  status: z.literal("complete"),
+  business: z.string(),
+  website_url: z.string().url(),
+  checked_at: z.string().datetime(),
+  headline: z.string(),
+  sample: z.object({
+    completed: z.number().int(), branded_found: z.number().int(), branded_checked: z.number().int(),
+    unbranded_found: z.number().int(), unbranded_checked: z.number().int(), unbranded_recommended: z.number().int()
+  }),
+  findings: z.array(z.string()),
+  strongest_questions: z.array(z.object({ question: z.string(), appearance: z.enum(["source_only", "mentioned", "recommended"]) })),
+  missed_questions: z.array(z.string()),
+  other_providers: z.array(z.object({ name: z.string(), appearances: z.number().int() })),
+  next_actions: z.array(z.string()),
+  limits: z.array(z.string()),
+  deeper_review: z.string()
+});
 const auditResultSchema = z.object({
   audit: z.object({
     requested_url: z.string().url(),
@@ -135,7 +200,7 @@ export function createServer(fetchImpl = fetch, env = {}, requestContext = {}) {
     version: SERVICE_VERSION,
     websiteUrl: "https://sr3h.uk"
   }, {
-    instructions: "Use check_ai_presence for a read-only AIDO discoverability check of a public website. It checks technical access and, when available, a small dated AI-assisted sample of how the site answers and appears for real customer questions. Report exact observations, not a score or a promise about ranking, recommendation, demand or conversion."
+    instructions: "Use check_ai_presence for the initial read-only AIDO check. After presenting that result, offer an optional ten-question extended check. Do not call prepare_ai_discovery_research until the user explicitly agrees. That tool prepares questions but does not run them. If the client provides web search, run each question independently and record only what the answer and cited sources show, then call summarise_ai_discovery_research. If web search is unavailable, say so and never invent results. Report exact dated observations, not a score or a promise about ranking, recommendation, demand or conversion."
   });
 
   server.registerTool("check_ai_presence", {
@@ -174,6 +239,56 @@ export function createServer(fetchImpl = fetch, env = {}, requestContext = {}) {
         content: [{ type: "text", text: `The website could not be checked (${code}). ${publicErrorMessage(code)}` }]
       };
     }
+  });
+
+  server.registerTool("prepare_ai_discovery_research", {
+    title: "Prepare a 10-question AI discovery check",
+    description: "After the user explicitly opts in, prepare ten business-specific questions for a broader AI discoverability check. This tool creates the question pack only; it does not run searches. The client may run each question separately if web search is available.",
+    inputSchema: extendedResearchInputShape,
+    outputSchema: extendedResearchResultSchema,
+    annotations: {
+      title: "Prepare a 10-question AI discovery check",
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true
+    }
+  }, async (input) => {
+    try {
+      const audit = await auditWebsite(input, fetchImpl, { includeAnalysisContext: true });
+      const result = await prepareExtendedResearch(input, audit, env, fetchImpl, requestContext);
+      const text = result.status === "ready"
+        ? `The ten-question research pack is ready. No extended searches have been run. Continue only if the user agreed to the extended check. If ChatGPT web search is available, search each question separately; otherwise say that browsing is unavailable. After the searches, call summarise_ai_discovery_research.`
+        : result.note;
+      return { content: [{ type: "text", text }], structuredContent: result };
+    } catch (error) {
+      const code = errorCode(error);
+      return { isError: true, content: [{ type: "text", text: `The research pack could not be prepared (${code}). ${publicErrorMessage(code)}` }] };
+    }
+  });
+
+  server.registerTool("summarise_ai_discovery_research", {
+    title: "Summarise an AI discovery check",
+    description: "Summarise one to ten completed, sourced AI-search observations into exact appearance counts, useful gaps and up to three practical next actions. Does not run searches and does not invent a visibility score.",
+    inputSchema: {
+      website_url: z.string().url().max(2048),
+      business_name: z.string().trim().min(1).max(120),
+      observations: z.array(researchObservationSchema).min(1).max(10)
+    },
+    outputSchema: researchSummarySchema,
+    annotations: {
+      title: "Summarise an AI discovery check",
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false
+    }
+  }, async (input) => {
+    const result = summariseExtendedResearch(input);
+    return {
+      content: [{ type: "text", text: `${result.headline}\n${result.findings.join("\n")}\nNext step: ${result.next_actions[0]}\n${result.deeper_review}` }],
+      structuredContent: result
+    };
   });
   return server;
 }

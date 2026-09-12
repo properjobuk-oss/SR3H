@@ -1,6 +1,6 @@
 # AIDO Discoverability Check
 
-AIDO is the product. This repository contains its public, read-only checking service and the MCP interface that lets ChatGPT and other compatible clients call it. It checks website access and offer clarity and, when configured, runs a six-question branded and unbranded AI-assisted search sample. It reports exact observations and explicit limits rather than a score or ranking promise.
+AIDO is the product. This repository contains its public, read-only checking service and the MCP interface that lets ChatGPT and other compatible clients call it. It checks website access and offer clarity and, when configured, runs a six-question branded and unbranded AI-assisted search sample. It can also prepare an optional ten-question research pack for a compatible client to search after the user agrees, then turn the sourced observations into a concise report. It reports exact observations and explicit limits rather than a score or ranking promise.
 
 The checker is not a standalone autonomous agent. ChatGPT supplies the conversational intelligence, chooses when to call the MCP tool and explains the structured result to the user.
 
@@ -8,7 +8,7 @@ The only required input is the public website URL. Optional business name, locat
 
 ## Version status
 
-- Production and the repository report `0.6.0`.
+- Production and the repository report `0.7.0`.
 - The public health endpoint is `https://mcp.sr3h.uk/health` and the MCP endpoint is `https://mcp.sr3h.uk/mcp`.
 - The technical check remains available if the optional paid discovery layer is unavailable.
 
@@ -18,6 +18,14 @@ See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the evidence boundary and r
 
 - `GET https://mcp.sr3h.uk/health` — deployment health.
 - `POST https://mcp.sr3h.uk/mcp` — stateless Streamable HTTP MCP endpoint.
+
+## MCP tools
+
+- `check_ai_presence` runs the bounded first check.
+- `prepare_ai_discovery_research` prepares ten tailored questions after the user explicitly opts in. It does not run the searches.
+- `summarise_ai_discovery_research` converts one to ten sourced observations into exact counts, gaps and practical next actions.
+
+The extended workflow deliberately separates question planning, client-side research and reporting. If the connected ChatGPT client provides web search, it can search each question independently. The MCP cannot force that host tool to run or move AIDO API charges onto a user account. If browsing is unavailable, the client must say so and must not fabricate observations. AIDO never asks for the user's OpenAI API key.
 
 ## Local verification
 
