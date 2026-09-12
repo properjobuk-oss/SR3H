@@ -405,7 +405,7 @@ function initAiPresenceChecker() {
       website_url: websiteUrl,
       company_website: String(data.get("company_website") || "")
     };
-    const optionalFields = ["business_name", "location_or_service_area"];
+    const optionalFields = ["business_name", "location_or_service_area", "target_customer"];
     optionalFields.forEach((field) => {
       const value = String(data.get(field) || "").trim();
       if (value) payload[field] = value;

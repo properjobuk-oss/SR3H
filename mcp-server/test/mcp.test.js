@@ -29,9 +29,24 @@ test("MCP client initializes, lists the annotated tool and calls it", async () =
     assert.equal(listed.tools[0].annotations.openWorldHint, true);
     assert.equal(listed.tools[0].outputSchema.type, "object");
 
-    const called = await client.callTool({ name: "check_ai_presence", arguments: { website_url: "https://test.example" } });
+    const called = await client.callTool({ name: "check_ai_presence", arguments: {
+      website_url: "https://test.example",
+      business_name: "Test Co",
+      location_or_service_area: "Oxford",
+      priority_services: ["A test service"],
+      target_customer: "Oxford organisations"
+    } });
     assert.notEqual(called.isError, true);
     assert.equal(called.structuredContent.audit.technical_readiness, "clear");
+    assert.deepEqual(called.structuredContent.supplied_context_presence, [
+      { term: "Test Co", found: true },
+      { term: "Oxford", found: true },
+      { term: "A test service", found: true }
+    ]);
+    assert.deepEqual(called.structuredContent.supplied_context, {
+      target_customer: "Oxford organisations",
+      note: "Recorded as user-supplied context only; this crawl does not validate demand or customer fit."
+    });
     assert.match(called.content[0].text, /^AI search crawlers can access this website/);
     assert.equal(called.content[0].text.length < 500, true);
   } finally {
@@ -120,7 +135,13 @@ test("website checker returns a bounded audit to an allowed SR3H origin", async 
       "origin": "https://sr3h.uk",
       "cf-connecting-ip": "203.0.113.22"
     },
-    body: JSON.stringify({ website_url: "https://test.example", business_name: "Test Co" })
+    body: JSON.stringify({
+      website_url: "https://test.example",
+      business_name: "Test Co",
+      location_or_service_area: "Oxford",
+      priority_services: ["A test service"],
+      target_customer: "Oxford organisations"
+    })
   });
   const response = await handleRequest(request, { AUDIT_RATE_LIMITER: limiter }, fetchImpl);
   const body = await response.json();
@@ -128,6 +149,12 @@ test("website checker returns a bounded audit to an allowed SR3H origin", async 
   assert.equal(response.headers.get("access-control-allow-origin"), "https://sr3h.uk");
   assert.equal(body.result.audit.technical_readiness, "clear");
   assert.equal(body.result.discoverability.status, "unavailable");
+  assert.equal(body.result.supplied_context.target_customer, "Oxford organisations");
+  assert.deepEqual(body.result.supplied_context_presence, [
+    { term: "Test Co", found: true },
+    { term: "Oxford", found: true },
+    { term: "A test service", found: true }
+  ]);
   assert.equal("_analysis_context" in body.result, false);
   assert.equal("score" in body.result.audit, false);
   assert.deepEqual(limiterKeys.sort(), ["web-check-ip:203.0.113.22", "web-check-target:test.example"]);

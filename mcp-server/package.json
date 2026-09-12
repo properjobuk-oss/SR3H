@@ -7,6 +7,7 @@
   "scripts": {
     "check": "node --check src/index.js && node --check src/audit.js && node --check src/discoverability.js && node --check src/usage-guard.js && node --check src/url-safety.js",
     "test": "node --test",
+    "probe:remote": "node scripts/probe-remote.mjs",
     "verify:remote": "node scripts/verify-remote.mjs",
     "dev": "wrangler dev",
     "deploy": "wrangler deploy"

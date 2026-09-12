@@ -6,7 +6,8 @@ const input = {
   website_url: "https://proper-job.example",
   business_name: "Proper Job",
   location_or_service_area: "United Kingdom",
-  priority_services: ["building estimates from architectural drawings"]
+  priority_services: ["building estimates from architectural drawings"],
+  target_customer: "UK builders and homeowners planning building work"
 };
 const audit = {
   audit: { requested_url: input.website_url, final_url: "https://proper-job.example/", checked_at: new Date().toISOString(), technical_readiness: "clear" },
@@ -80,6 +81,9 @@ test("uses bounded search, structured output and disabled API storage", async ()
   assert.deepEqual(requestBody.tools, [{ type: "web_search" }]);
   assert.equal(requestBody.text.format.strict, true);
   assert.match(requestBody.input, /Proper Job/);
+  assert.match(requestBody.input, /United Kingdom/);
+  assert.match(requestBody.input, /building estimates from architectural drawings/);
+  assert.match(requestBody.input, /UK builders and homeowners planning building work/);
   assert.doesNotMatch(requestBody.input, /generic example searches/i);
 });
 

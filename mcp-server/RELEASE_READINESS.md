@@ -36,11 +36,14 @@
 
 These are preparation materials, not evidence that OpenAI review has been requested or passed.
 
-## Version 0.5.0 release gate
+## Current version status
 
-The implementation and local tests are not deployment evidence. Before release, configure the production OpenAI secret, deploy the Worker, run the remote verifier, complete one real branded and one real unbranded check, confirm the plain-English output and review the provider cost/latency logs. Do not submit the MCP for review until those checks are recorded.
+- **Production and repository: `0.5.0`.** Cloudflare deployed Worker version `624d1d48-7d86-4fb4-8ae8-5ea67e996a53` on 12 September 2026.
+- The public health endpoint and MCP initialization both report `AIDO Discoverability Check` version `0.5.0`.
+- The deployed MCP advertises all four optional context fields and returns them through the audit result.
+- The OpenAI API secret is not yet configured in Cloudflare. Production therefore returns a truthful technical-only result and marks the AI-assisted discovery sample unavailable.
 
-## Verified on 11 September 2026
+## Production evidence for version 0.3.0 — 11 September 2026
 
 - Cloudflare Worker version `0.3.0` deployed at `https://mcp.sr3h.uk/mcp`, with the first-party website check route at `https://mcp.sr3h.uk/check`.
 - Public health, TLS, no-store and safety headers verified.
@@ -52,7 +55,22 @@ The implementation and local tests are not deployment evidence. Before release, 
 - The website route is restricted to approved SR3H and local-preview browser origins, rejects oversized and honeypot submissions, blocks private-network targets, and uses a separate five-checks-per-minute limiter for both visitor and target keys.
 - The complete local website form was verified in a browser against the deployed route, returning a sourced `clear` result for `sr3h.uk` with explicit unknowns and no score.
 - Cloudflare's rate-limit bindings are deployed and their rejection branches are unit tested. Platform limits are intentionally eventually consistent, so burst tests are not treated as proof of a hard quota.
-- A SQLite-backed Durable Object enforces the paid layer's exact daily ceiling and per-visitor and per-target allowances. Quota-storage failure disables only the paid layer rather than failing open.
+
+## Production probe — 12 September 2026
+
+- Health and MCP initialization report production version `0.5.0`.
+- `check_ai_presence` advertises business name, location or service area, priority services and target customer as optional inputs.
+- A remote MCP call confirmed that all four optional inputs reached the structured audit result.
+- The live technical audit completed and returned structured output.
+- The AI-assisted sample returned `unavailable`, as designed, because the production OpenAI secret is not configured.
+
+## Local evidence for version 0.5.0
+
+- A SQLite-backed Durable Object is implemented to enforce the paid layer's exact daily ceiling and per-visitor and per-target allowances. Quota-storage failure disables only the paid layer rather than failing open.
 - Dependency audit reported zero known vulnerabilities; 35 automated tests passed, including the Cloudflare execution-context regression, website request limits and persistent daily usage ceilings.
+
+## Version 0.5.0 remaining release gate
+
+Deployment, health, MCP connection, schema and technical-result checks are complete. Before plugin submission, configure the production OpenAI secret, run the full remote verifier, complete one real branded and one real unbranded check, confirm the plain-English output and review the provider cost and latency logs. Do not submit the plugin for review until those checks are recorded.
 
 OpenAI review has not been requested. The remaining draft cases above should be executed and recorded before submission.
