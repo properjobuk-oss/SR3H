@@ -1,7 +1,7 @@
 import { validatePublicUrl } from "./url-safety.js";
 
-export const LIMITS = Object.freeze({ redirects: 4, bytes: 1_000_000, timeoutMs: 10_000 });
-const USER_AGENT = "SR3H-AIPresenceCheck/0.2 (+https://sr3h.uk/ai-presence-support.html)";
+export const LIMITS = Object.freeze({ redirects: 4, bytes: 1_000_000, timeoutMs: 10_000, contextPages: 5, contextChars: 50_000 });
+const USER_AGENT = "AIDO-DiscoverabilityCheck/0.4 (+https://sr3h.uk/ai-presence-support.html)";
 
 function compactSpace(value = "") {
   return value.replace(/&amp;/gi, "&").replace(/&quot;/gi, '"')
@@ -203,7 +203,58 @@ function presence(text, terms = []) {
   return terms.map((term) => ({ term, found: new RegExp(escapeRegExp(term), "i").test(text) }));
 }
 
-export async function auditWebsite(input, fetchImpl = fetch) {
+function internalPageCandidates(html, baseUrl) {
+  const base = new URL(baseUrl);
+  const priorities = /\b(?:about|service|product|pricing|price|cost|calculator|faq|how|what|solution|case|proof|contact)\b/i;
+  const seen = new Set([base.href]);
+  return [...html.matchAll(/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)]
+    .map((match) => {
+      try {
+        const url = new URL(match[1], base);
+        url.hash = "";
+        if (url.origin !== base.origin || !["http:", "https:"].includes(url.protocol)) return null;
+        if (url.search || seen.has(url.href)) return null;
+        seen.add(url.href);
+        const label = compactSpace(match[2].replace(/<[^>]+>/g, " "));
+        const score = priorities.test(`${url.pathname} ${label}`) ? 1 : 0;
+        return { url: url.href, score };
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, LIMITS.contextPages - 1);
+}
+
+async function collectWebsiteContext(home, html, inspected, fetchImpl) {
+  const pages = [{
+    url: home.finalUrl.href,
+    title: inspected.title,
+    description: inspected.description,
+    text: inspected.visibleText.slice(0, 20_000)
+  }];
+  let remaining = LIMITS.contextChars - pages[0].text.length;
+  for (const candidate of internalPageCandidates(html, home.finalUrl.href)) {
+    if (remaining <= 0) break;
+    try {
+      const page = await safeFetch(candidate.url, fetchImpl);
+      if (page.finalUrl.origin !== home.finalUrl.origin) continue;
+      const type = page.response.headers.get("content-type") || "";
+      if (!page.response.ok || !type.toLowerCase().includes("text/html")) continue;
+      const body = await readLimitedText(page.response, 300_000);
+      const details = inspectHtml(body, page.finalUrl.href, page.response.headers.get("x-robots-tag") || "");
+      const text = details.visibleText.slice(0, Math.min(10_000, remaining));
+      pages.push({ url: page.finalUrl.href, title: details.title, description: details.description, text });
+      remaining -= text.length;
+    } catch {
+      // A failed supporting page must not prevent the homepage audit.
+    }
+  }
+  return { pages };
+}
+
+export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisContext = false } = {}) {
   const requested = validatePublicUrl(input.website_url);
   const page = await safeFetch(requested, fetchImpl);
   const contentType = page.response.headers.get("content-type") || "";
@@ -297,7 +348,7 @@ export async function auditWebsite(input, fetchImpl = fetch) {
   const blocked = robotsStatus === "blocked" || inspected.noindex || page.finalUrl.protocol !== "https:";
   const partial = gaps.length > 0 || robotsStatus === "unverified";
   const technicalReadiness = blocked ? "blocked" : partial ? "partial" : "clear";
-  return {
+  const result = {
     audit: {
       requested_url: requested.href,
       final_url: page.finalUrl.href,
@@ -325,4 +376,6 @@ export async function auditWebsite(input, fetchImpl = fetch) {
     next_action: gaps[0]?.action || "Make the main services and locations explicit, connect important claims to supporting evidence, then test five real customer questions.",
     deeper_analysis: "For an evidence-led review across pages, customer questions and AI responses, contact hello@sr3h.uk."
   };
+  if (includeAnalysisContext) result._analysis_context = await collectWebsiteContext(page, html, inspected, fetchImpl);
+  return result;
 }

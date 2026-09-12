@@ -78,22 +78,25 @@
     }
   ],
   "journal": "https://sr3h.uk/journal.html",
-  "freeAiPresenceCheck": {
+  "freeAidoDiscoverabilityCheck": {
+    "name": "AIDO Discoverability Check",
     "status": "Public beta MCP service",
     "mcpEndpoint": "https://mcp.sr3h.uk/mcp",
     "healthEndpoint": "https://mcp.sr3h.uk/health",
     "tool": "check_ai_presence",
-    "purpose": "Provide a bounded first-pass AEO and AI visibility check of a company's public discoverability and representation signals.",
-    "plannedChecks": [
+    "purpose": "Show whether AI systems can access and understand a public business website and what appears in a small dated branded and unbranded discovery sample.",
+    "checks": [
       "Public page reachability and crawl directives",
       "OAI-SearchBot access",
       "Canonical identity and service information",
       "Sitemap, metadata and structured data",
+      "How clearly public pages answer six business-specific customer questions",
+      "A bounded branded and unbranded AI-assisted search sample",
       "Public evidence and representation gaps",
       "Clear separation between technical discoverability and commercial outcome evidence"
     ],
     "doesNotProve": [
-      "ChatGPT ranking, citation or recommendation",
+      "A fixed ChatGPT ranking, citation or recommendation",
       "Customer demand",
       "Causal impact of a change",
       "Conversion performance without outcome data"

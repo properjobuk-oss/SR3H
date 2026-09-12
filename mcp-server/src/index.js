@@ -2,8 +2,9 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { z } from "zod";
 import { auditWebsite } from "./audit.js";
+import { checkDiscoverability, combineDiscoverabilityResult } from "./discoverability.js";
 
-const SERVICE_VERSION = "0.3.1";
+const SERVICE_VERSION = "0.4.0";
 const MAX_MCP_REQUEST_BYTES = 64_000;
 const MAX_WEB_REQUEST_BYTES = 8_000;
 const WEB_ORIGINS = new Set([
@@ -52,7 +53,36 @@ const auditResultSchema = z.object({
   })),
   unknowns: z.array(z.string()),
   next_action: z.string(),
-  deeper_analysis: z.string()
+  deeper_analysis: z.string(),
+  discoverability: z.object({
+    status: z.enum(["complete", "unavailable"]),
+    reason: z.string().optional(),
+    note: z.string().optional(),
+    model: z.string().optional(),
+    checked_at: z.string().datetime().optional(),
+    cached: z.boolean().optional(),
+    business: z.string().optional(),
+    summary: z.string().optional(),
+    questions: z.array(z.object({
+      question: z.string(),
+      kind: z.enum(["branded", "unbranded_category", "unbranded_problem", "unbranded_high_intent", "unbranded_differentiator", "unbranded_location"]),
+      site_answered: z.boolean(),
+      site_evidence_url: z.string().url().nullable(),
+      observed_in_search: z.boolean(),
+      search_evidence_url: z.string().url().nullable(),
+      finding: z.string()
+    })),
+    important_findings: z.array(z.string()).optional(),
+    best_next_step: z.string().optional(),
+    sources: z.array(z.string().url()),
+    limits: z.array(z.string()).optional()
+  }),
+  snapshot: z.object({
+    access: z.object({ passed: z.number().int(), checked: z.number().int() }),
+    understanding: z.object({ answered: z.number().int(), checked: z.number().int() }),
+    discovery: z.object({ branded_found: z.number().int(), branded_checked: z.number().int(), unbranded_found: z.number().int(), unbranded_checked: z.number().int() }),
+    outcomes: z.object({ status: z.literal("not_measured") })
+  }).optional()
 });
 
 function errorCode(error) {
@@ -80,6 +110,10 @@ function publicErrorMessage(code) {
 }
 
 function conciseResult(result) {
+  if (result.snapshot) {
+    const { access, understanding, discovery } = result.snapshot;
+    return `${result.summary}\nWebsite access: ${access.passed} of ${access.checked} checks passed.\nOffer clarity: ${understanding.answered} of ${understanding.checked} questions answered.\nObserved discovery: branded ${discovery.branded_found} of ${discovery.branded_checked}; unbranded ${discovery.unbranded_found} of ${discovery.unbranded_checked}.\nBest next step: ${result.next_action}`;
+  }
   const labels = {
     clear: "AI search crawlers can access this website",
     partial: "Website visible, with improvements",
@@ -91,22 +125,22 @@ function conciseResult(result) {
   return `${lead}\nWhat to improve:\n${gaps}\nNext useful step: ${result.next_action}`;
 }
 
-export function createServer(fetchImpl = fetch) {
+export function createServer(fetchImpl = fetch, env = {}) {
   const server = new McpServer({
-    name: "SR3H AI Presence Check",
+    name: "AIDO Discoverability Check",
     version: SERVICE_VERSION,
     websiteUrl: "https://sr3h.uk"
   }, {
-    instructions: "Use check_ai_presence for a read-only, one-page technical discoverability check of a public website. Present its observations as crawl evidence only. Never turn the result into a claim about AI ranking, citation, recommendation, customer demand or conversion."
+    instructions: "Use check_ai_presence for a read-only AIDO discoverability check of a public website. It checks technical access and, when available, a small dated AI-assisted sample of how the site answers and appears for real customer questions. Report exact observations, not a score or a promise about ranking, recommendation, demand or conversion."
   });
 
   server.registerTool("check_ai_presence", {
-    title: "Check website AI presence",
-    description: "Inspect a public website for observable technical and representation signals that affect AI-search discoverability. Returns sourced findings, gaps and explicit unknowns. It does not claim to measure ChatGPT ranking, recommendations or conversions.",
+    title: "Check AI discoverability",
+    description: "Check whether AI systems can access and understand a public business website and, when available, run a small dated branded and unbranded discovery sample. Returns exact observations, useful gaps and explicit limits, never a made-up score or ranking guarantee.",
     inputSchema: auditInputShape,
     outputSchema: auditResultSchema,
     annotations: {
-      title: "Check website AI presence",
+      title: "Check AI discoverability",
       readOnlyHint: true,
       destructiveHint: false,
       idempotentHint: true,
@@ -114,7 +148,16 @@ export function createServer(fetchImpl = fetch) {
     }
   }, async (input) => {
     try {
-      const result = await auditWebsite(input, fetchImpl);
+      const audit = await auditWebsite(input, fetchImpl, { includeAnalysisContext: true });
+      let allowed = true;
+      if (env.OPENAI_API_KEY && env.DISCOVERY_RATE_LIMITER) {
+        const target = new URL(audit.audit.final_url).hostname.toLowerCase();
+        allowed = (await env.DISCOVERY_RATE_LIMITER.limit({ key: `mcp-discovery-target:${target}` })).success;
+      }
+      const discovery = allowed
+        ? await checkDiscoverability(input, audit, env, fetchImpl)
+        : { status: "unavailable", reason: "rate_limited", note: "The live understanding and discovery sample reached its short-term limit. The technical website check still completed.", questions: [], sources: [] };
+      const result = combineDiscoverabilityResult(audit, discovery);
       return {
         content: [{ type: "text", text: conciseResult(result) }],
         structuredContent: result
@@ -194,9 +237,11 @@ async function readJsonBodyLimited(request, limit) {
 }
 
 async function rateLimitAudit(env, target, request, prefix = "audit") {
-  const limiter = prefix === "web-check"
-    ? env.WEB_RATE_LIMITER || env.AUDIT_RATE_LIMITER
-    : env.AUDIT_RATE_LIMITER;
+  const limiter = prefix === "discovery"
+    ? env.DISCOVERY_RATE_LIMITER
+    : prefix === "web-check"
+      ? env.WEB_RATE_LIMITER || env.AUDIT_RATE_LIMITER
+      : env.AUDIT_RATE_LIMITER;
   if (!limiter) return true;
   const targetKey = `${prefix}-target:${target}`;
   const ip = request.headers.get("cf-connecting-ip") || "unknown";
@@ -240,7 +285,17 @@ async function handleWebCheck(request, env, fetchImpl) {
   }
 
   try {
-    const result = await auditWebsite(input, fetchImpl);
+    const audit = await auditWebsite(input, fetchImpl, { includeAnalysisContext: true });
+    let discovery;
+    if (env.OPENAI_API_KEY && env.DISCOVERY_RATE_LIMITER) {
+      const allowed = await rateLimitAudit(env, target, request, "discovery");
+      discovery = allowed
+        ? await checkDiscoverability(input, audit, env, fetchImpl)
+        : { status: "unavailable", reason: "rate_limited", note: "The live understanding and discovery sample reached its short-term limit. The technical website check still completed.", questions: [], sources: [] };
+    } else {
+      discovery = await checkDiscoverability(input, audit, env, fetchImpl);
+    }
+    const result = combineDiscoverabilityResult(audit, discovery);
     return webCors(jsonResponse({ result }), origin);
   } catch (error) {
     const code = errorCode(error);
@@ -254,7 +309,7 @@ export async function handleRequest(request, env = {}, fetchImpl = fetch) {
   if (url.pathname === "/check") return handleWebCheck(request, env, fetchImpl);
   if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }));
   if (url.pathname === "/health" && ["GET", "HEAD"].includes(request.method)) {
-    return cors(new Response(request.method === "HEAD" ? null : JSON.stringify({ ok: true, service: "SR3H AI Presence Check", version: SERVICE_VERSION }), {
+    return cors(new Response(request.method === "HEAD" ? null : JSON.stringify({ ok: true, service: "AIDO Discoverability Check", version: SERVICE_VERSION }), {
       headers: { "content-type": "application/json; charset=utf-8" }
     }));
   }
@@ -293,7 +348,7 @@ export async function handleRequest(request, env = {}, fetchImpl = fetch) {
   }
 
   try {
-    const server = createServer(fetchImpl);
+    const server = createServer(fetchImpl, env);
     const transport = new WebStandardStreamableHTTPServerTransport({ enableJsonResponse: true });
     await server.connect(transport);
     return cors(await transport.handleRequest(request));

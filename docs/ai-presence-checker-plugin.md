@@ -1,4 +1,4 @@
-# SR3H AI Presence Check: MCP plugin boundary
+# AIDO Discoverability Check: MCP plugin boundary
 
 ## User goal
 
@@ -23,8 +23,9 @@ Read-only checks:
 3. Sitemap and canonical URL discovery.
 4. Page titles, descriptions and index directives.
 5. Organization, Product, Service and LocalBusiness structured data.
-6. Whether the business, services, location and evidence are stated consistently.
+6. Whether the business, services, location and evidence are stated consistently across up to five same-origin public pages.
 7. Whether `llms.txt` or another explicit machine-readable profile exists.
+8. When the provider is available, whether the site answers six business-specific questions and whether the business is observed in one branded and five unbranded AI-assisted searches.
 
 Output:
 
@@ -36,9 +37,11 @@ Output:
 - A short next action.
 - An optional invitation to contact `hello@sr3h.uk` for deeper analysis.
 
+The search sample uses a strict structured response, at most six web-search calls, bounded output, disabled OpenAI API storage, a separate Cloudflare rate limit and a 24-hour edge cache. If that layer is unavailable, the technical check still returns a useful result.
+
 ## Commercial and evidence boundary
 
-The tool must not claim to measure ChatGPT ranking, citation, recommendation, customer demand or conversion from a website crawl. It must not describe metadata compliance as commercial success. Consumer observations, API tests and real conversion data remain separate evidence classes.
+The tool must not turn a bounded search observation into a fixed ChatGPT ranking, independent recommendation, customer-demand or conversion claim. It must not describe metadata compliance as commercial success. Consumer observations, API tests and real conversion data remain separate evidence classes.
 
 ## OpenAI tool annotations
 
@@ -48,4 +51,4 @@ The tool must not claim to measure ChatGPT ranking, citation, recommendation, cu
 
 ## Deployment state
 
-The MCP service is deployed at `https://mcp.sr3h.uk/mcp` with a health endpoint at `https://mcp.sr3h.uk/health`. Its schemas, annotations, rate limits and public support, privacy and terms pages have been tested. ChatGPT developer-mode testing, publisher verification, OpenAI review and public plugin publication remain separate release gates.
+Version 0.3 remains deployed at `https://mcp.sr3h.uk/mcp`. Version 0.4 is implemented locally and requires a production secret, deployment, real output review and remote verification before it replaces the deployed version. OpenAI review and public plugin publication remain later, separate release gates.

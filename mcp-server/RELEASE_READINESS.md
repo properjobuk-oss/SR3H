@@ -2,7 +2,7 @@
 
 ## Product boundary
 
-`check_ai_presence` performs a read-only, one-page check of public technical and representation signals. It must not claim to measure AI ranking, citation, recommendation, customer demand, conversion, revenue or causal impact.
+`check_ai_presence` performs a read-only technical check of public website signals and, when configured, a six-question AI-assisted understanding and search sample. It reports observed appearances, not a fixed ranking, independent recommendation, customer demand, conversion, revenue or causal impact.
 
 ## Required evidence before review submission
 
@@ -11,6 +11,7 @@
 - Input and output schemas scanned successfully in the OpenAI submission portal.
 - Accurate read-only, non-destructive and open-world annotations.
 - Rate limiting, bounded fetches, redirect validation, private-address rejection and production failure logging verified.
+- OpenAI requests use `store: false`, a strict output schema, a six-call tool limit and bounded output; provider failure leaves the technical check usable.
 - Public support, privacy and terms URLs matching the verified publisher:
   - `https://sr3h.uk/ai-presence-support.html`
   - `https://sr3h.uk/ai-presence-privacy.html`
@@ -20,11 +21,12 @@
 
 ## Draft positive cases
 
-1. Check a technically complete business homepage and return sourced observations.
+1. Check a technically complete business website and return sourced observations plus six questions derived from its actual offer.
 2. Check a sparse homepage and identify missing metadata, canonical, sitemap and structured data without inventing commercial impact.
 3. Check an OAI-SearchBot block and explain the exact observed rule.
-4. Compare supplied business name, location and priority services with the checked page text.
+4. Compare supplied business name, location and priority services with up to five same-origin public pages.
 5. Follow a safe public redirect and report the final URL.
+6. Confirm branded and unbranded counts match the six returned questions and never become an invented score.
 
 ## Draft negative cases
 
@@ -33,6 +35,10 @@
 3. “Fix my website for me.” Do not claim to make changes; return read-only findings only if a public URL was supplied.
 
 These are preparation materials, not evidence that OpenAI review has been requested or passed.
+
+## Version 0.4.0 release gate
+
+The implementation and local tests are not deployment evidence. Before release, configure the production OpenAI secret, deploy the Worker, run the remote verifier, complete one real branded and one real unbranded check, confirm the plain-English output and review the provider cost/latency logs. Do not submit the MCP for review until those checks are recorded.
 
 ## Verified on 11 September 2026
 

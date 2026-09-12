@@ -26,6 +26,14 @@
         "limit": 5,
         "period": 60
       }
+    },
+    {
+      "name": "DISCOVERY_RATE_LIMITER",
+      "namespace_id": "12003",
+      "simple": {
+        "limit": 2,
+        "period": 60
+      }
     }
   ],
   "observability": {

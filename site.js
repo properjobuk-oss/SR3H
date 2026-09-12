@@ -269,6 +269,7 @@ function appendResultList(parent, items) {
 
 function renderAiCheckResult(container, result, form) {
   const state = result.audit?.technical_readiness || "partial";
+  const discovery = result.discoverability || { status: "unavailable" };
   const titles = {
     clear: "AI search crawlers can access your website.",
     partial: "Your website is accessible, but some information needs attention.",
@@ -282,11 +283,28 @@ function renderAiCheckResult(container, result, form) {
 
   const head = makeElement("div", "ai-check-result-head");
   const headCopy = document.createElement("div");
-  headCopy.append(makeElement("h3", "", titles[state] || titles.partial));
-  headCopy.append(makeElement("p", "", result.summary));
+  headCopy.append(makeElement("h3", "", discovery.status === "complete" ? result.summary : titles[state] || titles.partial));
+  headCopy.append(makeElement("p", "", discovery.status === "complete"
+    ? "A small, dated sample of what the website explains and what appeared in AI-assisted search."
+    : discovery.note || result.summary));
   const stateLabel = makeElement("span", "ai-check-state", stateLabels[state] || stateLabels.partial);
   stateLabel.dataset.state = state;
   head.append(headCopy, stateLabel);
+
+  const snapshot = makeElement("div", "ai-check-snapshot");
+  if (result.snapshot) {
+    const { access, understanding, discovery: observed } = result.snapshot;
+    [
+      ["Website access", `${access.passed} of ${access.checked} checks passed`],
+      ["Offer clarity", `${understanding.answered} of ${understanding.checked} questions answered`],
+      ["Observed discovery", `Branded ${observed.branded_found} of ${observed.branded_checked} · Unbranded ${observed.unbranded_found} of ${observed.unbranded_checked}`],
+      ["Customer outcomes", "Not measured"]
+    ].forEach(([label, value]) => {
+      const item = makeElement("div", "ai-check-snapshot-item");
+      item.append(makeElement("span", "", label), makeElement("strong", "", value));
+      snapshot.append(item);
+    });
+  }
 
   const grid = makeElement("div", "ai-check-result-grid");
   const findings = makeElement("div", "ai-check-result-block");
@@ -299,29 +317,30 @@ function renderAiCheckResult(container, result, form) {
     { title: "Show the proof", text: "Connect important claims to accreditations, reviews, case studies or product facts." },
     { title: "Test customer questions", text: "Check whether AI services mention the business for the questions customers actually ask." }
   ];
-  findings.append(makeElement("h4", "", gaps.length ? "What to improve" : "How to improve AI discoverability"));
-  appendResultList(findings, gaps.length ? gaps : discoverabilityGuidance);
+  const sampledFindings = discovery.status === "complete"
+    ? (discovery.important_findings || []).map((text) => ({ text }))
+    : [];
+  findings.append(makeElement("h4", "", sampledFindings.length ? "What this suggests" : gaps.length ? "What to improve" : "How to improve AI discoverability"));
+  appendResultList(findings, sampledFindings.length ? sampledFindings : gaps.length ? gaps : discoverabilityGuidance);
 
   const evidence = makeElement("div", "ai-check-result-block");
-  evidence.append(makeElement("h4", "", "What we checked"));
-  appendResultList(evidence, (result.observations || []).slice(0, 5).map((item) => ({
-    title: item.label,
-    text: item.evidence,
-    source: item.source_url
-  })));
+  evidence.append(makeElement("h4", "", discovery.status === "complete" ? "Questions sampled" : "What we checked"));
+  appendResultList(evidence, discovery.status === "complete"
+    ? (discovery.questions || []).slice(0, 6).map((item) => ({ title: item.question, text: item.finding, source: item.search_evidence_url || item.site_evidence_url }))
+    : (result.observations || []).slice(0, 5).map((item) => ({ title: item.label, text: item.evidence, source: item.source_url })));
   grid.append(findings, evidence);
 
   const limits = makeElement("div", "ai-check-result-block");
-  limits.append(makeElement("h4", "", "What this check does not prove"));
-  appendResultList(limits, (result.unknowns || []).slice(0, 3).map((text) => ({ text })));
+  limits.append(makeElement("h4", "", "Limits of this check"));
+  appendResultList(limits, (discovery.limits || result.unknowns || []).slice(0, 3).map((text) => ({ text })));
 
   const next = makeElement("p", "ai-check-next");
   next.append(makeElement("strong", "", "Next useful step"));
   next.append(document.createTextNode(result.next_action));
 
   const actions = makeElement("div", "ai-check-result-actions");
-  const contact = makeElement("a", "button primary", "Ask about a deeper review");
-  contact.href = "mailto:hello@sr3h.uk?subject=AI%20presence%20check";
+  const contact = makeElement("a", "button primary", "Discuss a full review");
+  contact.href = "mailto:hello@sr3h.uk?subject=AIDO%20discoverability%20review";
   const reset = makeElement("button", "ai-check-reset", "Check another website");
   reset.type = "button";
   reset.addEventListener("click", () => {
@@ -334,7 +353,8 @@ function renderAiCheckResult(container, result, form) {
   });
   actions.append(contact, reset);
 
-  container.replaceChildren(head, grid, limits, next, actions);
+  const fuller = makeElement("p", "ai-check-fuller", "Want the full picture? We can test more customer questions, compare competing services and connect discoverability with search impressions, referrals and enquiries.");
+  container.replaceChildren(head, snapshot, grid, limits, next, fuller, actions);
   container.hidden = false;
   form.hidden = true;
   container.focus?.();
@@ -385,10 +405,10 @@ function initAiPresenceChecker() {
 
     const submit = form.querySelector('button[type="submit"]');
     const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 30_000);
+    const timeout = window.setTimeout(() => controller.abort(), 45_000);
     form.setAttribute("aria-busy", "true");
     if (submit) submit.disabled = true;
-    status.textContent = "Checking the public page and its discovery signals…";
+    status.textContent = "Checking the website and a small discovery sample…";
     aiCheckTimestamp(Date.now());
 
     try {
@@ -400,7 +420,7 @@ function initAiPresenceChecker() {
       });
       const body = await response.json().catch(() => ({}));
       if (!response.ok || !body.result) throw new Error(body.error || "The check could not be completed.");
-      status.textContent = "Website check complete.";
+      status.textContent = "Discoverability check complete.";
       renderAiCheckResult(resultContainer, body.result, form);
     } catch (error) {
       status.classList.add("is-error");

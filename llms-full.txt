@@ -34,6 +34,13 @@ AIDO Labs does not treat API output as proof of consumer behaviour, population d
 
 Public overview: https://sr3h.uk/aido-labs.html
 
+## AIDO Discoverability Check
+
+The free public check tests whether AI systems can access and understand a business website. When the live discovery layer is available, it also runs a small dated sample of one branded and five business-specific unbranded searches. Results use exact observed counts, not a score. They do not establish a fixed ranking, future recommendation, demand or conversion performance.
+
+MCP endpoint: https://mcp.sr3h.uk/mcp
+Support: https://sr3h.uk/ai-presence-support.html
+
 ## Conchup
 
 Conchup is a workspace for complex software projects. It keeps requirements, decisions, implementation, tests and evidence connected, so a product can change without losing why it was built that way.

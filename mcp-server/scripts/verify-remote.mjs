@@ -18,6 +18,7 @@ try {
   if (health.headers.get("x-content-type-options") !== "nosniff") throw new Error("health endpoint is missing nosniff");
   const healthBody = await health.json();
   if (healthBody.ok !== true) throw new Error("health endpoint did not report ok");
+  if (healthBody.version !== "0.4.0") throw new Error(`expected version 0.4.0, received ${healthBody.version || "unknown"}`);
 
   await client.connect(transport);
   const serverVersion = client.getServerVersion();
@@ -31,6 +32,9 @@ try {
   const result = await client.callTool({ name: tool.name, arguments: { website_url: auditTarget } });
   if (result.isError) throw new Error(result.content?.[0]?.text || "audit call failed");
   if (!result.structuredContent?.audit?.technical_readiness) throw new Error("audit result was not structured as expected");
+  if (result.structuredContent?.discoverability?.status !== "complete" || !result.structuredContent?.snapshot) {
+    throw new Error("live discovery sample did not complete; check the OpenAI secret, rate limit and provider response");
+  }
   const rejected = await client.callTool({ name: tool.name, arguments: { website_url: "http://127.0.0.1/private" } });
   if (rejected.isError !== true || !rejected.content?.[0]?.text?.includes("invalid_url")) {
     throw new Error("private-network target was not rejected as expected");
@@ -41,6 +45,8 @@ try {
     server: serverVersion,
     tool: tool.name,
     technical_readiness: result.structuredContent.audit.technical_readiness,
+    understanding: result.structuredContent.snapshot.understanding,
+    discovery: result.structuredContent.snapshot.discovery,
     observations: result.structuredContent.observations.length,
     gaps: result.structuredContent.gaps.length,
     private_network_rejected: true

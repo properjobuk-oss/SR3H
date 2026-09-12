@@ -124,3 +124,16 @@ test("bounds page metadata and ignores malformed canonicals", () => {
   assert.equal(result.description.length, 500);
   assert.equal(result.canonical, null);
 });
+
+test("collects a bounded same-origin context without exposing it by default", async () => {
+  const linked = html.replace("</body>", '<a href="/services">Services</a><a href="https://other.example/about">Elsewhere</a></body>');
+  const fetchImpl = fixtureFetch({
+    "https://acme.example/": () => response(linked, { type: "text/html" }),
+    "https://acme.example/services": () => response("<html><head><title>Services</title></head><body>Boiler repair plans and evidence.</body></html>", { type: "text/html" })
+  });
+  const normal = await auditWebsite({ website_url: "https://acme.example" }, fetchImpl);
+  assert.equal("_analysis_context" in normal, false);
+  const enriched = await auditWebsite({ website_url: "https://acme.example" }, fetchImpl, { includeAnalysisContext: true });
+  assert.deepEqual(enriched._analysis_context.pages.map((item) => item.url), ["https://acme.example/", "https://acme.example/services"]);
+  assert.equal(enriched._analysis_context.pages.length <= LIMITS.contextPages, true);
+});

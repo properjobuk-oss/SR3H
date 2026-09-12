@@ -42,8 +42,8 @@
     <link rel="mask-icon" href="/favicon.svg?v=20260702-4" color="#1a1a18">
     <link rel="manifest" href="/site.webmanifest?v=20260703-1">
     <link rel="preload" href="assets/sr3h-quiet-material.jpg" as="image">
-    <link rel="preload" href="assets/sr3h-logo-reveal.mp4?v=20260702-6" as="video" type="video/mp4">
-    <link rel="stylesheet" href="styles.css?v=20260912-2">
+    <link rel="preload" href="assets/sr3h-logo-reveal.mp4?v=20260912-1" as="video" type="video/mp4">
+    <link rel="stylesheet" href="styles.css?v=20260912-3">
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -71,7 +71,7 @@
               "Generative engine optimisation (GEO)",
               "Answer engine optimisation (AEO)",
               "AI search optimisation",
-              "AI presence measurement",
+              "AI discoverability measurement",
               "ChatGPT search discoverability",
               "AI crawler analysis",
               "AI referral and conversion measurement",
@@ -197,12 +197,12 @@
           },
           {
             "@type": "WebApplication",
-            "@id": "https://sr3h.uk/#ai-presence-check",
-            "name": "SR3H AI Presence Check",
-            "url": "https://sr3h.uk/#ai-check",
+            "@id": "https://sr3h.uk/#aido-discoverability-check",
+            "name": "AIDO Discoverability Check",
+            "url": "https://sr3h.uk/aido-labs.html#ai-check",
             "applicationCategory": "BusinessApplication",
             "operatingSystem": "Any",
-            "description": "A free, read-only check of one public webpage's technical signals for AI visibility and answer engine optimisation.",
+            "description": "A free, read-only check of website access, offer clarity and a small dated sample of branded and unbranded AI discoverability.",
             "offers": {
               "@type": "Offer",
               "price": "0",
@@ -219,7 +219,7 @@
   </head>
   <body>
     <div class="intro-overlay" aria-hidden="true">
-      <video class="intro-video" src="assets/sr3h-logo-reveal.mp4?v=20260702-6" muted playsinline webkit-playsinline autoplay preload="auto"></video>
+      <video class="intro-video" src="assets/sr3h-logo-reveal.mp4?v=20260912-1" muted playsinline webkit-playsinline autoplay preload="auto"></video>
     </div>
 
     <header class="site-header" aria-label="SR3H">
@@ -228,7 +228,7 @@
       </a>
       <nav class="nav nav--full" aria-label="Primary">
         <a href="#work">Work</a>
-        <a href="#ai-check">AI check</a>
+        <a href="aido-labs.html#ai-check">AI check</a>
         <a href="#platform">Research</a>
         <a href="journal.html">Journal</a>
         <a href="#community">Lunchtime Websites</a>
@@ -393,48 +393,6 @@
         </div>
       </section>
 
-      <section class="section ai-check-section" id="ai-check" aria-labelledby="ai-check-title">
-        <div class="section-inner ai-check-layout">
-          <div class="ai-check-intro">
-            <p class="eyebrow">Free AI visibility check</p>
-            <h2 id="ai-check-title">Can AI find and understand your business?</h2>
-            <p class="large-copy">Enter a public website. We check the signals AI search systems can see and show the clearest next improvement. It is a simple first step in answer engine optimisation (AEO).</p>
-            <p class="ai-check-boundary">This is a technical check, not a made-up score. It cannot prove rankings, recommendations or sales.</p>
-          </div>
-
-          <div class="ai-check-tool">
-            <form class="ai-check-form" id="ai-check-form">
-              <div class="form-field form-field--wide">
-                <label for="checker-url">Website</label>
-                <input id="checker-url" name="website_url" type="text" inputmode="url" autocomplete="url" autocapitalize="none" spellcheck="false" maxlength="2048" placeholder="example.com" required>
-              </div>
-              <div class="form-field">
-                <label for="checker-name">Business name <span>optional</span></label>
-                <input id="checker-name" name="business_name" type="text" autocomplete="organization" maxlength="120">
-              </div>
-              <div class="form-field">
-                <label for="checker-location">Location or service area <span>optional</span></label>
-                <input id="checker-location" name="location_or_service_area" type="text" autocomplete="address-level2" maxlength="160">
-              </div>
-              <div class="form-field form-field--wide">
-                <label for="checker-services">What should people find you for? <span>optional, separated by commas</span></label>
-                <input id="checker-services" name="priority_services" type="text" maxlength="600">
-              </div>
-              <div class="checker-honeypot" aria-hidden="true" hidden>
-                <label for="checker-company-website">Leave this empty</label>
-                <input id="checker-company-website" name="company_website" type="text" tabindex="-1" autocomplete="off">
-              </div>
-              <div class="ai-check-actions form-field--wide">
-                <button class="button primary" type="submit">Check my website</button>
-                <p>No account. One public page. No AI-generated score.</p>
-              </div>
-            </form>
-            <div class="ai-check-status" id="ai-check-status" role="status" aria-live="polite"></div>
-            <div class="ai-check-result" id="ai-check-result" tabindex="-1" hidden></div>
-          </div>
-        </div>
-      </section>
-
       <section class="section community-section" id="community" aria-labelledby="community-title">
         <div class="section-inner community-layout">
           <div class="community-intro">
@@ -482,6 +440,6 @@
         <a href="ai-presence-terms.html">Terms</a>
       </nav>
     </footer>
-    <script src="site.js?v=20260911-3"></script>
+    <script src="site.js?v=20260912-4"></script>
   </body>
 </html>

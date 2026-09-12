@@ -1,6 +1,6 @@
-# SR3H AI Presence Check MCP
+# AIDO Discoverability Check MCP
 
-A public, read-only MCP service that checks observable website signals affecting AI-search discoverability. It reports sourced findings and explicit unknowns; it does not claim to measure rankings, recommendations or conversions.
+A public, read-only MCP service that checks website access and offer clarity and, when configured, runs a six-question branded and unbranded AI-assisted search sample. It reports exact observations and explicit limits rather than a score or ranking promise.
 
 ## Endpoints
 
@@ -22,7 +22,15 @@ Verify a deployed endpoint with the same SDK client used by MCP consumers:
 npm run verify:remote -- https://your-worker.example/mcp https://sr3h.uk
 ```
 
-Production uses a per-target-site Cloudflare rate-limit binding for audit calls, a 64 KB MCP request limit, Workers observability for bounded failure events, explicit input and output schemas, and no-store responses. Submitted website URLs and page contents are not written to application logs or persistent storage. Cloudflare's binding is intentionally permissive and eventually consistent, so it is an abuse-control layer rather than an exact accounting limit.
+Production uses separate Cloudflare rate limits for technical checks and paid discovery samples, a 64 KB MCP request limit, bounded website fetches, at most six web-search tool calls, a short structured response and no-store OpenAI API requests. Completed discovery results may be cached for 24 hours to avoid paying for the same check repeatedly. Submitted page contents are not written to application logs or an application database. Cloudflare rate limits are abuse controls rather than exact accounting limits.
+
+Set the OpenAI secret without committing it:
+
+```sh
+npx wrangler secret put OPENAI_API_KEY
+```
+
+Without that secret, the deterministic technical check still completes and explicitly marks the live discovery sample unavailable.
 
 Public information: [support](https://sr3h.uk/ai-presence-support.html), [privacy](https://sr3h.uk/ai-presence-privacy.html), and [terms](https://sr3h.uk/ai-presence-terms.html).
 

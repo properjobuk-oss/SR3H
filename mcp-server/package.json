@@ -1,11 +1,11 @@
 {
   "name": "@sr3h/ai-presence-checker",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
-  "description": "Read-only MCP service for evidence-bounded website AI discoverability checks.",
+  "description": "Read-only AIDO website access, understanding and AI discoverability checks.",
   "scripts": {
-    "check": "node --check src/index.js && node --check src/audit.js && node --check src/url-safety.js",
+    "check": "node --check src/index.js && node --check src/audit.js && node --check src/discoverability.js && node --check src/url-safety.js",
     "test": "node --test",
     "verify:remote": "node scripts/verify-remote.mjs",
     "dev": "wrangler dev",

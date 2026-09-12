@@ -31,9 +31,9 @@ Machine-readable services: https://sr3h.uk/ai-services.json
 
 SR3H publishes notes on AI, software engineering, product research and the systems it is building at https://sr3h.uk/journal.html.
 
-## AI Visibility Check
+## AIDO Discoverability Check
 
-SR3H offers a public beta MCP tool at https://mcp.sr3h.uk/mcp. `check_ai_presence` performs a read-only, one-page AEO check of public technical and representation signals. It does not claim to prove ChatGPT rankings, recommendations, customer demand, causal effects or conversion performance without direct evidence.
+SR3H offers a public beta MCP tool at https://mcp.sr3h.uk/mcp. `check_ai_presence` checks public website access and offer clarity and, when available, runs a small dated branded and unbranded AI-assisted search sample. It reports exact observations rather than a score and does not claim to prove fixed rankings, recommendations, demand, causal effects or conversion performance.
 
 Support: https://sr3h.uk/ai-presence-support.html
 Privacy: https://sr3h.uk/ai-presence-privacy.html

@@ -22,7 +22,7 @@ test("MCP client initializes, lists the annotated tool and calls it", async () =
   await client.connect(clientTransport);
   try {
     const listed = await client.listTools();
-    assert.equal(client.getServerVersion().version, "0.3.1");
+    assert.equal(client.getServerVersion().version, "0.4.0");
     assert.equal(listed.tools.length, 1);
     assert.equal(listed.tools[0].name, "check_ai_presence");
     assert.equal(listed.tools[0].annotations.readOnlyHint, true);
@@ -81,7 +81,7 @@ test("HTTP health and error responses carry production safety headers", async ()
   assert.equal(health.status, 200);
   assert.equal(health.headers.get("cache-control"), "no-store");
   assert.equal(health.headers.get("x-content-type-options"), "nosniff");
-  assert.equal((await health.json()).version, "0.3.1");
+  assert.equal((await health.json()).version, "0.4.0");
 
   const missing = await handleRequest(new Request("https://mcp.example/nope"));
   assert.equal(missing.status, 404);
@@ -127,8 +127,26 @@ test("website checker returns a bounded audit to an allowed SR3H origin", async 
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("access-control-allow-origin"), "https://sr3h.uk");
   assert.equal(body.result.audit.technical_readiness, "clear");
+  assert.equal(body.result.discoverability.status, "unavailable");
+  assert.equal("_analysis_context" in body.result, false);
   assert.equal("score" in body.result.audit, false);
   assert.deepEqual(limiterKeys.sort(), ["web-check-ip:203.0.113.22", "web-check-target:test.example"]);
+});
+
+test("website checker limits the paid discovery layer separately", async () => {
+  const discoveryKeys = [];
+  const allow = { limit: async () => ({ success: true }) };
+  const discoveryLimiter = { limit: async ({ key }) => { discoveryKeys.push(key); return { success: false }; } };
+  const response = await handleRequest(new Request("https://mcp.example/check", {
+    method: "POST",
+    headers: { "content-type": "application/json", "origin": "https://sr3h.uk", "cf-connecting-ip": "203.0.113.50" },
+    body: JSON.stringify({ website_url: "https://test.example" })
+  }), { WEB_RATE_LIMITER: allow, DISCOVERY_RATE_LIMITER: discoveryLimiter, OPENAI_API_KEY: "test-key" }, fetchImpl);
+  const body = await response.json();
+  assert.equal(response.status, 200);
+  assert.equal(body.result.discoverability.status, "unavailable");
+  assert.equal(body.result.discoverability.reason, "rate_limited");
+  assert.deepEqual(discoveryKeys.sort(), ["discovery-ip:203.0.113.50", "discovery-target:test.example"]);
 });
 
 test("Cloudflare execution context is not mistaken for the audit fetch function", async () => {
