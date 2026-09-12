@@ -353,7 +353,9 @@ function renderAiCheckResult(container, result, form) {
 
   const next = makeElement("p", "ai-check-next");
   next.append(makeElement("strong", "", "What to do next"));
-  next.append(document.createTextNode(result.next_action));
+  next.append(document.createTextNode(discovery.status === "complete"
+    ? result.next_action
+    : `${result.next_action} Then test the customer questions that matter and record whether the business is absent, mentioned or recommended.`));
 
   const actions = makeElement("div", "ai-check-result-actions");
   const contact = makeElement("a", "button primary", "Discuss a full review");
