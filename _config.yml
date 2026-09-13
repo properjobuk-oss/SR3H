@@ -3,5 +3,6 @@
 exclude:
   - mcp-server
   - docs
+  - scripts
   - README.md
   - SECURITY.md
