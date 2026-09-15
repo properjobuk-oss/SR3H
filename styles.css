@@ -44,6 +44,7 @@ html.intro-enabled.intro-page-visible .site-header, html.intro-enabled.intro-pag
 .nav { display: flex; gap: clamp(15px, 2.5vw, 32px); align-items: center; color: var(--muted); font-size: 13px; line-height: 1; }
 .nav a { text-decoration: none; transition: color 160ms ease; }
 .nav a:hover, .nav a:focus-visible { color: var(--ink); }
+.nav-toggle { display: none; }
 
 .hero { position: relative; display: grid; min-height: min(820px, 90svh); align-items: end; overflow: hidden; padding: calc(118px + env(safe-area-inset-top)) max(var(--page-pad), env(safe-area-inset-right)) 64px max(var(--page-pad), env(safe-area-inset-left)); border-bottom: 1px solid var(--line); background: linear-gradient(120deg, rgba(247, 250, 246, 0.88), rgba(247, 250, 246, 0.58) 56%, rgba(246, 250, 249, 0.82)), url("assets/sr3h-quiet-material.jpg") center / cover no-repeat; }
 .hero::after { position: absolute; right: -8vw; bottom: -20vw; width: min(62vw, 820px); aspect-ratio: 1; border: 1px solid rgba(40, 72, 64, 0.16); border-radius: 50%; box-shadow: 0 0 0 min(5vw, 66px) rgba(40, 72, 64, 0.05), 0 0 0 min(10vw, 132px) rgba(40, 72, 64, 0.035); content: ""; pointer-events: none; }
@@ -315,10 +316,14 @@ h3 { margin: 0 0 12px; font-size: clamp(26px, 2.2vw, 36px); font-weight: 570; le
 @media (max-width: 760px) {
   .site-header { padding-top: calc(14px + env(safe-area-inset-top)); padding-bottom: 14px; }
   .brand { width: 90px; }
-  .nav { gap: 13px; font-size: 11px; }
-  .nav a:nth-child(3), .nav a:nth-child(4) { display: none; }
-  .nav--full a:nth-child(3), .nav--full a:nth-child(4) { display: none; }
-  .nav--full a:nth-child(5) { display: inline; }
+  .site-header { flex-wrap: wrap; gap: 12px; }
+  .nav { width: 100%; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; }
+  .nav a { display: inline-flex; align-items: center; min-height: 44px; }
+  .menu-enhanced .nav-toggle { display: inline-flex; align-items: center; justify-content: center; min-width: 76px; min-height: 44px; padding: 0 16px; border: 1px solid var(--line-strong); border-radius: 24px; background: var(--paper-soft); color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
+  .nav-toggle:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
+  .menu-enhanced .nav { display: none; }
+  .menu-enhanced.menu-open .nav { display: flex; flex-direction: column; align-items: stretch; gap: 0; max-height: calc(100dvh - 110px - env(safe-area-inset-top)); overflow-y: auto; padding: 8px 0; border-top: 1px solid var(--line); }
+  .menu-open .nav a { padding: 8px 4px; min-height: 44px; }
   .hero { min-height: 660px; padding-bottom: 44px; }
   .split, .section-heading, .contact-panel { grid-template-columns: 1fr; gap: 28px; }
   .section-heading { margin-bottom: 34px; }

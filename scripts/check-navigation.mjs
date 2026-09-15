@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { runInNewContext } from 'node:vm';
+const root = new URL('../', import.meta.url);
+const read = name => readFileSync(new URL(name, root), 'utf8');
+const pages = [...read('sitemap.xml').matchAll(/<loc>(.*?)<\/loc>/g)].map(m => new URL(m[1]).pathname.slice(1) || 'index.html');
+for (const page of pages) {
+  const html = read(page);
+  assert(html.includes('navigation.js?v=20260915-1'), `${page}: missing shared menu`);
+  assert(html.includes('styles.css?v=20260915-menu'), `${page}: stale stylesheet`);
+  const nav = html.match(/<nav class="nav nav--full"[^>]*>([\s\S]*?)<\/nav>/)[1];
+  const labels = [...nav.matchAll(/<a\b[^>]*>(.*?)<\/a>/g)].map(m => m[1]);
+  assert.deepEqual(labels, ['Work', 'Research', 'Blog', 'Lunchtime Websites', 'AIDO', 'Contact']);
+}
+const target = () => ({ handlers: {}, addEventListener(name, fn) { this.handlers[name] = fn; } });
+const classes = new Set();
+const nav = { ...target(), contains: el => el === link, before: el => { button = el; } };
+const link = {};
+let button;
+const header = { ...target(), querySelector: () => nav, contains: el => [nav, button, link].includes(el), classList: { add: v => classes.add(v), remove: v => classes.delete(v), contains: v => classes.has(v) } };
+const document = { ...target(), querySelector: () => header, createElement: () => ({ ...target(), attrs: {}, setAttribute(k,v) { this.attrs[k] = v; }, focus() { document.activeElement = this; } }) };
+const media = { ...target(), matches: true };
+const window = { ...target(), matchMedia: () => media };
+runInNewContext(read('navigation.js'), { document, window });
+assert.equal(button.attrs['aria-expanded'], 'false');
+const open = () => { button.handlers.click(); assert.equal(button.attrs['aria-expanded'], 'true'); };
+const closed = () => { assert.equal(button.attrs['aria-expanded'], 'false'); assert(!classes.has('menu-open')); };
+open(); button.handlers.click(); closed();
+open(); nav.handlers.click({ target: { closest: () => link } }); closed();
+open(); document.handlers.keydown({ key: 'Escape' }); closed(); assert.equal(document.activeElement, button);
+open(); document.handlers.click({ target: {} }); closed();
+open(); header.handlers.focusout({ relatedTarget: {} }); closed();
+open(); media.handlers.change(); closed();
+open(); window.handlers.pageshow(); closed();
+assert(!read('styles.css').includes('.nav a:nth-child('), 'Do not hide navigation links by position');
+console.log(`PASS: all ${pages.length} headers, menu toggle, link selection, Escape, outside click, focus exit, breakpoint reset and page restore.`);
