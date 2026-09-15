@@ -7,7 +7,7 @@
   const toggle = document.createElement('button');
   toggle.type = 'button';
   toggle.className = 'nav-toggle';
-  toggle.textContent = 'Menu';
+  toggle.setAttribute('aria-label', 'Open menu');
   nav.id = 'primary-navigation';
   toggle.setAttribute('aria-controls', nav.id);
   toggle.setAttribute('aria-expanded', 'false');
@@ -17,14 +17,14 @@
   function close(returnFocus = false) {
     header.classList.remove('menu-open');
     toggle.setAttribute('aria-expanded', 'false');
-    toggle.textContent = 'Menu';
+    toggle.setAttribute('aria-label', 'Open menu');
     if (returnFocus) toggle.focus();
   }
   toggle.addEventListener('click', () => {
     if (header.classList.contains('menu-open')) return close();
     header.classList.add('menu-open');
     toggle.setAttribute('aria-expanded', 'true');
-    toggle.textContent = 'Close';
+    toggle.setAttribute('aria-label', 'Close menu');
   });
   nav.addEventListener('click', event => {
     if (event.target.closest('a')) close();
