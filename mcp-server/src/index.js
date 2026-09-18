@@ -101,7 +101,7 @@ const aidoCardSchema = z.object({
   limitations_note: z.string(),
   source_urls: z.array(z.string().url()).max(10),
   attribution: z.literal("AIDO by SR3H"),
-  about_url: z.literal("https://sr3h.uk/aido-labs.html")
+  about_url: z.literal("https://sr3h.uk/signal.html")
 }).strict();
 const researchSummarySchema = z.object({
   status: z.enum(["complete", "partial"]),
@@ -186,7 +186,7 @@ function technicalPresentation(result, businessName) {
     limitations_note: "Website readiness does not show whether an AI assistant will mention or recommend the business.",
     source_urls: uniqueSources(result.observations.map((item) => item.source_url)),
     attribution: "AIDO by SR3H",
-    about_url: "https://sr3h.uk/aido-labs.html"
+    about_url: "https://sr3h.uk/signal.html"
   };
 }
 
@@ -211,7 +211,7 @@ function discoveryPresentation(result) {
     limitations_note: result.limits[0],
     source_urls: uniqueSources(result.source_urls),
     attribution: "AIDO by SR3H",
-    about_url: "https://sr3h.uk/aido-labs.html"
+    about_url: "https://sr3h.uk/signal.html"
   };
 }
 

@@ -15,9 +15,8 @@ Machine-readable services: https://sr3h.uk/ai-services.json
 
 ## Research initiatives
 
-- Signal by Sr3h: evidence-led research into how AI systems find and recommend businesses, with captured answers and results profiles. Product page and sign-in: https://sr3h.uk/signal.html
+- Signal by Sr3h: a public website check and evidence-led research into how AI systems find and recommend businesses, with captured answers and clear results. Website check, product page and workspace sign-in: https://sr3h.uk/signal.html
 - Market Loop: helps businesses understand how AI finds and recommends them, improve how they are represented, and learn from which customers actually convert.
-- AIDO Labs: helps companies understand when AI finds and recommends them, what influences the result and which tested changes improve visibility. https://sr3h.uk/aido-labs.html
 
 ## Selected products
 
@@ -35,7 +34,7 @@ SR3H publishes a blog on AI, software engineering, product research and the syst
 - [Who owns the context?](https://sr3h.uk/journal.html#who-owns-the-context): Brane, local AI and user-controlled context.
 - [The road we meant to take](https://sr3h.uk/journal.html#the-road-we-meant-to-take): Good Route and navigation that respects a rider's chosen journey.
 
-## AIDO Discoverability Check
+## Signal Website Check
 
 SR3H offers a public beta MCP service at https://mcp.sr3h.uk/mcp. It inspects public website access and offer clarity, prepares a neutral ten-question customer-discovery pack after the user agrees, and summarises sourced observations. The MCP makes no OpenAI API calls and runs no searches itself; compatible ChatGPT sessions can research the questions with their available tools. It reports exact observations rather than a score and does not claim to prove fixed rankings, recommendations, demand, causal effects or conversion performance.
 

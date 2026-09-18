@@ -386,7 +386,7 @@ export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisCo
       "Every page, external mention, AI model, search index or user journey."
     ],
     next_action: gaps[0]?.action || "Technical access signals are in place. To measure actual discovery, run the separate ten-question sample using representative customer questions.",
-    deeper_analysis: "AIDO is developed by SR3H. Learn about the method and its limits at https://sr3h.uk/aido-labs.html."
+    deeper_analysis: "AIDO is developed by SR3H. Learn about the method and its limits at https://sr3h.uk/signal.html."
   };
   if (includeAnalysisContext) result._analysis_context = await collectWebsiteContext(page, html, inspected, fetchImpl);
   return result;

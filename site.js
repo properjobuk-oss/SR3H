@@ -364,7 +364,7 @@ function renderAiCheckResult(container, result, form) {
 
   const actions = makeElement("div", "ai-check-result-actions");
   const contact = makeElement("a", "button primary", "Discuss a full review");
-  contact.href = "mailto:hello@sr3h.uk?subject=AIDO%20discoverability%20review";
+  contact.href = "mailto:hello@sr3h.uk?subject=Signal%20website%20review";
   const reset = makeElement("button", "ai-check-reset", "Check another website");
   reset.type = "button";
   reset.addEventListener("click", () => {
@@ -378,7 +378,7 @@ function renderAiCheckResult(container, result, form) {
   actions.append(contact, reset);
 
   const fuller = makeElement("p", "ai-check-fuller", discovery.status === "complete"
-    ? "A deeper AIDO review tests more customer questions across AI services, separates mentions from genuine recommendations, compares competing businesses and checks which changes improve visibility."
+    ? "A deeper Signal review tests more customer questions across AI services, separates mentions from recommendations and checks which changes improve the evidence."
     : "To understand actual AI visibility, the next stage is to test the questions customers ask, record whether the business is mentioned or recommended, and compare it with the alternatives that appear instead.");
   const limitItems = (discovery.limits || result.unknowns || []).slice(0, 3);
   const limits = makeElement("p", "ai-check-limits", `About this check: ${limitItems.join(" ")}`);

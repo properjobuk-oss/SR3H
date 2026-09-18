@@ -18,23 +18,17 @@ An SR3H assessment can examine public crawlability, robots directives, sitemaps,
 
 A technical check cannot by itself prove that an AI system will rank, cite or recommend a company. It also cannot prove customer demand, causal improvement or conversion performance. Those conclusions require controlled observations and real outcome data.
 
-## Signal
+## Signal by Sr3h
 
-Signal is evidence-led research into AI-mediated commercial discovery. It distinguishes observed evidence from inference, keeps consumer and API observations separate, and separates natural discovery from introduced evaluation. Its purpose is to understand how AI systems represent choices and whether tested changes lead to better decisions and real-world outcomes.
+Signal combines a public website check with evidence-led research into AI-mediated commercial discovery. It distinguishes observed evidence from inference, keeps consumer and API observations separate, and separates natural discovery from introduced evaluation. Its purpose is to understand how AI systems represent choices and whether tested changes lead to better decisions and real-world outcomes.
+
+Public page, website check and workspace access: https://sr3h.uk/signal.html
 
 ## Market Loop
 
 Market Loop helps businesses understand how AI finds and recommends them, improve how they are represented, and learn from which customers actually convert. It connects public representation work with measured commercial outcomes rather than treating visibility as an end in itself.
 
-## AIDO Labs
-
-AIDO Labs is an experimental evidence workbench for bounded AI-mediated commercial questions. Its proving slice defines a target, population, buyer need and decision; records exact interactions and complete responses; separates consumer, API and other observations; separates natural discovery from introduced evaluation; and produces an evidence-qualified readout with one next action.
-
-AIDO Labs does not treat API output as proof of consumer behaviour, population demand or causal intervention effects.
-
-Public overview: https://sr3h.uk/aido-labs.html
-
-## AIDO Discoverability Check
+## Signal Website Check
 
 The website form tests whether search and AI systems can access and understand a business website. When its live discovery layer is available, it also runs a small dated sample of one branded and five business-specific unbranded searches using SR3H's bounded API service. The separate MCP inspects the website and can prepare and summarise a ten-question check without calling the OpenAI API; compatible ChatGPT sessions perform any optional research with their own available tools. Results use exact observed counts, not a score. They do not establish a fixed ranking, future recommendation, demand or conversion performance.
 

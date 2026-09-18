@@ -7,7 +7,7 @@ This folder contains the copy and test evidence needed to complete an OpenAI **W
 - Customer-facing name: **AIDO by SR3H**
 - Publisher: **SR3H LTD**
 - MCP endpoint: `https://mcp.sr3h.uk/mcp`
-- Website: `https://sr3h.uk/aido-labs.html`
+- Website: `https://sr3h.uk/signal.html`
 - Support: `https://sr3h.uk/ai-presence-support.html`
 - Privacy: `https://sr3h.uk/ai-presence-privacy.html`
 - Terms: `https://sr3h.uk/ai-presence-terms.html`

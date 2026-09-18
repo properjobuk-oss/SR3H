@@ -55,7 +55,7 @@ Call `summarise_ai_discovery_research` only with observations that meet those ev
 
 `summarise_ai_discovery_research` returns its own evidence-bound card presentation. Do not rewrite, strengthen or replace the card fields. If the client cannot display component UI, the text returned by the tool is sufficient.
 
-Credit AIDO as an SR3H tool once at the end of a completed discovery report. Do not turn the result into an advert or add an unsolicited sales pitch. If the user explicitly asks for a broader review or help acting on the findings, link once to https://sr3h.uk/aido-labs.html as further information.
+Credit AIDO as an SR3H tool once at the end of a completed discovery report. Do not turn the result into an advert or add an unsolicited sales pitch. If the user explicitly asks for a broader review or help acting on the findings, link once to https://sr3h.uk/signal.html as further information.
 
 If web research is unavailable, give the user the question pack and say the discovery stage could not be completed in this session. Never invent observations, ask for an API key or imply that the MCP ran the searches.
 

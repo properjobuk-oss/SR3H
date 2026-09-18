@@ -228,7 +228,7 @@ export function summariseExtendedResearch(input) {
       "A dated sample of the searches completed in this conversation; results can vary between services and over time.",
       "It does not establish a fixed ranking or measure demand, enquiries, sales or revenue."
     ],
-    deeper_review: "AIDO is developed by SR3H. Learn about the method and its limits at https://sr3h.uk/aido-labs.html."
+    deeper_review: "AIDO is developed by SR3H. Learn about the method and its limits at https://sr3h.uk/signal.html."
   };
 }
 

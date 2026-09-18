@@ -99,7 +99,7 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
       </div>
       <section class="next" id="nextPanel"><h2>Best next step</h2><p id="nextAction"></p></section>
       <details id="details" hidden><summary>Evidence and limits</summary><p id="limitations"></p><ul class="sources" id="sources"></ul></details>
-      <footer class="footer"><span id="checkedAt"></span><a id="about" href="https://sr3h.uk/aido-labs.html" target="_blank" rel="noreferrer">AIDO by SR3H</a></footer>
+      <footer class="footer"><span id="checkedAt"></span><a id="about" href="https://sr3h.uk/signal.html" target="_blank" rel="noreferrer">AIDO by SR3H</a></footer>
     </div>
   </main>
   <script>
@@ -190,7 +190,7 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
         byId("details").hidden = !(clean(data.limitations_note) || sources.childElementCount);
         const date = Date.parse(data.checked_at);
         setText("checkedAt", Number.isNaN(date) ? "" : new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(date));
-        byId("about").href = "https://sr3h.uk/aido-labs.html";
+        byId("about").href = "https://sr3h.uk/signal.html";
       };
       window.addEventListener("message", (event) => {
         if (event.source !== window.parent) return;

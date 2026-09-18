@@ -52,9 +52,9 @@ Anup House: The first Lunchtime Websites example, creating a clear online home f
 
 Clarity: A space for reflection, meditation and Buddhist learning, bringing daily practice into everyday life.
 
-AIDO Labs: AIDO Labs helps companies understand when AI finds and recommends them, and what influences the result. It tests changes to see what improves their visibility.
+Signal: Signal records defined customer questions, complete AI answers, sources and test conditions. It shows when a business is absent, mentioned or recommended and supports like-for-like repeated tests.
 
-AIDO Labs page: AIDO Labs helps a company understand when AI finds and recommends it, what influences the result and whether a tested change improves visibility. It records the question, system, date, sources and limits behind each result. Visibility alone is not proof of commercial value.
+Signal page: Signal combines a public website check with evidence-led AI discovery research. Each result retains its question, AI system, date, sources, sample size and limits. It does not treat a small sample as a market ranking or causal proof.
 
 ## Research Language
 
