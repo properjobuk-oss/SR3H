@@ -10,7 +10,7 @@ for (const page of pages) {
   assert(html.includes('styles.css?v=20260915-menu-2'), `${page}: stale stylesheet`);
   const nav = html.match(/<nav class="nav nav--full"[^>]*>([\s\S]*?)<\/nav>/)[1];
   const labels = [...nav.matchAll(/<a\b[^>]*>(.*?)<\/a>/g)].map(m => m[1]);
-  assert.deepEqual(labels, ['Work', 'Research', 'Blog', 'Lunchtime Websites', 'AIDO', 'Contact']);
+  assert.deepEqual(labels, ['Work', 'Research', 'Blog', 'Lunchtime Websites', 'Signal', 'Contact']);
 }
 const target = () => ({ handlers: {}, addEventListener(name, fn) { this.handlers[name] = fn; } });
 const classes = new Set();

@@ -38,7 +38,7 @@ for (const url of urls) {
     };
     walk(data);
   }
-  if (['index.html', 'aido-labs.html', 'conchup.html', 'journal.html'].includes(path)) {
+  if (['index.html', 'aido-labs.html', 'conchup.html', 'signal.html', 'journal.html'].includes(path)) {
     assert.equal(meta(html, 'og:url'), url);
     assert.equal(meta(html, 'og:title'), title);
     assert.equal(meta(html, 'twitter:title'), title);
