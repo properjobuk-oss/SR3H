@@ -11,10 +11,13 @@ assert(signal.includes('id="ai-check-form"'), "Signal must contain the website c
 assert(signal.includes('site.js?v=20260918-signal-1'), "Signal must load the checker behaviour");
 assert.equal((signal.match(/Login to Signal/g) || []).length, 1, "Signal needs one live Signal action");
 assert(!signal.includes("For existing users"), "Remove duplicated sign-in instructions");
-assert(signal.includes("Measure where your business appears in AI answers."), "Signal must explain the measured outcome");
-assert(signal.includes("question, AI system, model, date, sources and full answer"), "Signal must state the retained test evidence");
+assert(signal.includes("See how AI finds your company."), "Signal must explain the customer outcome");
+assert(signal.includes("See how AI finds, compares and recommends your company—then know what to change next."), "Signal must state the complete product proposition");
+assert(signal.includes("questions, answers, competitors and evidence"), "Signal must describe the evidence shown in the workspace");
 assert(signal.includes("Website readiness and observed inclusion are reported separately."), "Signal must separate readiness from observed inclusion");
 assert(legacy.includes('url=signal.html#ai-check') && legacy.includes('window.location.replace("signal.html#ai-check")'), "Old AIDO URL must preserve the checker route");
 assert(home.includes('href="https://aido-beta.vercel.app/" aria-label="Explore Signal by Sr3h"'), "Homepage card must use the live Signal site");
+assert(home.includes('assets/projects/signal-logo.png'), "Homepage card must use the current Signal logo");
+assert(home.includes('assets/projects/signal-workspace-preview.svg'), "Homepage card must preview the current Signal workspace");
 assert(!home.includes('href="aido-labs.html"'), "Homepage must not advertise the retired AIDO page");
 console.log("PASS: Signal has one concise workspace action, the website checker, and a compatible AIDO redirect.");

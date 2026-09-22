@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 860" role="img" aria-labelledby="title desc">
+  <title id="title">Signal visibility workspace</title>
+  <desc id="desc">An illustrative Signal workspace with visibility trend, company comparison, evidence sources and next action.</desc>
+  <defs>
+    <linearGradient id="mark" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#26d5e8"/><stop offset=".5" stop-color="#1671ef"/><stop offset="1" stop-color="#7258ec"/></linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#f6f8fc"/></linearGradient>
+    <filter id="shadow" x="-12%" y="-14%" width="124%" height="132%"><feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#24365b" flood-opacity=".12"/></filter>
+  </defs>
+  <rect width="1280" height="860" rx="32" fill="#f4f6fa"/>
+  <rect x="28" y="26" width="1224" height="808" rx="22" fill="#fff" filter="url(#shadow)"/>
+  <path d="M50 48h1180a22 22 0 0 1 22 22v58H28V70a22 22 0 0 1 22-22z" fill="#fff"/>
+  <path d="M28 128h1224" stroke="#e7eaf0"/>
+  <rect x="54" y="67" width="34" height="34" rx="11" fill="url(#mark)"/>
+  <path d="m63 91 8-14 8 14" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="102" y="81" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700">SIGNAL</text>
+  <text x="102" y="99" fill="#87909f" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="700" letter-spacing="2">BY SR3H</text>
+  <rect x="880" y="65" width="133" height="37" rx="18" fill="#f2f4f8"/>
+  <text x="902" y="88" fill="#536174" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="600">Last 30 days</text>
+  <rect x="1027" y="65" width="180" height="37" rx="18" fill="#111827"/>
+  <text x="1061" y="88" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700">New check +</text>
+  <rect x="28" y="128" width="190" height="706" fill="#fbfcfe"/>
+  <path d="M218 128v706" stroke="#e7eaf0"/>
+  <text x="54" y="169" fill="#9aa4b3" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" letter-spacing="1.6">WORKSPACE</text>
+  <rect x="43" y="186" width="159" height="42" rx="10" fill="#edf2ff"/>
+  <circle cx="65" cy="207" r="7" fill="#396cf2"/><text x="82" y="212" fill="#1e4bb1" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700">Overview</text>
+  <text x="60" y="259" fill="#596579" font-family="Arial, Helvetica, sans-serif" font-size="14">Questions</text><text x="60" y="304" fill="#596579" font-family="Arial, Helvetica, sans-serif" font-size="14">Competitors</text><text x="60" y="349" fill="#596579" font-family="Arial, Helvetica, sans-serif" font-size="14">Answers &amp; sources</text><text x="60" y="394" fill="#596579" font-family="Arial, Helvetica, sans-serif" font-size="14">Next actions</text>
+  <text x="246" y="171" fill="#8994a5" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" letter-spacing="1.4">PROPER JOB</text>
+  <text x="246" y="213" fill="#101828" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700">AI visibility overview</text>
+  <text x="246" y="240" fill="#697586" font-family="Arial, Helvetica, sans-serif" font-size="15">What customers are shown when they ask.</text>
+  <rect x="246" y="270" width="242" height="105" rx="15" fill="url(#panel)" stroke="#e5e9f0"/>
+  <text x="267" y="300" fill="#718096" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700">VISIBILITY</text><text x="267" y="346" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="700">38%</text><text x="389" y="343" fill="#1e9b6d" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700">↑ 6.2</text>
+  <rect x="504" y="270" width="242" height="105" rx="15" fill="url(#panel)" stroke="#e5e9f0"/>
+  <text x="525" y="300" fill="#718096" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700">MENTIONED</text><text x="525" y="346" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="700">7/18</text><text x="626" y="343" fill="#687586" font-family="Arial, Helvetica, sans-serif" font-size="13">answers</text>
+  <rect x="762" y="270" width="242" height="105" rx="15" fill="url(#panel)" stroke="#e5e9f0"/>
+  <text x="783" y="300" fill="#718096" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700">EVIDENCE</text><text x="783" y="346" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="700">24</text><text x="845" y="343" fill="#687586" font-family="Arial, Helvetica, sans-serif" font-size="13">sources</text>
+  <rect x="1020" y="270" width="206" height="105" rx="15" fill="#111827"/>
+  <text x="1041" y="300" fill="#aebee9" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700">NEXT OPPORTUNITY</text><text x="1041" y="329" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">Clarify service</text><text x="1041" y="351" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">and location proof</text>
+  <rect x="246" y="402" width="611" height="277" rx="16" fill="#fff" stroke="#e5e9f0"/>
+  <text x="270" y="435" fill="#182230" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">Where you appear</text><text x="270" y="457" fill="#7b8797" font-family="Arial, Helvetica, sans-serif" font-size="12">Visibility by service and date</text>
+  <path d="M278 606h543M278 552h543M278 498h543" stroke="#e9edf3"/>
+  <path d="M279 585 C341 568 359 580 413 553 S506 542 565 559 S668 542 722 521 S778 523 820 510" fill="none" stroke="#246bf0" stroke-width="4" stroke-linecap="round"/>
+  <path d="M279 617 C336 596 377 608 420 592 S514 606 565 578 S663 583 719 560 S783 562 820 547" fill="none" stroke="#8662e7" stroke-width="4" stroke-linecap="round"/>
+  <path d="M279 640 C350 629 384 641 425 624 S511 633 568 618 S657 638 715 606 S781 619 820 601" fill="none" stroke="#e49a34" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="565" cy="559" r="6" fill="#fff" stroke="#246bf0" stroke-width="3"/><text x="280" y="657" fill="#929cab" font-family="Arial, Helvetica, sans-serif" font-size="11">Week 1</text><text x="426" y="657" fill="#929cab" font-family="Arial, Helvetica, sans-serif" font-size="11">Week 2</text><text x="568" y="657" fill="#929cab" font-family="Arial, Helvetica, sans-serif" font-size="11">Week 3</text><text x="708" y="657" fill="#929cab" font-family="Arial, Helvetica, sans-serif" font-size="11">Week 4</text>
+  <circle cx="278" cy="710" r="5" fill="#246bf0"/><text x="290" y="714" fill="#667386" font-family="Arial, Helvetica, sans-serif" font-size="12">ChatGPT</text><circle cx="390" cy="710" r="5" fill="#8662e7"/><text x="402" y="714" fill="#667386" font-family="Arial, Helvetica, sans-serif" font-size="12">Perplexity</text><circle cx="523" cy="710" r="5" fill="#e49a34"/><text x="535" y="714" fill="#667386" font-family="Arial, Helvetica, sans-serif" font-size="12">Google AI</text>
+  <rect x="880" y="402" width="346" height="277" rx="16" fill="#fff" stroke="#e5e9f0"/>
+  <text x="904" y="435" fill="#182230" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">Companies appearing</text><text x="904" y="457" fill="#7b8797" font-family="Arial, Helvetica, sans-serif" font-size="12">Across the current question set</text>
+  <path d="M904 480h298M904 530h298M904 580h298M904 630h298" stroke="#edf0f4"/>
+  <text x="905" y="512" fill="#687586" font-family="Arial, Helvetica, sans-serif" font-size="13">1</text><circle cx="939" cy="507" r="10" fill="#f2b62e"/><text x="959" y="512" fill="#253042" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700">Local Builder Co.</text><text x="1150" y="512" fill="#253042" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700">62%</text>
+  <text x="905" y="562" fill="#687586" font-family="Arial, Helvetica, sans-serif" font-size="13">2</text><circle cx="939" cy="557" r="10" fill="url(#mark)"/><text x="959" y="562" fill="#253042" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700">Proper Job</text><text x="1150" y="562" fill="#253042" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700">38%</text>
+  <text x="905" y="612" fill="#687586" font-family="Arial, Helvetica, sans-serif" font-size="13">3</text><circle cx="939" cy="607" r="10" fill="#d4dce7"/><text x="959" y="612" fill="#253042" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700">Example Trade</text><text x="1150" y="612" fill="#253042" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700">29%</text>
+  <rect x="246" y="706" width="980" height="96" rx="16" fill="#f5f7fb"/>
+  <text x="271" y="740" fill="#6a7890" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" letter-spacing="1.2">WHAT TO CHANGE NEXT</text><text x="271" y="773" fill="#172033" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700">Make the core service, location and proof easier to find and verify.</text><text x="1058" y="770" fill="#246bf0" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700">Open evidence →</text>
+</svg>
