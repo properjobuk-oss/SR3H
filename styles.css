@@ -44,6 +44,8 @@ html.intro-enabled.intro-page-visible .site-header, html.intro-enabled.intro-pag
 .nav { display: flex; gap: clamp(15px, 2.5vw, 32px); align-items: center; color: var(--muted); font-size: 13px; line-height: 1; }
 .nav a { text-decoration: none; transition: color 160ms ease; }
 .nav a:hover, .nav a:focus-visible { color: var(--ink); }
+.nav .nav-signal-link { display: inline-flex; width: 24px; height: 24px; flex: 0 0 24px; align-items: center; justify-content: center; }
+.nav-signal-link img { display: block; width: 24px; height: 24px; object-fit: contain; }
 .nav-toggle { display: none; }
 
 .hero { position: relative; display: grid; min-height: min(820px, 90svh); align-items: end; overflow: hidden; padding: calc(118px + env(safe-area-inset-top)) max(var(--page-pad), env(safe-area-inset-right)) 64px max(var(--page-pad), env(safe-area-inset-left)); border-bottom: 1px solid var(--line); background: linear-gradient(120deg, rgba(247, 250, 246, 0.88), rgba(247, 250, 246, 0.58) 56%, rgba(246, 250, 249, 0.82)), url("assets/sr3h-quiet-material.jpg") center / cover no-repeat; }
