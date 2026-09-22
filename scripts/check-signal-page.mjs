@@ -18,6 +18,7 @@ assert(signal.includes("Website readiness and observed inclusion are reported se
 assert(legacy.includes('url=signal.html#ai-check') && legacy.includes('window.location.replace("signal.html#ai-check")'), "Old AIDO URL must preserve the checker route");
 assert(home.includes('href="https://aido-beta.vercel.app/" aria-label="Explore Signal by Sr3h"'), "Homepage card must use the live Signal site");
 assert(home.includes('assets/projects/signal-logo.png'), "Homepage card must use the current Signal logo");
-assert(home.includes('assets/projects/signal-workspace-preview.svg'), "Homepage card must preview the current Signal workspace");
+assert(home.includes('assets/projects/signal-workspace-phone.png'), "Homepage card must use the portrait Signal workspace preview");
+assert(home.includes('assets/projects/signal-nav-mark.png'), "Homepage preview must use the exact current Signal mark");
 assert(!home.includes('href="aido-labs.html"'), "Homepage must not advertise the retired AIDO page");
 console.log("PASS: Signal has one concise workspace action, the website checker, and a compatible AIDO redirect.");
