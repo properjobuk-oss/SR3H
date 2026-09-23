@@ -7,7 +7,7 @@ const pages = [...read('sitemap.xml').matchAll(/<loc>(.*?)<\/loc>/g)].map(m => n
 for (const page of pages) {
   const html = read(page);
   assert(html.includes('navigation.js?v=20260915-2'), `${page}: missing shared menu`);
-  assert(html.includes('styles.css?v=20260921-blog-1'), `${page}: stale stylesheet`);
+  assert(html.includes('styles.css?v=20260923-blog-images-1'), `${page}: stale stylesheet`);
   const nav = html.match(/<nav class="nav nav--full"[^>]*>([\s\S]*?)<\/nav>/)[1];
   const labels = [...nav.matchAll(/<a\b[^>]*>(.*?)<\/a>/g)].map(m => /aria-label="([^"]+)"/.exec(m[0])?.[1] || m[1]);
   assert.deepEqual(labels, ['Work', 'Research', 'Blog', 'Lunchtime', 'Signal', 'Contact']);

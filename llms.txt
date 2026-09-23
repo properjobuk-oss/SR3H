@@ -31,6 +31,9 @@ Machine-readable services: https://sr3h.uk/ai-services.json
 
 SR3H publishes a blog on AI, software engineering, product research and the systems it is building at https://sr3h.uk/journal.html.
 
+- [Everyone wants a better answer. Better for whom?](https://sr3h.uk/journal.html#better-answer-for-whom): customer fit, business visibility and AI-mediated discovery.
+- [Big Brain AI Monster](https://sr3h.uk/journal.html#big-brain-ai-monster): the distributed processes behind an AI answer.
+- [Is AI visibility optimisation just SEO dressed up?](https://sr3h.uk/journal.html#is-ai-visibility-just-seo): what AI visibility work shares with SEO and what needs separate evidence.
 - [When buyers ask AI, who gets the work?](https://sr3h.uk/journal.html#when-buyers-ask-ai): AI discovery and when a business becomes relevant to a customer need.
 - [Who owns the context?](https://sr3h.uk/journal.html#who-owns-the-context): Brane, local AI and user-controlled context.
 - [The road we meant to take](https://sr3h.uk/journal.html#the-road-we-meant-to-take): Good Route and navigation that respects a rider's chosen journey.
