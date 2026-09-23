@@ -1,6 +1,6 @@
 # SR3H
 
-> SR3H is an independent technology lab in Oxford. It researches AI visibility and builds useful software and dependable human-AI systems.
+> SR3H is an independent technology lab in Oxford. It researches how AI is changing the way people find information, products and services, and builds useful human-AI systems and software.
 
 Canonical website: https://sr3h.uk/
 Contact: mailto:hello@sr3h.uk
@@ -8,14 +8,15 @@ Machine-readable services: https://sr3h.uk/ai-services.json
 
 ## Services and expertise
 
-- UK AI visibility and answer engine optimisation (AEO): evidence-led checks and practical improvements for how AI systems find, understand and represent a business, product or service. Related terms include AI discoverability, AI search optimisation, generative engine optimisation (GEO), large language model optimisation (LLMO), AI crawler analysis and AI referral measurement.
-- Human-AI systems: research and product engineering around interfaces, structured context, scoped memory, knowledge, permissions, provenance and evaluation.
-- MCP apps and AI tools: focused Model Context Protocol tools with explicit data, permission and commercial boundaries.
+- AI search and AI-mediated discovery: research into how systems understand intent, gather sources, compare options and present information, products and services. Related areas include answer engine optimisation (AEO), generative engine optimisation (GEO), AI visibility, conversational and agentic search, recommendations and source transparency.
+- Human-AI interaction: research and product engineering around interfaces, context, memory, knowledge, permissions, evidence and how people guide and review AI work.
+- AI agents and MCP apps: focused Model Context Protocol tools and agent interactions with clear tasks, permissions and data boundaries.
 - Complex software engineering: bespoke product design, engineering, testing, deployment and maintainable self-management systems.
 
 ## Research initiatives
 
-- Signal by Sr3h: a public website check and evidence-led research into how AI systems find and recommend businesses, with captured answers and clear results. Website check, product page and workspace sign-in: https://sr3h.uk/signal.html
+- SR3H research: how AI interprets what people need, discovers and assesses information, compares businesses or products, and moves from answers towards actions. We examine the evidence behind recommendations and how organic, sponsored or other commercial interests may affect what people see.
+- Signal by Sr3h: one research programme exploring how AI systems find, understand and recommend businesses. Website check, product page and workspace sign-in: https://sr3h.uk/signal.html
 - Market Loop: helps businesses understand how AI finds and recommends them, improve how they are represented, and learn from which customers actually convert.
 
 ## Selected products

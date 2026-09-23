@@ -8,11 +8,17 @@ Contact: hello@sr3h.uk
 
 ## What SR3H does
 
-SR3H is an independent technology lab in Oxford. It researches AI visibility and builds useful software and dependable human-AI systems. Its work covers human interfaces, structured context, scoped memory, knowledge, permissions, provenance, evaluation and the connection between requirements, implementation, tests and evidence.
+SR3H is an independent technology lab in Oxford. It studies how AI is changing the relationship between people, the web and information, and builds useful software and dependable human-AI systems. Its work includes human-AI interaction, AI-mediated discovery, answer engine optimisation (AEO), AI agents and MCP, as well as context, knowledge, permissions, evidence and evaluation.
+
+## AI, the web and emerging interaction
+
+People increasingly describe what they need in a conversation rather than searching only with short keywords. AI systems can interpret intent, gather information from different sources, compare options and help people take action. SR3H studies this path from a person's question to the answer or choice they receive.
+
+Research areas include conversational and agentic search, AI-mediated product and service discovery, AEO and generative engine optimisation (GEO), human-AI interaction, agent tools and the Model Context Protocol (MCP). We ask what evidence informs an answer or recommendation, why suitable options may be missed, and how people can distinguish useful information from sponsored or otherwise commercially influenced results. These are questions we investigate, not claims that visibility alone produces a good recommendation or business outcome.
 
 ## AI visibility and discoverability
 
-SR3H helps UK businesses understand and improve how AI systems find, describe and recommend them. This work covers AI visibility, AI discoverability, AI search optimisation, answer engine optimisation (AEO), generative engine optimisation (GEO), large language model optimisation (LLMO), entity understanding, structured data, crawler access, retrieval, citation, representation quality, referral traffic and conversion measurement.
+SR3H helps UK businesses understand and improve how AI systems find, describe and consider them for relevant customer needs. This work covers AI visibility, AI discoverability, AI search optimisation, answer engine optimisation (AEO), generative engine optimisation (GEO), large language model optimisation (LLMO), entity understanding, structured data, crawler access, retrieval, citations, representation quality, referral traffic and conversion measurement. The wider research asks whether an option is appropriate to the need, what evidence supports its selection, and how organic and sponsored visibility are presented.
 
 An SR3H assessment can examine public crawlability, robots directives, sitemaps, canonical identity, structured data, service clarity, public evidence, answer consistency and the boundary between being technically discoverable and being commercially selected.
 
@@ -20,7 +26,7 @@ A technical check cannot by itself prove that an AI system will rank, cite or re
 
 ## Signal by Sr3h
 
-Signal combines a public website check with evidence-led research into AI-mediated commercial discovery. It distinguishes observed evidence from inference, keeps consumer and API observations separate, and separates natural discovery from introduced evaluation. Its purpose is to understand how AI systems represent choices and whether tested changes lead to better decisions and real-world outcomes.
+Signal is one SR3H research programme. It combines a public website check with evidence-led research into AI-mediated commercial discovery. It distinguishes observed evidence from inference, keeps consumer and API observations separate, and separates natural discovery from introduced evaluation. Its purpose is to understand how AI systems represent choices and whether tested changes lead to better decisions and real-world outcomes.
 
 Public page, website check and workspace access: https://sr3h.uk/signal.html
 

@@ -18,6 +18,14 @@
         "AI discoverability audit",
         "AI brand visibility",
         "AI search visibility",
+        "AI-mediated discovery",
+        "conversational search",
+        "agentic search",
+        "AI recommendations",
+        "AI commerce and distribution",
+        "intent understanding",
+        "organic and sponsored AI results",
+        "AI source transparency",
         "AI search optimisation",
         "generative engine optimisation",
         "GEO",
@@ -29,20 +37,20 @@
         "large language model optimisation",
         "LLMO"
       ],
-      "description": "Evidence-led checks and practical improvements for how AI systems find, understand and represent a business, product or service.",
+      "description": "Research and evidence-led improvements for how AI search systems interpret customer intent, find and represent businesses, and present products or services. Work includes answer engine optimisation (AEO), source quality and commercial visibility.",
       "serviceArea": "United Kingdom",
       "availability": "Available by enquiry"
     },
     {
       "id": "human-ai-systems",
       "name": "Human-AI systems research and product design",
-      "description": "Research, design and engineering for interfaces, context, memory, knowledge, permissions, provenance and evaluation in dependable human-AI systems.",
+      "description": "Research, design and engineering for human-AI interaction: how people set direction, provide context, review AI work and stay in control across interfaces, agents and tools.",
       "availability": "Available by enquiry"
     },
     {
       "id": "mcp-engineering",
       "name": "MCP app and AI tool engineering",
-      "description": "Focused Model Context Protocol tools and AI-assisted services with explicit data, permission and commercial boundaries.",
+      "description": "Focused Model Context Protocol (MCP) tools and AI-assisted services, designed around useful tasks, clear permissions and responsible data handling.",
       "availability": "Available by enquiry"
     },
     {
@@ -53,6 +61,11 @@
     }
   ],
   "research": [
+    {
+      "name": "Human-AI interaction and AI-mediated discovery",
+      "status": "Research area",
+      "description": "Studies how people express intent to AI systems, how systems gather and assess information, and how answers, recommendations and actions are shaped by evidence, tools and commercial interests."
+    },
     {
       "name": "Signal by Sr3h",
       "status": "Research",
