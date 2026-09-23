@@ -44,7 +44,7 @@ html.intro-enabled.intro-page-visible .site-header, html.intro-enabled.intro-pag
 .nav { display: flex; gap: clamp(15px, 2.5vw, 32px); align-items: center; color: var(--muted); font-size: 13px; line-height: 1; }
 .nav a { text-decoration: none; transition: color 160ms ease; }
 .nav a:hover, .nav a:focus-visible { color: var(--ink); }
-.nav .nav-signal-link { display: inline-flex; width: 24px; height: 24px; flex: 0 0 24px; align-items: center; justify-content: center; }
+.nav .nav-signal-link { display: inline-flex; height: 24px; align-items: center; gap: 6px; white-space: nowrap; }
 .nav-signal-link img { display: block; width: 24px; height: 24px; object-fit: contain; }
 .nav-toggle { display: none; }
 
