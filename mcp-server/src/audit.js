@@ -1,5 +1,6 @@
 import { validatePublicUrl } from "./url-safety.js";
 import { readBoundedText } from "./bounded-body.js";
+import { publicReferences, richResultTypes } from "./public-readiness.js";
 
 export const LIMITS = Object.freeze({ redirects: 4, bytes: 1_000_000, homepageBytes: 3_000_000, timeoutMs: 10_000, contextPages: 5, contextChars: 50_000 });
 const USER_AGENT = "AIDO-DiscoverabilityCheck/0.4 (+https://sr3h.uk/ai-presence-support.html)";
@@ -277,8 +278,30 @@ export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisCo
   const html = await readLimitedText(page.response, LIMITS.homepageBytes);
   const inspected = inspectHtml(html, page.finalUrl, page.response.headers.get("x-robots-tag") || "");
   const origin = page.finalUrl.origin;
+  const references = publicReferences(html, page.finalUrl.href);
+  const richTypes = richResultTypes(html);
+  // These small public documents are independent; bound their size and fetch them together.
+  const publicDocuments = Promise.all([
+    ["api", "/openapi.json"], ["plugin", "/.well-known/ai-plugin.json"]
+  ].map(async ([id, path]) => {
+    const source = `${origin}${path}`;
+    if (references[id]) return signal(id, id === "api" ? "Public API" : "AI app / plugin", "clear", "A public connection reference was found on the checked page. Its operation was not tested.", references[id]);
+    try {
+      const fetched = await safeFetch(source, fetchImpl, { accept: "application/json", maxBytes: 65_000 });
+      if (fetched.response.status === 404) return signal(id, id, "missing", "No public reference or discovery document was detected at the checked locations.", source);
+      if (!fetched.response.ok) return signal(id, id, "unverified", "The public discovery document could not be read.", source);
+      const body = await readLimitedText(fetched.response, 65_000);
+      let document;
+      try { document = JSON.parse(body); } catch { return signal(id, id, "missing", "No public connection document was detected at the checked location.", source); }
+      const valid = id === "api"
+        ? (typeof document?.openapi === "string" || typeof document?.swagger === "string") && document?.paths && typeof document.paths === "object" && !Array.isArray(document.paths)
+        : document?.schema_version === "v1" && typeof document?.name_for_human === "string" && typeof document?.api?.url === "string";
+      return signal(id, id, valid ? "clear" : "missing", valid ? "A public connection document was found. Its operation was not tested." : "No recognised public connection document was detected.", fetched.finalUrl.href);
+    } catch { return signal(id, id, "unverified", "The public discovery document could not be read.", source); }
+  }));
 
   let robotsStatus = "missing";
+  let searchAccess = "clear";
   let robotsEvidence = "No robots.txt file was found, so no crawler restriction was found there.";
   let robotsSource = `${origin}/robots.txt`;
   let sitemapCandidates = [];
@@ -289,10 +312,12 @@ export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisCo
       const robotsText = await readLimitedText(robotsFetch.response);
       const looksLikeHtml = /<\s*(?:!doctype\s+html|html|head|body)\b/i.test(robotsText);
       if (looksLikeHtml) {
+        searchAccess = "unverified";
         robotsEvidence = "The robots.txt address returned a webpage instead of crawler rules, so access could not be confirmed there.";
       } else {
         const decision = evaluateRobots(robotsText);
         robotsStatus = decision.allowed ? "clear" : "blocked";
+        searchAccess = robotsStatus;
         robotsEvidence = decision.allowed
           ? "OpenAI's search crawler is allowed to access the homepage."
           : `OpenAI's search crawler is blocked from the homepage by this rule: ${decision.matchedRule?.type} ${decision.matchedRule?.path}.`;
@@ -300,10 +325,12 @@ export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisCo
       }
     } else if (robotsFetch.response.status !== 404) {
       robotsStatus = "unverified";
+      searchAccess = "unverified";
       robotsEvidence = `The robots.txt address returned HTTP ${robotsFetch.response.status}, so crawler access could not be confirmed.`;
     }
   } catch {
     robotsStatus = "unverified";
+    searchAccess = "unverified";
     robotsEvidence = "Crawler rules could not be checked from this service.";
   }
 
@@ -318,8 +345,10 @@ export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisCo
           sitemap = { status: "clear", url: result.finalUrl.href, evidence: "A readable XML sitemap is available." };
           break;
         }
+      } else if (result.response.status !== 404) {
+        sitemap = { ...sitemap, status: "unverified", evidence: "The sitemap could not be read." };
       }
-    } catch { /* reflected as missing */ }
+    } catch { sitemap = { ...sitemap, status: "unverified", evidence: "The sitemap could not be read." }; }
   }
 
   let llms = { status: "missing", url: `${origin}/llms.txt`, evidence: "No llms.txt file was found. It is optional and does not affect OpenAI ranking by itself." };
@@ -338,6 +367,7 @@ export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisCo
   try {
     const card = await safeFetch(cardUrl, fetchImpl, { accept: "application/json,*/*;q=0.5" });
     if (card.response.status === 404) agentCard = { status: "missing", evidence: "No Agent Card was found at the usual public address.", url: cardUrl };
+    else if (card.response.ok && !(card.response.headers.get("content-type") || "").includes("json")) agentCard = { status: "missing", evidence: "No Agent Card document was detected at the usual public address.", url: cardUrl };
     else if (card.response.ok && (card.response.headers.get("content-type") || "").includes("json")) {
       const data = JSON.parse(await readLimitedText(card.response, 65_000));
       const interfaces = Array.isArray(data?.supportedInterfaces) && data.supportedInterfaces.some((item) => item && typeof item.url === "string");
@@ -354,6 +384,7 @@ export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisCo
     signal("reachability", "Page access", "clear", `The page loaded successfully (HTTP ${page.response.status}) at ${page.finalUrl.href}`, page.finalUrl.href),
     signal("https", "Secure connection", page.finalUrl.protocol === "https:" ? "clear" : "gap", page.finalUrl.protocol === "https:" ? "The checked page uses HTTPS." : "The checked page uses an unencrypted HTTP connection.", page.finalUrl.href),
     signal("oai_searchbot", "OpenAI search access", robotsStatus, robotsEvidence, robotsSource),
+    signal("search_access", "Search access", searchAccess, robotsEvidence, robotsSource),
     signal("indexing", "Indexing permission", inspected.noindex ? "blocked" : "clear", inspected.noindex ? "The page asks search engines not to index it." : "The page does not ask search engines to exclude it.", page.finalUrl.href),
     signal("sitemap", "Sitemap", sitemap.status, sitemap.evidence, sitemap.url),
     signal("canonical", "Preferred page URL", inspected.canonical ? "clear" : "gap", inspected.canonical ? `The preferred public URL is ${inspected.canonical}` : "No preferred public URL was declared on the page.", page.finalUrl.href),
@@ -362,7 +393,10 @@ export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisCo
     signal("structured_data", "Structured data", inspected.structuredData.types.length && !inspected.structuredData.parseErrors ? "clear" : inspected.structuredData.blocks ? "partial" : "gap", inspected.structuredData.blocks ? `Structured data found: ${inspected.structuredData.types.join(", ") || "no recognised types"}. Parse errors: ${inspected.structuredData.parseErrors}.` : "No JSON-LD structured data was found.", page.finalUrl.href),
     signal("llms_txt", "Optional AI information file", llms.status, llms.evidence, llms.url),
     signal("agent_card", "Agent Card", agentCard.status, agentCard.evidence, agentCard.url),
-    signal("a2a", "A2A", a2a.status, a2a.evidence, a2a.url)
+    signal("a2a", "A2A", a2a.status, a2a.evidence, a2a.url),
+    signal("rich_result_data", "Rich-result markup", richTypes.length ? "clear" : "missing", richTypes.length ? `Recognised markup with basic fields: ${richTypes.join(", ")}. Full eligibility and search display were not tested.` : "No supported JSON-LD rich-result type with basic fields was detected on this page.", page.finalUrl.href),
+    signal("mcp", "Public MCP", references.mcp ? "clear" : "missing", references.mcp ? "A public MCP reference was found on the checked page. Its operation was not tested." : "No public MCP reference was detected on the checked page. Private or unlinked services may exist.", references.mcp || page.finalUrl.href),
+    ...await publicDocuments
   ];
 
   const gaps = [];
