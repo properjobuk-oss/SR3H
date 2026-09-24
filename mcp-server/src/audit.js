@@ -195,11 +195,13 @@ function jsonLdTypes(html) {
 export function inspectHtml(html, baseUrl, xRobotsTag = "") {
   const title = boundedText(html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1] || "", 300);
   const description = boundedText(metaContent(html, "description"), 500);
+  const mainHeading = boundedText(html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i)?.[1]?.replace(/<[^>]+>/g, " ") || "", 300);
   const robots = [metaContent(html, "robots"), xRobotsTag].filter(Boolean).join(", ").toLowerCase();
   const structuredData = jsonLdTypes(html);
   return {
     title,
     description,
+    mainHeading,
     canonical: canonicalHref(html, baseUrl),
     noindex: /(?:^|[,\s])noindex(?:[,\s]|$)/.test(robots),
     structuredData,
@@ -330,6 +332,22 @@ export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisCo
     }
   } catch { /* reflected as missing */ }
 
+  const cardUrl = `${origin}/.well-known/agent-card.json`;
+  let agentCard = { status: "unverified", evidence: "The public Agent Card location could not be checked.", url: cardUrl };
+  let a2a = { status: "unverified", evidence: "No A2A interface was verified from a public Agent Card.", url: cardUrl };
+  try {
+    const card = await safeFetch(cardUrl, fetchImpl, { accept: "application/json,*/*;q=0.5" });
+    if (card.response.status === 404) agentCard = { status: "missing", evidence: "No Agent Card was found at the usual public address.", url: cardUrl };
+    else if (card.response.ok && (card.response.headers.get("content-type") || "").includes("json")) {
+      const data = JSON.parse(await readLimitedText(card.response, 65_000));
+      const interfaces = Array.isArray(data?.supportedInterfaces) && data.supportedInterfaces.some((item) => item && typeof item.url === "string");
+      if (typeof data?.name === "string" && typeof data?.description === "string" && (typeof data?.url === "string" || interfaces)) {
+        agentCard = { status: "clear", evidence: "A public Agent Card was found. The agent itself was not tested.", url: card.finalUrl.href };
+        if (interfaces) a2a = { status: "clear", evidence: "An A2A interface is advertised in the Agent Card. It was not tested.", url: card.finalUrl.href };
+      } else agentCard = { status: "partial", evidence: "A public JSON file was found, but its basic Agent Card fields could not be confirmed.", url: card.finalUrl.href };
+    }
+  } catch { /* Unreadable or invalid cards remain unverified. */ }
+
   const suppliedTerms = [input.business_name, input.location_or_service_area, ...(input.priority_services || [])].filter(Boolean);
   const termPresence = presence(`${inspected.title || ""} ${inspected.description || ""} ${inspected.visibleText}`, suppliedTerms);
   const observations = [
@@ -340,8 +358,11 @@ export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisCo
     signal("sitemap", "Sitemap", sitemap.status, sitemap.evidence, sitemap.url),
     signal("canonical", "Preferred page URL", inspected.canonical ? "clear" : "gap", inspected.canonical ? `The preferred public URL is ${inspected.canonical}` : "No preferred public URL was declared on the page.", page.finalUrl.href),
     signal("metadata", "Page title and description", inspected.title && inspected.description ? "clear" : "gap", inspected.title && inspected.description ? "The page has both a title and a description." : `Title: ${inspected.title || "missing"}; description: ${inspected.description || "missing"}`, page.finalUrl.href),
+    signal("headings", "Main heading", inspected.mainHeading ? "clear" : "gap", inspected.mainHeading ? "A main heading was found on the checked page." : "No main heading was found on the checked page.", page.finalUrl.href),
     signal("structured_data", "Structured data", inspected.structuredData.types.length && !inspected.structuredData.parseErrors ? "clear" : inspected.structuredData.blocks ? "partial" : "gap", inspected.structuredData.blocks ? `Structured data found: ${inspected.structuredData.types.join(", ") || "no recognised types"}. Parse errors: ${inspected.structuredData.parseErrors}.` : "No JSON-LD structured data was found.", page.finalUrl.href),
-    signal("llms_txt", "Optional AI information file", llms.status, llms.evidence, llms.url)
+    signal("llms_txt", "Optional AI information file", llms.status, llms.evidence, llms.url),
+    signal("agent_card", "Agent Card", agentCard.status, agentCard.evidence, agentCard.url),
+    signal("a2a", "A2A", a2a.status, a2a.evidence, a2a.url)
   ];
 
   const gaps = [];

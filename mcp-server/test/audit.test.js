@@ -45,6 +45,7 @@ test("supports robots wildcard and end-anchor rules", () => {
 test("extracts metadata, canonical, noindex and structured-data types", () => {
   const result = inspectHtml(html.replace("Acme Heating Oxford", "Acme Heating &amp; Oxford").replace("</head>", '<meta name="robots" content="noindex"></head>'), "https://acme.example/");
   assert.equal(result.title, "Acme Heating & Oxford");
+  assert.equal(result.mainHeading, "Acme Heating");
   assert.equal(result.canonical, "https://acme.example/");
   assert.equal(result.noindex, true);
   assert.deepEqual(result.structuredData.types, ["Organization", "Service"]);
@@ -66,6 +67,20 @@ test("returns sourced findings, supplied-term evidence and explicit limits", asy
   assert.match(result.next_action, /measure actual discovery/);
   assert.doesNotMatch(result.next_action, /make the main services and locations explicit/i);
   assert.match(result.supplied_context.note, /user-supplied context only/);
+  assert.equal(result.observations.find((item) => item.id === "headings").status, "clear");
+  assert.equal(result.observations.find((item) => item.id === "agent_card").status, "missing");
+  assert.equal(result.observations.find((item) => item.id === "a2a").status, "unverified");
+});
+
+test("reports advertised Agent Card and A2A without claiming an operation test", async () => {
+  const fetchImpl = fixtureFetch({
+    "https://agent.example/": response(html, { type: "text/html" }),
+    "https://agent.example/.well-known/agent-card.json": response(JSON.stringify({ name: "Acme agent", description: "Answers public questions", supportedInterfaces: [{ url: "https://agent.example/a2a" }] }), { type: "application/json" })
+  });
+  const result = await auditWebsite({ website_url: "https://agent.example" }, fetchImpl);
+  assert.equal(result.observations.find((item) => item.id === "agent_card").status, "clear");
+  assert.equal(result.observations.find((item) => item.id === "a2a").status, "clear");
+  assert.match(result.observations.find((item) => item.id === "a2a").evidence, /not tested/);
 });
 
 test("reports blocking directives without presenting a success score", async () => {
