@@ -9,7 +9,9 @@ export function publicReferences(html, baseUrl) {
     api: /\b(?:api|openapi|swagger)\b/i
   };
   const page = html.replace(/<script\b[\s\S]*?<\/script>/gi, "").replace(/<!--[\s\S]*?-->/g, "");
-  for (const match of [...page.matchAll(/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)].slice(0, 300)) {
+  let scanned = 0;
+  for (const match of page.matchAll(/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)) {
+    if (scanned++ === 300) break;
     try {
       const href = validatePublicUrl(new URL(match[1].replace(/&amp;/g, "&"), baseUrl).href).href;
       const text = `${new URL(href).pathname.replace(/[-_/]/g, " ")} ${match[2].replace(/<[^>]*>/g, " ")}`;
