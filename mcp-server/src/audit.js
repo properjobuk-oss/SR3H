@@ -1,7 +1,7 @@
 import { validatePublicUrl } from "./url-safety.js";
 import { readBoundedText } from "./bounded-body.js";
 
-export const LIMITS = Object.freeze({ redirects: 4, bytes: 1_000_000, timeoutMs: 10_000, contextPages: 5, contextChars: 50_000 });
+export const LIMITS = Object.freeze({ redirects: 4, bytes: 1_000_000, homepageBytes: 3_000_000, timeoutMs: 10_000, contextPages: 5, contextChars: 50_000 });
 const USER_AGENT = "AIDO-DiscoverabilityCheck/0.4 (+https://sr3h.uk/ai-presence-support.html)";
 
 function codePoint(value) {
@@ -55,7 +55,7 @@ async function readLimitedText(response, limit = LIMITS.bytes) {
   return new TextDecoder().decode(joined);
 }
 
-async function safeFetch(startUrl, fetchImpl, { accept = "text/html,*/*;q=0.8" } = {}) {
+async function safeFetch(startUrl, fetchImpl, { accept = "text/html,*/*;q=0.8", maxBytes = LIMITS.bytes } = {}) {
   let current = validatePublicUrl(startUrl);
   for (let redirects = 0; redirects <= LIMITS.redirects; redirects += 1) {
     const started = Date.now();
@@ -78,9 +78,9 @@ async function safeFetch(startUrl, fetchImpl, { accept = "text/html,*/*;q=0.8" }
       continue;
     }
     let body;
-    try { body = await readBoundedText(response, LIMITS.bytes, Math.max(1, LIMITS.timeoutMs - (Date.now() - started))); }
+    try { body = await readBoundedText(response, maxBytes, Math.max(1, LIMITS.timeoutMs - (Date.now() - started))); }
     catch (error) {
-      if (error.message === 'request_too_large') throw new Error('Response is larger than the 1 MB audit limit.');
+      if (error.message === 'request_too_large') throw new Error(`Response is larger than the ${Math.round(maxBytes / 1_000_000)} MB audit limit.`);
       throw error;
     }
     return { response: new Response(body || null, { status: response.status, headers: response.headers }), finalUrl: current };
@@ -270,11 +270,11 @@ async function collectWebsiteContext(home, html, inspected, fetchImpl) {
 
 export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisContext = false } = {}) {
   const requested = validatePublicUrl(input.website_url);
-  const page = await safeFetch(requested, fetchImpl);
+  const page = await safeFetch(requested, fetchImpl, { maxBytes: LIMITS.homepageBytes });
   const contentType = page.response.headers.get("content-type") || "";
   if (!page.response.ok) throw new Error(`Website returned HTTP ${page.response.status}.`);
   if (!contentType.toLowerCase().includes("text/html")) throw new Error("The supplied URL did not return an HTML webpage.");
-  const html = await readLimitedText(page.response);
+  const html = await readLimitedText(page.response, LIMITS.homepageBytes);
   const inspected = inspectHtml(html, page.finalUrl, page.response.headers.get("x-robots-tag") || "");
   const origin = page.finalUrl.origin;
 

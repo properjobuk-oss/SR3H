@@ -396,7 +396,7 @@ function initAiPresenceChecker() {
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    status.classList.remove("is-error");
+    status.classList.remove("is-error", "is-loading");
     status.textContent = "";
 
     const data = new FormData(form);
@@ -424,7 +424,7 @@ function initAiPresenceChecker() {
       website_url: websiteUrl,
       company_website: String(data.get("company_website") || "")
     };
-    const optionalFields = ["business_name", "location_or_service_area", "target_customer"];
+    const optionalFields = ["location_or_service_area", "target_customer"];
     optionalFields.forEach((field) => {
       const value = String(data.get(field) || "").trim();
       if (value) payload[field] = value;
@@ -436,7 +436,8 @@ function initAiPresenceChecker() {
     const timeout = window.setTimeout(() => controller.abort(), 45_000);
     form.setAttribute("aria-busy", "true");
     if (submit) submit.disabled = true;
-    status.textContent = "Checking the website and a small discovery sample…";
+    status.classList.add("is-loading");
+    status.textContent = "Checking the website and available AI answers. This can take about a minute.";
     aiCheckTimestamp(Date.now());
 
     try {
@@ -457,6 +458,7 @@ function initAiPresenceChecker() {
         : error.message || "The check could not be completed.";
     } finally {
       window.clearTimeout(timeout);
+      status.classList.remove("is-loading");
       form.removeAttribute("aria-busy");
       if (submit) submit.disabled = false;
     }

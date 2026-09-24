@@ -105,9 +105,19 @@ test("revalidates redirects and rejects a public URL redirecting to a private ho
 
 test("rejects oversized responses", async () => {
   const fetchImpl = fixtureFetch({
-    "https://large.example/": response("x", { type: "text/html", headers: { "content-length": String(LIMITS.bytes + 1) } })
+    "https://large.example/": response("x", { type: "text/html", headers: { "content-length": String(LIMITS.homepageBytes + 1) } })
   });
   await assert.rejects(() => auditWebsite({ website_url: "https://large.example" }, fetchImpl), /larger than/);
+});
+
+test("accepts a homepage above the supporting-resource size limit", async () => {
+  const largeHtml = html.replace("</body>", `${" ".repeat(LIMITS.bytes + 1)}</body>`);
+  const fetchImpl = fixtureFetch({
+    "https://large-home.example/": response(largeHtml, { type: "text/html" })
+  });
+  const result = await auditWebsite({ website_url: "https://large-home.example" }, fetchImpl);
+  assert.equal(result.audit.final_url, "https://large-home.example/");
+  assert.equal(result.observations.find((item) => item.id === "reachability").status, "clear");
 });
 
 test("does not treat HTML fallback pages as robots.txt or llms.txt", async () => {
