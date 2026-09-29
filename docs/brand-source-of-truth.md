@@ -38,9 +38,7 @@ Good Route: Navigation that preserves the rider’s chosen route and makes rerou
 
 RedThread: A private workspace for people preparing briefings from complex source material, with each person’s work kept separate.
 
-Lunchtime Websites: A small pro bono SR3H initiative for people and good causes that need a clear, useful website.
-
-Anup House: The first Lunchtime Websites example, creating a clear online home for an independent guesthouse in Bodh Gaya and improving visitor information and discoverability.
+Anup House: A clear online home for an independent guesthouse in Bodh Gaya, improving visitor information and discoverability.
 
 Signal: Signal records defined customer questions, complete AI answers, sources and test conditions. It shows when a business is absent, mentioned or recommended and supports like-for-like repeated tests.
 
