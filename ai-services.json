@@ -49,8 +49,8 @@
     },
     {
       "name": "Signal by SR3H",
-      "status": "Research",
-      "description": "Records defined customer questions, complete AI answers, sources and test conditions to show when a business is absent, mentioned or recommended and compare like-for-like repeated tests.",
+      "status": "In-house research tool",
+      "description": "SR3H's AI visibility and analytics software runs repeatable batches of customer questions, records complete answers, sources and test conditions, and compares results over time to investigate how businesses are presented and recommended.",
       "url": "https://sr3h.uk/signal.html"
     }
   ],

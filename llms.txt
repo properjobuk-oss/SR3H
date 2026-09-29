@@ -17,14 +17,14 @@ Machine-readable services: https://sr3h.uk/ai-services.json
 ## Research initiatives
 
 - SR3H research: how AI interprets what people need, discovers and assesses information, compares businesses or products, and moves from answers towards actions. We examine the evidence behind recommendations and how organic, sponsored or other commercial interests may affect what people see.
-- Signal by SR3H: one research programme exploring how AI systems find, understand and recommend businesses. Website check, product page and workspace sign-in: https://sr3h.uk/signal.html
+- Signal by SR3H: in-house AI visibility and analytics software. It runs repeatable question batches, retains answers and sources, and compares results over time. About Signal: https://sr3h.uk/signal.html
 
 ## Selected products
 
 - Conchup: a software development workspace that keeps requirements, decisions, code and tests connected, so changes can be reviewed against what the product is meant to do. https://sr3h.uk/conchup.html
 - Brane: personal context for AI, with control over what is shared; a research project testing when selected information improves an answer without exposing an entire personal history.
 - Proper Job: explainable guide-price ranges for UK building work, also available through MCP tools for AI assistants.
-- Signal: AI search analytics for examining how businesses are found, compared and recommended, and identifying changes worth testing. https://sr3h.uk/signal.html
+- Signal: AI visibility and analytics software for testing how AI finds, describes and recommends businesses. https://sr3h.uk/signal.html
 - RedThread: a private workspace for people preparing briefings from complex source material, with each person's work kept separate.
 - Good Route: motorcycle navigation that preserves the rider's chosen route and keeps rerouting under explicit control.
 

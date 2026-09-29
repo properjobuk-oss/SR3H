@@ -40,12 +40,12 @@ RedThread: A private workspace for people preparing briefings from complex sourc
 
 Anup House: A clear online home for an independent guesthouse in Bodh Gaya, improving visitor information and discoverability.
 
-Signal: Signal records defined customer questions, complete AI answers, sources and test conditions. It shows when a business is absent, mentioned or recommended and supports like-for-like repeated tests.
+Signal: Signal is SR3H’s in-house AI visibility and analytics software. It runs defined customer questions in repeatable batches and retains complete answers, sources and test conditions for comparison over time. Research examines when AI answers a need itself, introduces a business and presents its options. Observed changes do not establish cause.
 
-Signal card: AI search analytics for examining how businesses are found, compared and recommended, and identifying changes worth testing. Keep the free website check as a separate invitation.
+Signal card: AI visibility and analytics software for testing how AI finds, describes and recommends businesses. Signal runs batches of questions, records answers and sources, and compares repeated results. Label it In-house research tool. The main link is About Signal; keep the free website check as a separate invitation.
 
 
-Signal page: Signal combines a public website check with evidence-led AI discovery research. Each result retains its question, AI system, date, sources, sample size and limits. It does not treat a small sample as a market ranking or causal proof.
+Signal page: Lead with Signal’s repeatable testing and analysis. Keep the public website check as a separate entry point. Results retain questions, AI system, date, sources, sample size and limits; small samples are not market rankings or causal proof. MyLegend is the separate profile and rich-card product; hosting does not change Signal’s role.
 
 ## Research Language
 

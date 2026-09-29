@@ -26,9 +26,9 @@ A technical check cannot by itself prove that an AI system will rank, cite or re
 
 ## Signal by SR3H
 
-Signal is one SR3H research programme. It combines a public website check with evidence-led research into AI-mediated commercial discovery. It distinguishes observed evidence from inference, keeps consumer and API observations separate, and separates natural discovery from introduced evaluation. Its purpose is to understand how AI systems represent choices and whether tested changes lead to better decisions and real-world outcomes.
+Signal is SR3H’s in-house AI visibility and analytics software. It runs repeatable batches of defined customer questions and retains complete answers, cited sources and test conditions for comparison over time. The research examines when AI answers a need itself, when it introduces an outside business, and how it presents that business. It distinguishes observation from inference, keeps consumer and API observations separate, and treats before-and-after differences as associations rather than causal proof. The public website check is a separate starting point.
 
-Public page, website check and workspace access: https://sr3h.uk/signal.html
+About Signal and the free website check: https://sr3h.uk/signal.html
 
 ## Signal Website Check
 
