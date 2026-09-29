@@ -1,6 +1,6 @@
 # SR3H
 
-> SR3H is an independent technology lab in Oxford. It researches how AI is changing the way people find information, products and services, and builds useful human-AI systems and software.
+> SR3H is an independent AI research and software development lab in Oxford. We investigate how AI works and build useful software, with research focused on output quality, relevance, personal context and privacy.
 
 Canonical website: https://sr3h.uk/
 Contact: mailto:hello@sr3h.uk
@@ -8,23 +8,24 @@ Machine-readable services: https://sr3h.uk/ai-services.json
 
 ## Services and expertise
 
-- AI search and AI-mediated discovery: research into how systems understand intent, gather sources, compare options and present information, products and services. Related areas include answer engine optimisation (AEO), generative engine optimisation (GEO), AI visibility, conversational and agentic search, recommendations and source transparency.
-- Human-AI interaction: research and product engineering around interfaces, context, memory, knowledge, permissions, evidence and how people guide and review AI work.
-- AI agents and MCP apps: focused Model Context Protocol tools and agent interactions with clear tasks, permissions and data boundaries.
-- Complex software engineering: bespoke product design, engineering, testing, deployment and maintainable self-management systems.
+- Output and relevance: research into what makes an AI response accurate, useful and relevant, including context, sources, retained information and checking output.
+- Personal context and privacy: research into on-device processing, selective sharing and clear choices about what is remembered, used or sent to an external service.
+- Tools and human control: research into where automation helps, where fixed rules work better and where a person needs to review or approve a result.
+- Discovery and recommendations: research into how AI finds information, compares options and recommends businesses, products or services, including the evidence behind recommendations and commercial influence.
+- Software development: design and engineering of useful working products, including non-AI software where it serves the task better.
 
 ## Research initiatives
 
 - SR3H research: how AI interprets what people need, discovers and assesses information, compares businesses or products, and moves from answers towards actions. We examine the evidence behind recommendations and how organic, sponsored or other commercial interests may affect what people see.
-- Signal by Sr3h: one research programme exploring how AI systems find, understand and recommend businesses. Website check, product page and workspace sign-in: https://sr3h.uk/signal.html
-- Market Loop: helps businesses understand how AI finds and recommends them, improve how they are represented, and learn from which customers actually convert.
+- Signal by SR3H: one research programme exploring how AI systems find, understand and recommend businesses. Website check, product page and workspace sign-in: https://sr3h.uk/signal.html
 
 ## Selected products
 
-- Conchup: keeps software requirements, decisions, implementation, tests and evidence connected as a product changes. https://sr3h.uk/conchup.html
-- Brane: personal knowledge for more useful AI, with control over what is shared and what stays private.
+- Conchup: a software development workspace that keeps requirements, decisions, code and tests connected, so changes can be reviewed against what the product is meant to do. https://sr3h.uk/conchup.html
+- Brane: personal context for AI, with control over what is shared; a research project testing when selected information improves an answer without exposing an entire personal history.
 - Proper Job: explainable guide-price ranges for UK building work, also available through MCP tools for AI assistants.
-- RedThread: private, evidence-linked briefings from complex source material.
+- Signal: AI search analytics for examining how businesses are found, compared and recommended, and identifying changes worth testing. https://sr3h.uk/signal.html
+- RedThread: a private workspace for people preparing briefings from complex source material, with each person's work kept separate.
 - Good Route: motorcycle navigation that preserves the rider's chosen route and keeps rerouting under explicit control.
 
 ## Blog

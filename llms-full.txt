@@ -8,35 +8,31 @@ Contact: hello@sr3h.uk
 
 ## What SR3H does
 
-SR3H is an independent technology lab in Oxford. It studies how AI is changing the relationship between people, the web and information, and builds useful software and dependable human-AI systems. Its work includes human-AI interaction, AI-mediated discovery, answer engine optimisation (AEO), AI agents and MCP, as well as context, knowledge, permissions, evidence and evaluation.
+SR3H is an independent AI research and software development lab in Oxford. We investigate how AI works and build useful software, with research focused on output quality, relevance, personal context and privacy.
 
-## AI, the web and emerging interaction
+## Research
 
-People increasingly describe what they need in a conversation rather than searching only with short keywords. AI systems can interpret intent, gather information from different sources, compare options and help people take action. SR3H studies this path from a person's question to the answer or choice they receive.
+SR3H builds prototypes to test ideas, compare approaches and find out what is worth developing further. Its work covers how AI systems use information, how people work with them and what makes their results genuinely useful.
 
-Research areas include conversational and agentic search, AI-mediated product and service discovery, AEO and generative engine optimisation (GEO), human-AI interaction, agent tools and the Model Context Protocol (MCP). We ask what evidence informs an answer or recommendation, why suitable options may be missed, and how people can distinguish useful information from sponsored or otherwise commercially influenced results. These are questions we investigate, not claims that visibility alone produces a good recommendation or business outcome.
+Research includes what makes an AI response accurate, useful and relevant; how to give AI useful context without handing over an entire personal history; where automation helps and where people need to review or approve a result; and how AI finds information, compares options and recommends businesses, products or services. AI search and discovery form one part of this work.
 
-## AI visibility and discoverability
+## AI discovery and recommendations
 
-SR3H helps UK businesses understand and improve how AI systems find, describe and consider them for relevant customer needs. This work covers AI visibility, AI discoverability, AI search optimisation, answer engine optimisation (AEO), generative engine optimisation (GEO), large language model optimisation (LLMO), entity understanding, structured data, crawler access, retrieval, citations, representation quality, referral traffic and conversion measurement. The wider research asks whether an option is appropriate to the need, what evidence supports its selection, and how organic and sponsored visibility are presented.
+SR3H studies how AI systems find, describe and compare businesses for relevant customer needs. This includes public website information, source quality, evidence behind recommendations and the influence of sponsored results. Observations can suggest changes to test; commercial impact requires separate outcome evidence.
 
 An SR3H assessment can examine public crawlability, robots directives, sitemaps, canonical identity, structured data, service clarity, public evidence, answer consistency and the boundary between being technically discoverable and being commercially selected.
 
 A technical check cannot by itself prove that an AI system will rank, cite or recommend a company. It also cannot prove customer demand, causal improvement or conversion performance. Those conclusions require controlled observations and real outcome data.
 
-## Signal by Sr3h
+## Signal by SR3H
 
 Signal is one SR3H research programme. It combines a public website check with evidence-led research into AI-mediated commercial discovery. It distinguishes observed evidence from inference, keeps consumer and API observations separate, and separates natural discovery from introduced evaluation. Its purpose is to understand how AI systems represent choices and whether tested changes lead to better decisions and real-world outcomes.
 
 Public page, website check and workspace access: https://sr3h.uk/signal.html
 
-## Market Loop
-
-Market Loop helps businesses understand how AI finds and recommends them, improve how they are represented, and learn from which customers actually convert. It connects public representation work with measured commercial outcomes rather than treating visibility as an end in itself.
-
 ## Signal Website Check
 
-The website form tests whether search and AI systems can access and understand a business website. When its live discovery layer is available, it also runs a small dated sample of one branded and five business-specific unbranded searches using SR3H's bounded API service. The separate MCP inspects the website and can prepare and summarise a ten-question check without calling the OpenAI API; compatible ChatGPT sessions perform any optional research with their own available tools. Results use exact observed counts, not a score. They do not establish a fixed ranking, future recommendation, demand or conversion performance.
+The website form inspects what a public business website makes available to search and AI systems. When its live discovery layer is available, it also runs a small dated sample of one branded and five business-specific unbranded searches using SR3H's bounded API service. The separate MCP inspects the website and can prepare and summarise a ten-question check without calling the OpenAI API; compatible ChatGPT sessions perform any optional research with their own available tools. Results use exact observed counts, not a score. They do not establish a fixed ranking, future recommendation, demand or conversion performance.
 
 MCP endpoint: https://mcp.sr3h.uk/mcp
 Support: https://sr3h.uk/ai-presence-support.html
@@ -55,12 +51,11 @@ Published posts include “Everyone wants a better answer. Better for whom?” o
 
 ## Service areas
 
-1. UK AI visibility and answer engine optimisation (AEO).
-2. Human-AI interface and system research.
-3. MCP app and AI tool engineering.
-4. Context, memory, knowledge graph and provenance systems.
-5. Complex bespoke software design and engineering.
-6. Product experiments, evaluation and conversion measurement.
+1. AI output quality, relevance and evaluation.
+2. Personal context, privacy and user control.
+3. AI discovery and recommendation research.
+4. MCP app and AI tool engineering.
+5. Software product design and development.
 
 ## Contact
 

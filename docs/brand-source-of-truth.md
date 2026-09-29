@@ -2,39 +2,35 @@
 
 ## Position
 
-SR3H is an independent technology lab in Oxford.
+SR3H is an independent AI research and software development lab in Oxford.
 
 It is not the loud product brand. Proper Job, Brane and future tools keep their own names.
 
 ## Core Line
 
-Researching AI. Building useful software.
+Understanding AI. Making it useful.
 
 ## Approved Description
 
-SR3H is an independent technology lab in Oxford, designing software and dependable human–AI systems.
+SR3H is an independent AI research and software development lab in Oxford.
 
-We focus on the engineering beneath complex products: preserving context, connecting knowledge and keeping decisions traceable, while making the experience simple for the person using it.
+We investigate how AI works and build useful software. Our research focuses on improving the quality and relevance of AI output while protecting personal data and keeping people in control.
 
-SR3H incubates ideas around real problems, developing the strongest through applied research and careful engineering into useful, scalable products.
-
-We study how AI uses knowledge, makes recommendations and works with people. We turn that research into tools for real decisions and practical work.
-
-SR3H is based at Grassroots, H B Allen Centre, Oxford.
+Based at Grassroots, the science and technology workspace managed by Oxford Innovation Space.
 
 ## Search Presentation
 
-Title: SR3H | UK AI Visibility & AEO Technology Lab
+Title: SR3H | AI Research & Software Development, Oxford
 
-Description: SR3H helps UK businesses understand and improve how AI systems find, describe and recommend them through AEO research, audits and practical tools.
+Description: SR3H is an independent AI research and software development lab in Oxford, building useful tools with a focus on relevance, privacy and user control.
 
 ## Selected Work Language
 
 Proper Job: Clear guide-price ranges for UK building work, showing the assumptions and cost drivers behind each estimate. Also available as an MCP app for AI assistants.
 
-Brane: Personal knowledge for more useful AI, with control over what is shared and what stays private. In Safari, it also shows which trackers are present on each page.
+Brane: Personal context for AI, with control over what is shared. Brane explores how selected information can improve an answer without exposing an entire personal history. Its Safari tracker feature is a secondary detail.
 
-Conchup: Software engineering with a lasting record of requirements, decisions and the evidence behind a build.
+Conchup: A software development workspace that keeps requirements, decisions, code and tests connected, so changes can be reviewed against what the product is meant to do.
 
 Conchup page: Conchup is a workspace for complex software projects. It keeps requirements, decisions, implementation, tests and evidence connected, so a product can change without losing why it was built that way.
 
@@ -44,7 +40,7 @@ Drift: A place-discovery tool for exploring nearby destinations and deciding whe
 
 Good Route: Navigation that preserves the rider’s chosen route and makes rerouting an explicit decision.
 
-RedThread: A private workspace for developing briefings, with each person’s work kept separate.
+RedThread: A private workspace for people preparing briefings from complex source material, with each person’s work kept separate.
 
 Lunchtime Websites: A small pro bono SR3H initiative for people and good causes that need a clear, useful website.
 
@@ -54,13 +50,16 @@ Clarity: A space for reflection, meditation and Buddhist learning, bringing dail
 
 Signal: Signal records defined customer questions, complete AI answers, sources and test conditions. It shows when a business is absent, mentioned or recommended and supports like-for-like repeated tests.
 
+Signal card: AI search analytics for examining how businesses are found, compared and recommended, and identifying changes worth testing. Keep the free website check as a separate invitation.
+
+
 Signal page: Signal combines a public website check with evidence-led AI discovery research. Each result retains its question, AI system, date, sources, sample size and limits. It does not treat a small sample as a market ranking or causal proof.
 
 ## Research Language
 
-How AI understands a task and finds the right help.
+We build prototypes to test ideas, compare approaches and find out what is worth developing further. Our work covers how AI systems use information, how people work with them and what makes their results genuinely useful.
 
-Our research spans human–AI interfaces, specialist knowledge and how AI finds and recommends products and services. We test whether changes lead to better decisions and real-world outcomes.
+Our research covers output and relevance; personal context and privacy; tools and human control; and discovery and recommendations.
 
 Conchup: We explore how AI-assisted development can carry requirements and decisions from an idea through to a tested build, without losing why things changed.
 

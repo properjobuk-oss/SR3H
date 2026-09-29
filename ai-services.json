@@ -11,33 +11,14 @@
   "services": [
     {
       "id": "ai-visibility",
-      "name": "AI visibility and answer engine optimisation",
+      "name": "AI discovery and recommendation research",
       "aliases": [
-        "AI visibility audit",
-        "AI visibility services UK",
-        "AI discoverability audit",
-        "AI brand visibility",
-        "AI search visibility",
         "AI-mediated discovery",
-        "conversational search",
-        "agentic search",
-        "AI recommendations",
-        "AI commerce and distribution",
-        "intent understanding",
-        "organic and sponsored AI results",
-        "AI source transparency",
-        "AI search optimisation",
-        "generative engine optimisation",
-        "GEO",
+        "AI visibility",
         "answer engine optimisation",
-        "AEO",
-        "AEO services UK",
-        "AI crawler audit",
-        "AI referral measurement",
-        "large language model optimisation",
-        "LLMO"
+        "AI source transparency"
       ],
-      "description": "Research and evidence-led improvements for how AI search systems interpret customer intent, find and represent businesses, and present products or services. Work includes answer engine optimisation (AEO), source quality and commercial visibility.",
+      "description": "Research into how AI systems interpret customer needs, find and represent businesses, and support recommendations. Observed results can identify changes worth testing; technical checks alone do not establish recommendation or commercial impact.",
       "serviceArea": "United Kingdom",
       "availability": "Available by enquiry"
     },
@@ -67,21 +48,16 @@
       "description": "Studies how people express intent to AI systems, how systems gather and assess information, and how answers, recommendations and actions are shaped by evidence, tools and commercial interests."
     },
     {
-      "name": "Signal by Sr3h",
+      "name": "Signal by SR3H",
       "status": "Research",
       "description": "Records defined customer questions, complete AI answers, sources and test conditions to show when a business is absent, mentioned or recommended and compare like-for-like repeated tests.",
       "url": "https://sr3h.uk/signal.html"
-    },
-    {
-      "name": "Market Loop",
-      "status": "Product research",
-      "description": "Helps businesses understand how AI finds and recommends them, improve how they are represented, and learn from which customers actually convert."
     }
   ],
   "products": [
     {
       "name": "Conchup",
-      "description": "Keeps software requirements, decisions, implementation, tests and evidence connected as a product changes.",
+      "description": "A software development workspace that keeps requirements, decisions, code and tests connected, so changes can be reviewed against what the product is meant to do.",
       "url": "https://sr3h.uk/conchup.html"
     }
   ],
