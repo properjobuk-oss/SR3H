@@ -16,7 +16,7 @@ assert(signal.includes("Examine how AI finds, compares and recommends your compa
 assert(signal.includes("questions, answers, competitors and evidence"), "Signal must describe the evidence shown in the workspace");
 assert(signal.includes("Website readiness and observed inclusion are reported separately."), "Signal must separate readiness from observed inclusion");
 assert(legacy.includes('url=signal.html#ai-check') && legacy.includes('window.location.replace("signal.html#ai-check")'), "Old AIDO URL must preserve the checker route");
-assert(home.includes('href="https://aido-beta.vercel.app/" aria-label="Explore Signal by SR3H"'), "Homepage card must use the live Signal site");
+assert(home.includes('href="https://mylegend.id/check" aria-label="Start the Signal website check"'), "Homepage card must open the website check directly");
 assert(home.includes('assets/projects/signal-logo.png'), "Homepage card must use the current Signal logo");
 assert(home.includes('assets/projects/signal-workspace-phone.png'), "Homepage card must use the portrait Signal workspace preview");
 assert(home.includes('assets/projects/signal-nav-mark.png'), "Homepage preview must use the exact current Signal mark");
