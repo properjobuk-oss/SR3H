@@ -34,10 +34,6 @@ Conchup: A software development workspace that keeps requirements, decisions, co
 
 Conchup page: Conchup is a workspace for complex software projects. It keeps requirements, decisions, implementation, tests and evidence connected, so a product can change without losing why it was built that way.
 
-NextUp: A personal viewing log for keeping track and deciding what to watch next.
-
-Drift: A place-discovery tool for exploring nearby destinations and deciding where to go next.
-
 Good Route: Navigation that preserves the rider’s chosen route and makes rerouting an explicit decision.
 
 RedThread: A private workspace for people preparing briefings from complex source material, with each person’s work kept separate.
@@ -45,8 +41,6 @@ RedThread: A private workspace for people preparing briefings from complex sourc
 Lunchtime Websites: A small pro bono SR3H initiative for people and good causes that need a clear, useful website.
 
 Anup House: The first Lunchtime Websites example, creating a clear online home for an independent guesthouse in Bodh Gaya and improving visitor information and discoverability.
-
-Clarity: A space for reflection, meditation and Buddhist learning, bringing daily practice into everyday life.
 
 Signal: Signal records defined customer questions, complete AI answers, sources and test conditions. It shows when a business is absent, mentioned or recommended and supports like-for-like repeated tests.
 
