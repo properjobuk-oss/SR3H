@@ -4,6 +4,7 @@
 
 Canonical website: https://sr3h.uk/
 About SR3H: https://sr3h.uk/about.html
+Danny Griffin: https://sr3h.uk/people/danny-griffin
 Contact: mailto:hello@sr3h.uk
 Machine-readable services: https://sr3h.uk/ai-services.json
 
