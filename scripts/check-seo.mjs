@@ -12,8 +12,7 @@ const descriptions = new Set();
 const meta = (html, name) => html.match(new RegExp(`<meta (?:name|property)="${name}" content="([^"]*)"`))?.[1];
 let schemas = 0;
 for (const url of urls) {
-  const route = new URL(url).pathname.slice(1) || 'index.html';
-  const path = route.includes('.') ? route : `${route}/index.html`;
+  const path = new URL(url).pathname.slice(1) || 'index.html';
   assert(existsSync(resolve(root, path)), `Missing sitemap page: ${path}`);
   const html = read(path);
   const title = html.match(/<title>(.*?)<\/title>/)?.[1];
