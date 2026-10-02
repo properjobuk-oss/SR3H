@@ -3,6 +3,7 @@
 > SR3H is an independent AI research and software development lab in Oxford. We investigate how AI works and build useful software, with research focused on output quality, relevance, personal context and privacy.
 
 Canonical website: https://sr3h.uk/
+About SR3H: https://sr3h.uk/about.html
 Contact: mailto:hello@sr3h.uk
 Machine-readable services: https://sr3h.uk/ai-services.json
 

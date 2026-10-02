@@ -10,7 +10,7 @@ for (const page of pages) {
   assert(/href="styles\.css\?v=[^"]+"/.test(html), `${page}: missing versioned stylesheet`);
   const nav = html.match(/<nav class="nav nav--full"[^>]*>([\s\S]*?)<\/nav>/)[1];
   const labels = [...nav.matchAll(/<a\b[^>]*>(.*?)<\/a>/g)].map(m => /aria-label="([^"]+)"/.exec(m[0])?.[1] || m[1]);
-  assert.deepEqual([labels[0], labels[1], labels[2], labels[4]], ['Work', 'Research', 'Blog', 'Contact']);
+  assert.deepEqual([labels[0], labels[1], labels[2], labels[4], labels[5]], ['Work', 'Research', 'Blog', 'Contact', 'About']);
   const productLink = nav.match(/<a class="nav-signal-link"[^>]*>/)?.[0] || '';
   assert(productLink.includes('href="https://aido-beta.vercel.app/"') && labels[3] === 'Signal', `${page}: incorrect Signal link`);
 }
