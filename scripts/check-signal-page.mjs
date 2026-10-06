@@ -17,7 +17,7 @@ assert(signal.includes("does not establish what caused it"), "Signal must distin
 assert(signal.includes("Website readiness and observed inclusion are reported separately."), "Signal must separate readiness from observed inclusion");
 assert(legacy.includes('url=signal.html#ai-check') && legacy.includes('window.location.replace("signal.html#ai-check")'), "Old AIDO URL must preserve the checker route");
 assert(home.includes('href="signal.html">About Signal ↗</a>'), "Homepage card must lead to About Signal");
-assert(home.includes('href="https://mylegend.id/check">Free website check ↗</a>'), "Homepage card must keep the free check separate");
+assert(home.includes('href="signal.html#ai-check">Free website check ↗</a>'), "Homepage card must keep the free check separate and on the public Signal page");
 assert(home.includes('assets/projects/signal-logo.png'), "Homepage card must use the current Signal logo");
 assert(home.includes('assets/projects/signal-workspace-phone.png'), "Homepage card must use the portrait Signal workspace preview");
 assert(home.includes('assets/projects/signal-nav-mark.png'), "Homepage preview must use the exact current Signal mark");

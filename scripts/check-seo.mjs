@@ -31,14 +31,19 @@ for (const url of urls) {
       if (!value || typeof value !== 'object') return;
       if (value['@type'] === 'BlogPosting') {
         const target = new URL(value.url);
-        assert(html.includes(`id="${target.hash.slice(1)}"`), `Missing article anchor: ${value.url}`);
-        assert(html.includes(value.headline), 'Article headline must be visible');
+        const articlePath = target.pathname.slice(1);
+        assert(existsSync(resolve(root, articlePath)), `Missing article page: ${value.url}`);
+        const article = read(articlePath);
+        const escapedHeadline = value.headline.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+        assert(article.includes(escapedHeadline), 'Article headline must be visible');
+        assert.equal(article.match(/rel="canonical" href="([^"]+)"/)?.[1], value.url, `Article canonical mismatch: ${value.url}`);
+        if (target.hash) assert(article.includes(`id="${target.hash.slice(1)}"`), `Missing article anchor: ${value.url}`);
       }
       Object.values(value).forEach(walk);
     };
     walk(data);
   }
-  if (['index.html', 'aido-labs.html', 'conchup.html', 'signal.html', 'journal.html', 'about.html'].includes(path)) {
+  if (path.startsWith('blog/') || ['index.html', 'aido-labs.html', 'conchup.html', 'signal.html', 'journal.html', 'about.html'].includes(path)) {
     assert.equal(meta(html, 'og:url'), url);
     assert.equal(meta(html, 'og:title'), title);
     assert.equal(meta(html, 'twitter:title'), title);
@@ -52,4 +57,4 @@ for (const url of urls) {
 }
 JSON.parse(read('ai-services.json'));
 assert(read('robots.txt').includes('Sitemap: https://sr3h.uk/sitemap.xml'));
-console.log(`PASS: ${urls.length} canonical pages, unique metadata, ${schemas} JSON-LD blocks, article anchors and social assets.`);
+console.log(`PASS: ${urls.length} canonical pages, unique metadata, ${schemas} JSON-LD blocks, article pages and social assets.`);

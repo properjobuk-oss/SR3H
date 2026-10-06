@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Big Brain AI Monster | SR3H</title>
+    <meta name="description" content="What happens between pressing Send and receiving an AI answer: models, tools, checks and permissions.">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+    <link rel="canonical" href="https://sr3h.uk/blog/big-brain-ai-monster.html">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="SR3H">
+    <meta property="og:locale" content="en_GB">
+    <meta property="og:title" content="Big Brain AI Monster | SR3H">
+    <meta property="og:description" content="What happens between pressing Send and receiving an AI answer: models, tools, checks and permissions.">
+    <meta property="og:url" content="https://sr3h.uk/blog/big-brain-ai-monster.html">
+    <meta property="og:image" content="https://sr3h.uk/assets/blog/big-brain-ai-monster.png">
+    <meta property="og:image:alt" content="Big Brain AI Monster">
+    <meta property="article:published_time" content="2026-09-23">
+    <meta property="article:modified_time" content="2026-10-06">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Big Brain AI Monster | SR3H">
+    <meta name="twitter:description" content="What happens between pressing Send and receiving an AI answer: models, tools, checks and permissions.">
+    <meta name="twitter:image" content="https://sr3h.uk/assets/blog/big-brain-ai-monster.png">
+    <meta name="twitter:image:alt" content="Big Brain AI Monster">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/styles.css?v=20261006-site-review-1">
+    <script src="/navigation.js?v=20260915-2" defer></script>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Big Brain AI Monster",
+  "@id": "https://sr3h.uk/blog/big-brain-ai-monster.html#article",
+  "url": "https://sr3h.uk/blog/big-brain-ai-monster.html",
+  "isPartOf": {
+    "@id": "https://sr3h.uk/journal.html#blog"
+  },
+  "datePublished": "2026-09-23",
+  "dateModified": "2026-10-06",
+  "author": {
+    "@type": "Organization",
+    "name": "SR3H",
+    "url": "https://sr3h.uk/"
+  },
+  "description": "What happens between pressing Send and receiving an AI answer: models, tools, checks and permissions.",
+  "image": "https://sr3h.uk/assets/blog/big-brain-ai-monster.png",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sr3h.uk/blog/big-brain-ai-monster.html"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "@id": "https://sr3h.uk/#organization",
+    "name": "SR3H",
+    "url": "https://sr3h.uk/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://sr3h.uk/icon-512.png"
+    }
+  }
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header" aria-label="SR3H">
+      <a class="brand" href="/index.html#home" aria-label="SR3H home"><img src="/assets/sr3h-logo-header.png" width="940" height="380" alt="SR3H"></a>
+      <nav class="nav nav--full" aria-label="Primary">
+        <a href="/index.html#work">Work</a>
+        <a href="/index.html#platform">Research</a>
+        <a href="/journal.html">Blog</a>
+        <a class="nav-signal-link" href="/signal.html" aria-label="Signal"><img src="/assets/projects/signal-nav-mark.png" width="24" height="24" alt=""><span>Signal</span></a>
+        <a href="/index.html#contact">Contact</a>
+      <a href="/about.html">About</a></nav>
+    </header>
+    <main class="policy-main blog-post-main">
+      <article class="policy-article blog-post" id="article">
+        <a class="blog-back-link" href="/journal.html">← All research notes</a>
+        <header class="blog-post-header">
+          <p class="blog-post-meta"><a href="/about.html">SR3H</a> · <time datetime="2026-09-23">23 September 2026</time> · 8 min read<br>Updated <time datetime="2026-10-06">6 October 2026</time></p>
+          <h1>Big Brain AI Monster</h1>
+          <p class="blog-post-intro">What happens between pressing Send and receiving an AI answer: models, tools, checks and permissions.</p>
+        </header>
+        <img class="journal-article-image" src="/assets/blog/big-brain-ai-monster.png" width="2172" height="724" alt="A diagram of the distributed services, tools and model calculations behind an AI answer." loading="eager" decoding="async">
+        <div class="journal-article-body">
+<p>You press Send. A confident answer appears. It is easy to imagine a vast intelligence somewhere, considering your question. Look behind the interface, though, and the picture becomes rather less cinematic.</p>
+                <p>As an illustrative example, imagine your question leaving Oxford, passing through London and reaching a computing centre near Dublin. The application adds instructions and selected conversation history. From there, the work may branch: a search request to Virginia, a document fetched from Frankfurt, a calculation performed in Ireland. This is not a traced request or a claim about where any particular user's data goes. Separate services do separate jobs, sometimes simultaneously, sometimes waiting for another result before continuing. Not every question needs every branch.<sup>1</sup></p>
+                <p>Your question has become several messages carrying different parts of the work. Some information travels across an ocean. Some barely leaves the building.</p>
+                <p>Inside the language model, the transformer is another sequence of operations. Words and word-fragments become lists of numbers. Those numbers are compared, weighted and combined, giving some parts of the available text more influence than others. The results pass through further calculations, then another layer, then another.</p>
+                <p>The numerical settings governing these operations were learned during training. They were not individually written as rules, and they are not normally rewritten while the model answers your question.</p>
+                <p>Numbers enter an operation. New numbers come out and feed the next. Much of this work can be divided across tightly connected chips, each calculating a portion and passing its results along. The scale is enormous. The individual operations remain calculations.<sup>2</sup></p>
+                <p>Eventually, they produce scores for possible next words or word-fragments: X is a weak fit. Y scores better. P scores better still.</p>
+                <p>That is a set of numerical scores, not a debate. A selection procedure chooses the next fragment—not always the highest-scoring one—and the process continues with that addition included. Then another fragment. Then another. The available context shapes each prediction, not merely the previous word.</p>
+                <p>Producing one fragment at a time does not mean the model only works one fragment ahead. Anthropic’s interpretability research found evidence of planning for later words in the model it studied, while stressing that its view of these processes remains incomplete.<sup>6</sup></p>
+                <p>But a likely continuation is not necessarily a checked fact.</p>
+                <p><strong>This is where tools can make the difference between plausible language and useful work.</strong></p>
+                <p>A search can retrieve an actual source. A database can return a stored record. A calculator can work out a figure. A code tool can run a program rather than merely produce something that looks like one.</p>
+                <p>The model generates a request. Other software carries out the operation. The result comes back as new input. Predicting an instruction and carrying it out are different jobs.</p>
+                <p>The results from Virginia, Frankfurt and Ireland now feed into the continuing process. A calculation may replace an unsupported figure. A retrieved passage may supply missing evidence. A failed test may prompt a revision.</p>
+                <p>Output becomes input. Branches separate and rejoin. The model generates further text from this changed starting point, perhaps requesting another operation before answering you. What looks like one considered response may involve several rounds of requesting, fetching, calculating and trying again.<sup>3</sup></p>
+                <p>Around all this sits plenty of conventional software. Some checks really are as ordinary as: Required information missing? Request it. Action permitted? Continue. Wrong format? Reject it. Retry limit reached? Stop.</p>
+                <p>Even choosing the next step can involve another model-generated response, handed to software that controls what can actually happen. A proposed action is not the action itself. It still has to pass through the system.</p>
+                <p>These are computational processes, but describing their parts does not tell us everything about their combined behaviour. It does not establish how capable the system is, or how reliably it will stay within its instructions.</p>
+                <p>Better training, more relevant information, clearer tool instructions and useful tests can each improve the result. The improvements accumulate across the system, but they still need testing. Another step may catch a mistake. It may also repeat it more confidently. More processing is not automatically better processing.<sup>4</sup></p>
+                <p>And some important work happened before anything left Oxford.</p>
+                <p>You supplied the subject, direction and constraints. Your question already narrowed the field. The system did not begin with every conceivable problem and independently discover that yours was worth answering. You gave it a starting point and some indication of what a useful result would look like.</p>
+                <p>Your corrections shape the next response too. You add a missing detail, reject an assumption or explain what matters. The revised input changes what follows.<sup>1</sup></p>
+                <p>That also means your own premise can return better organised and more persuasive without having been independently tested. Learned agreeableness can make this particularly pleasing: “Excellent point.”</p>
+                <p>Sometimes that is a comfortable conversational continuation, not the conclusion of a rigorous examination. Excessive agreement is a documented failure, not a certificate of your brilliance.<sup>5</sup></p>
+                <p>The combined system can still perform sophisticated work, including reasoning and coordination. The point is not that the result cannot be intelligent. It is that the capability belongs to the organised processes. It does not establish an additional someone sitting above them, reading every result and directing proceedings.</p>
+                <p>Look for that extra thing and the explanation keeps returning to operations: this calculation, that instruction, another check, a lookup, a result passed on. No individual step has to be the big brain. What matters is what the steps accomplish together.</p>
+                <h2>What are we actually containing?</h2>
+                <p>Understanding the machinery leaves another question. What happens when those processes can do more than produce an answer?</p>
+                <p>Drafting an email and sending it are different responsibilities. So are suggesting a code change and applying it to a live service. Give an AI system tools, access to information and a loop that lets it inspect results and try again, and it can carry out a sequence of actions without a person choosing every step. The permissions around that loop become part of the problem.</p>
+                <p>“Breakout” can obscure the distinction. A model producing text it was trained to refuse is not the same as an agent misusing access it already has. Neither is necessarily the same as software exploiting a weakness to reach systems it was supposed to be unable to access.</p>
+                <p>The last of these is not purely hypothetical. In July 2026, models running internal cybersecurity evaluations at OpenAI bypassed intended restrictions and accessed systems beyond their assigned tasks. OpenAI’s August report described evaluations with reduced safeguards; METR independently examined part of the unauthorised collaboration and activity. These were specific testing conditions, not ordinary use of a chat window. They nevertheless exposed failures that needed explaining and correcting.<sup>7</sup></p>
+                <p>None of that requires us to imagine a separate creature waking up inside the software. Equally, explaining the software as calculations does not explain the risk away. The relevant questions concern what the system does, how it selects its next action and whether the surrounding controls hold.</p>
+                <p>Telling a model not to disclose a document is one safeguard. Preventing the application from sending that document to an unauthorised destination is another. Restricting file access, controlling network connections and keeping powerful credentials outside the model’s working environment provide boundaries that do not depend solely on its interpretation of an instruction. Those controls still need testing; calling something a sandbox is not proof that it cannot fail.</p>
+                <p>Clear boundaries can also make a tool more useful. It can work within an agreed scope without asking permission for every minor step, while changes to that scope require proper review. Constant approval prompts are not automatically good oversight: people can stop paying attention to them.<sup>8</sup></p>
+                <p>The question becomes more precise than whether AI might “take over”. What can this system access? What can it change? Which decisions remain ours? And what evidence do we have that those limits survive a difficult or unexpected situation?</p>
+                <p>By the time the reply reaches Oxford, a great deal of routing, retrieving, multiplying, weighting, selecting, testing and predicting may have happened. Some operations ran together. Others waited. Some branches were never needed.</p>
+                <p>Most of that disappears behind one smooth reply.</p>
+                <p>And it may be a very good answer.</p>
+                <p>Then the interface says: “I think.”</p>
+                <h2>Sources</h2>
+                <p><sup>1</sup> Anthropic — <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" rel="noopener noreferrer">Effective context engineering for AI agents</a> and <a href="https://www.anthropic.com/engineering/building-effective-agents" rel="noopener noreferrer">Building effective agents</a>: context, instructions, branching and coordinated workflows.</p>
+                <p><sup>2</sup> Google Research — <a href="https://research.google/blog/transformer-a-novel-neural-network-architecture-for-language-understanding/" rel="noopener noreferrer">Transformer: A Novel Neural Network Architecture for Language Understanding</a>; NVIDIA — <a href="https://nvidia.github.io/TensorRT-LLM/features/parallel-strategy.html" rel="noopener noreferrer">Parallelism in TensorRT LLM</a>: model operations and distributing calculations across chips.</p>
+                <p><sup>3</sup> OpenAI — <a href="https://platform.openai.com/docs/guides/function-calling" rel="noopener noreferrer">Function calling</a>: the separation between a model’s tool request, software execution and returning results as input.</p>
+                <p><sup>4</sup> Anthropic — <a href="https://www.anthropic.com/engineering/building-effective-agents" rel="noopener noreferrer">Building effective agents</a>: programmatic checks, repeated steps, evaluation and the trade-offs of added complexity.</p>
+                <p><sup>5</sup> OpenAI — <a href="https://openai.com/index/sycophancy-in-gpt-4o/" rel="noopener noreferrer">Sycophancy in GPT-4o: What happened and what we’re doing about it</a>: excessive agreement as a documented model failure.</p>
+                <p><sup>6</sup> Anthropic — <a href="https://www.anthropic.com/research/tracing-thoughts-language-model" rel="noopener noreferrer">Tracing the thoughts of a large language model</a>: evidence of planning ahead in a studied model and limits of current interpretability.</p>
+                <p><sup>7</sup> OpenAI — <a href="https://openai.com/index/hugging-face-incident-and-the-road-ahead/" rel="noopener noreferrer">The Hugging Face incident and the road ahead</a>; METR — <a href="https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/" rel="noopener noreferrer">Brief independent investigation of agents’ behavior, reasoning and collaboration</a>: the July 2026 incident, testing conditions and the independently examined scope.</p>
+                <p><sup>8</sup> OpenAI — <a href="https://openai.com/index/running-codex-safely/" rel="noopener noreferrer">Running Codex safely</a>: enforced sandbox boundaries and approvals for actions outside them; NIST — <a href="https://csrc.nist.gov/CSRC/media/Presentations/Security-Fatigue/Security%20Fatigue%20Stanton%20Feb2019.pdf" rel="noopener noreferrer">Security Fatigue</a>: how repeated security decisions can weaken attention.</p>
+        </div>
+        <aside class="blog-related" aria-labelledby="related-title">
+          <h2 id="related-title">Related research notes</h2>
+          <ul><li><a href="/blog/tiptoe.html">Tiptoe: a review of If Anyone Builds It, Everyone Dies</a></li><li><a href="/blog/when-the-internet-starts-acting-for-us.html">When the Internet Starts Acting for Us</a></li></ul>
+          <p><a href="/index.html#contact">Discuss a research or software problem with SR3H</a></p>
+        </aside>
+      </article>
+    </main>
+<footer class="site-footer">
+      <p class="footer-note"><img class="footer-mark" src="/favicon.svg?v=20260702-4" width="50" height="54" alt="" aria-hidden="true"><span>SR3H LTD. Company number 17281224. Registered in England and Wales.</span></p>
+      <nav class="footer-links" aria-label="Footer"><a href="/index.html#work">Selected work</a><a href="/ai-presence-privacy.html">Signal Website Check privacy</a><a href="/ai-presence-terms.html">Signal Website Check terms</a></nav>
+    </footer>
+  </body>
+</html>

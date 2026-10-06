@@ -47,7 +47,14 @@ Public overview: https://sr3h.uk/conchup.html
 
 SR3H publishes a blog on AI, software engineering, product research and the systems it is building at https://sr3h.uk/journal.html.
 
-Published posts include “Everyone wants a better answer. Better for whom?” on customer fit and business visibility; “Big Brain AI Monster” on the processes behind an AI answer; “Is AI visibility optimisation just SEO dressed up?” on the evidence for AI visibility work; “When buyers ask AI, who gets the work?” on AI discoverability; “Who owns the context?” on Brane, local AI and user-controlled context; and “The road we meant to take” on Good Route, route choice and navigation that respects a rider's intent.
+- When the Internet Starts Acting for Us: https://sr3h.uk/blog/when-the-internet-starts-acting-for-us.html
+- Tiptoe: a review of If Anyone Builds It, Everyone Dies: https://sr3h.uk/blog/tiptoe.html
+- Everyone wants a better answer. Better for whom?: https://sr3h.uk/blog/better-answer-for-whom.html
+- Big Brain AI Monster: https://sr3h.uk/blog/big-brain-ai-monster.html
+- Is AI visibility optimisation just SEO dressed up?: https://sr3h.uk/blog/is-ai-visibility-just-seo.html
+- When buyers ask AI, who gets the work?: https://sr3h.uk/blog/when-buyers-ask-ai.html
+- Who owns the context?: https://sr3h.uk/blog/who-owns-the-context.html
+- The road we meant to take: https://sr3h.uk/blog/the-road-we-meant-to-take.html
 
 ## Service areas
 

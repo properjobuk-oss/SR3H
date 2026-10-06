@@ -7,12 +7,12 @@ const pages = [...read('sitemap.xml').matchAll(/<loc>(.*?)<\/loc>/g)].map(m => n
 for (const page of pages) {
   const html = read(page);
   assert(html.includes('navigation.js?v=20260915-2'), `${page}: missing shared menu`);
-  assert(/href="styles\.css\?v=[^"]+"/.test(html), `${page}: missing versioned stylesheet`);
+  assert(/href="\/?styles\.css\?v=[^"]+"/.test(html), `${page}: missing versioned stylesheet`);
   const nav = html.match(/<nav class="nav nav--full"[^>]*>([\s\S]*?)<\/nav>/)[1];
   const labels = [...nav.matchAll(/<a\b[^>]*>(.*?)<\/a>/g)].map(m => /aria-label="([^"]+)"/.exec(m[0])?.[1] || m[1]);
   assert.deepEqual([labels[0], labels[1], labels[2], labels[4], labels[5]], ['Work', 'Research', 'Blog', 'Contact', 'About']);
   const productLink = nav.match(/<a class="nav-signal-link"[^>]*>/)?.[0] || '';
-  assert(productLink.includes('href="https://mylegend.id"') && labels[3] === 'MyLegend', `${page}: incorrect MyLegend link`);
+  assert(/href="\/?signal\.html"/.test(productLink) && labels[3] === 'Signal', `${page}: incorrect Signal link`);
 }
 const target = () => ({ handlers: {}, addEventListener(name, fn) { this.handlers[name] = fn; } });
 const classes = new Set();
