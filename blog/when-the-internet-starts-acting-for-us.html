@@ -17,7 +17,6 @@
     <meta property="og:image" content="https://sr3h.uk/assets/blog/when-the-internet-starts-acting-for-us.png">
     <meta property="og:image:alt" content="When the Internet Starts Acting for Us">
     <meta property="article:published_time" content="2026-10-02">
-    <meta property="article:modified_time" content="2026-10-06">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="When the Internet Starts Acting for Us | SR3H">
     <meta name="twitter:description" content="How AI agents are shifting the web from something we browse and operate to something we increasingly delegate.">
@@ -37,7 +36,6 @@
     "@id": "https://sr3h.uk/journal.html#blog"
   },
   "datePublished": "2026-10-02",
-  "dateModified": "2026-10-06",
   "author": {
     "@type": "Organization",
     "name": "SR3H",
@@ -77,45 +75,296 @@
       <article class="policy-article blog-post" id="article">
         <a class="blog-back-link" href="/journal.html">← All research notes</a>
         <header class="blog-post-header">
-          <p class="blog-post-meta"><a href="/about.html">SR3H</a> · <time datetime="2026-10-02">2 October 2026</time> · 5 min read<br>Updated <time datetime="2026-10-06">6 October 2026</time></p>
+          <p class="blog-post-meta"><a href="/about.html">SR3H</a> · <time datetime="2026-10-02">2 October 2026</time> · 15 min read</p>
           <h1>When the Internet Starts Acting for Us</h1>
           <p class="blog-post-intro">How AI agents are shifting the web from something we browse and operate to something we increasingly delegate.</p>
         </header>
         <img class="journal-article-image" src="/assets/blog/when-the-internet-starts-acting-for-us.png" width="2170" height="725" alt="When the Internet Starts Acting for Us: an AI assistant coordinates restaurant booking, directions, email, delivery updates and a hotel while the user stays in control." loading="eager" decoding="async">
         <div class="journal-article-body">
-<p>Imagine you need a new washing machine. You search, compare retailers, check dimensions and delivery dates, and find out whether someone will remove the old one. The information is available, but you assemble it and operate each service yourself.</p>
-<p>Now imagine asking: “Find three reliable machines under £600 that fit this space, can arrive this week and include removal of the old one. Show me the options before buying anything.”</p>
-<p>The outcome may be similar. What changes is who works through the process. A person describes the intention and constraints; an agent chooses steps using the services available to it.</p>
-<p>This is a useful direction to investigate, rather than a claim that one assistant can already complete every example below. Available tools, permissions and supported services determine what can actually happen.</p>
-<h2>Websites have capabilities beneath their screens</h2>
-<p>A retailer provides search, filters, product pages and checkout. Beneath those interfaces, its systems can search a catalogue, check stock, calculate delivery and create an order. A restaurant system can check availability and reserve a table.</p>
-<p>People usually reach those capabilities through an interface. Software can also request them through an API: a structured connection between systems. Where an authorised agent has access to the right connection, it need not reproduce every click a person would make.</p>
-<p>MCP, the Model Context Protocol, provides a common way for AI applications to connect to tools and data. It describes available operations and their inputs and results. It does not itself supply a business's stock database, booking service or complete security system. Those capabilities still have to exist and be connected. <a href="https://modelcontextprotocol.io/docs/getting-started/intro" rel="noopener noreferrer">MCP documentation</a></p>
-<p>This gives a website a second audience. People need clear information and useful interfaces. An agent needs accurate information, usable capabilities and enforceable permissions.</p>
-<h2>From finding an option to completing a task</h2>
-<p>Consider a hotel request: somewhere near tomorrow's meeting, with parking, accepting dogs and costing less than £180. An assistant may help gather and compare information, but completing a booking also requires current availability, the final price, cancellation conditions and authority to commit.</p>
-<p>Being able to describe a suitable hotel is different from being able to book it. Search, connected tools and transactions are separate capabilities, and their availability varies between platforms and services.</p>
-<p>Existing commerce protocols show how those connections can be made. The Universal Commerce Protocol describes operations for checkout and related commerce services; its specification is a foundation for integrations, rather than proof that every retailer is already accessible to every agent. <a href="https://ucp.dev/" rel="noopener noreferrer">Universal Commerce Protocol</a></p>
-<p>For a business, the useful question is increasingly specific: can an authorised assistant check a fact, obtain a quote or complete a supported action, and then verify the result?</p>
-<h2>The task may continue after the transaction</h2>
-<p>A confirmation screen usually ends an online purchase. An agent could be given a longer responsibility: watch the delivery and alert the customer if the date changes.</p>
-<p>If a washing-machine delivery moves to a time when nobody is home, the assistant might offer to request a different slot. That example requires access to delivery updates, relevant calendar information and a way to contact the supplier. Changing the arrangement would also require the customer's authority.</p>
-<p>Some infrastructure already supports work that continues over time. Vercel's Workflow documentation, for example, describes durable workflows that can pause, resume and wait for external events. That makes ongoing processes possible; it does not automatically make them reliable personal assistants. <a href="https://vercel.com/docs/workflows" rel="noopener noreferrer">Workflow documentation</a></p>
-<p>The design problem is to preserve the purpose of a task while conditions change. What should the system monitor? When should it ask? When has it finished? How does someone withdraw the responsibility?</p>
-<h2>Personal context needs a clear boundary</h2>
-<p>“Find somewhere I would actually like for dinner” asks the assistant to combine a live situation with personal preferences. Location, dietary requirements, walking distance and current table availability may all matter.</p>
-<p>That does not mean every restaurant needs the person's underlying conversation or history. The assistant might use private preferences to compare options, then send the chosen restaurant only the information required for a reservation.</p>
-<p>At SR3H, this is one question behind Brane: which context improves a task, which information stays private, and when should the assistant use no extra history at all? Retaining information, using it and sharing it are separate decisions. <a href="/blog/who-owns-the-context.html">Who owns the context?</a></p>
-<h2>Delegation needs enforceable limits</h2>
-<p>An agent that can read a menu has different responsibilities from one that can send an email, cancel a booking or spend money. Instructions to be careful are insufficient on their own.</p>
-<p>The services underneath must establish who is making a request and what that requester may do. An assistant might be allowed to compare products but require approval to purchase, or make a reservation only when it is refundable. Spending limits, time limits and access to personal information need explicit boundaries.</p>
-<p>MCP's authorisation specification describes access controls for its HTTP transport. Product-specific rules still need enforcement by the systems carrying out the work. <a href="https://modelcontextprotocol.io/specification/latest/basic/authorization" rel="noopener noreferrer">MCP authorisation specification</a></p>
-<p>People also need a usable account of what happened: which service was contacted, what was shared, what commitment was made and whether the intended outcome was confirmed. Failure, cancellation and correction belong in the design from the start.</p>
-<h2>What businesses can prepare now</h2>
-<p>The first step is accurate, accessible information about the offer: capabilities, limitations, prices where appropriate, service areas and contact details. Established search foundations remain relevant. Google says its AI search features require no additional technical optimisation beyond those foundations. <a href="https://developers.google.com/search/docs/appearance/ai-features" rel="noopener noreferrer">Google Search Central</a></p>
-<p>Beyond discovery, choose a small action worth making available to an authorised assistant. Checking availability or requesting a quote can be a more useful starting point than exposing every operation at once. Define the inputs, permissions, possible failures and evidence of completion.</p>
-<p>This connects with our work on Signal and Conchup. Signal investigates how AI finds and presents businesses; Conchup keeps requirements, decisions and evidence connected as software changes. Each addresses part of the distance between an intention and a result that someone can review.</p>
-<p>People will still browse shops, explore holidays and enjoy using applications directly. Delegation adds another choice. The important work is deciding which responsibilities software can usefully take on, what information it needs and where the person remains in control.</p>
+<p>Imagine you need a new washing machine.</p>
+<p>Today the process is familiar. You search. You open several retailers. You set filters. You compare specifications and reviews. You check dimensions, energy ratings and delivery dates. You find out whether someone will remove the old machine. Eventually, after moving backwards and forwards between pages and services, you decide what to buy.</p>
+<p>None of this is particularly difficult.</p>
+<p>It is simply how the internet works: we operate it.</p>
+<p>Now imagine saying:</p>
+<p><em>Find me a reliable washing machine under £600 that fits this space, has good energy efficiency, can be delivered this week and includes removal of the old one. Show me the best three before buying anything.</em></p>
+<p>The outcome may be similar. The relationship with the internet is not.</p>
+<p>That small behavioural change — from navigating a process to describing an intention — could become one of the more significant shifts in computing since the move from desktop software to the web, and later from the web to mobile apps.</p>
+<p>For most of the internet’s history, software has been built around a simple assumption:</p>
+<p>a person will operate the interface.</p>
+<p>AI agents introduce another possibility.</p>
+<p>The person describes what they want. The software works out which services are needed and how to use them.</p>
+<p>That change is already beginning.</p>
+<h2>The internet we know was designed for our fingers</h2>
+<p>Open almost any digital service and its basic structure is familiar.</p>
+<p>A retailer gives us search, filters, product pages, a basket and checkout. An airline gives us destinations, dates, seat selection and payment. A bank gives us balances, transactions and transfers.</p>
+<p>Businesses spend enormous amounts of time designing these interfaces because, historically, the interface has been where the customer meets the service.</p>
+<p>But underneath the screens are the actual capabilities.</p>
+<p>A retailer can search its catalogue, check stock, calculate delivery and create an order. An airline can query schedules, reserve a seat and alter a booking. A restaurant system can check availability and reserve a table.</p>
+<p>A person usually reaches those capabilities by navigating the interface.</p>
+<p>An AI agent does not necessarily need to.</p>
+<p>It does not need to find the beautifully positioned <strong>Check availability</strong> button if the same underlying capability can be requested safely and directly.</p>
+<p>A conventional website effectively tells a person:</p>
+<p><em>Here are the screens you can operate.</em></p>
+<p>An increasingly agentic service can also tell software:</p>
+<p><em>Here are the things I can do.</em></p>
+<p>That sounds like a fairly technical change. It is not.</p>
+<p>It changes who has to understand the interface.</p>
+<h2>The user stops learning every system</h2>
+<p>At the moment, we become temporary experts in dozens of systems.</p>
+<p>We learn where an airline hides baggage options. We work out which filters a retailer has chosen to expose. We remember which menu contains a bank transfer. We type the same preferences into different booking forms.</p>
+<p>None of these jobs is individually difficult. Together they make up a surprising amount of digital life.</p>
+<p>Agentic software can reverse some of that burden.</p>
+<p>Instead of learning how every service expects us to express a request, we describe the request in our own terms and let the software translate it into the actions each service requires.</p>
+<p>That does not mean screens disappear.</p>
+<p>People enjoy browsing. We want to see photographs of a hotel, look at clothes, compare cars and explore possibilities. Sometimes using the interface is part of the experience.</p>
+<p>But the screen may stop being the only useful entrance to a service.</p>
+<p>That is a fairly profound change.</p>
+<h2>Search begins to turn into action</h2>
+<p>It is easiest to see in search.</p>
+<p>Suppose you need a hotel near a meeting.</p>
+<p>Today you might search an area, open several results and answer a series of questions yourself.</p>
+<p>Does it have parking?<br>
+Does it allow dogs?<br>
+Is breakfast included?<br>
+Is there a room next Friday?<br>
+Is it under £120?</p>
+<p>The information probably exists. The job of finding it, joining it together and deciding what matters still largely belongs to you.</p>
+<p>An agent can approach the same problem differently:</p>
+<p><em>Find me somewhere within a twenty-minute walk of tomorrow’s meeting. It needs parking, it needs to allow dogs, and I don’t want to spend more than £120.</em></p>
+<p>The useful result is not necessarily another page of links.</p>
+<p>The agent can check the requirements against the available options, discard the ones that obviously do not fit and return a short list with the important differences explained.</p>
+<p>Then you say:</p>
+<p><em>Book the second one.</em></p>
+<p>At that point, finding something on the internet and using the internet to get something done start to merge.</p>
+<h2>Shopping gives us an early glimpse</h2>
+<p>Online shopping is still strongly shaped by the catalogue.</p>
+<p>The retailer decides how products are categorised, which filters exist and which attributes can be compared.</p>
+<p>But people do not always think in catalogue fields.</p>
+<p>You might say:</p>
+<p><em>I need a lightweight waterproof coat for walking the dog. It needs to be breathable because I don’t want to get sweaty in it, with a proper hood, no heavy insulation, and under £100. I don’t care about the brand.</em></p>
+<p>That is a slightly awkward request for a traditional filter panel.</p>
+<p>The useful information may be scattered across product descriptions, technical specifications, customer reviews and stock data.</p>
+<p>A good agent could treat the requirement as a whole.</p>
+<p>Perhaps a suitable coat is normally £130 but currently reduced to £89. The agent could notice the sale rather than excluding it because the standard price is over budget. It could check that the retailer is established, that the product has a credible review history rather than three suspicious five-star ratings, that returns are straightforward and that the claimed waterproofing and breathability are actually supported by the specification.</p>
+<p>The useful result is not simply:</p>
+<p><em>Here is something mentioning “waterproof coat”.</em></p>
+<p>It is closer to:</p>
+<p><em>This one fits what you asked for. It is currently £89 in a sale, the manufacturer is well established, the retailer has a proper returns policy, and there are enough independent reviews to make the rating meaningful. There are two similar alternatives if you want to compare them.</em></p>
+<p>That is still shopping.</p>
+<p>But the work has moved.</p>
+<p>Instead of you visiting six pages and deciding which details deserve trust, some of that evaluation has been delegated.</p>
+<p>And once the agent can transact, the relationship changes again.</p>
+<p>It might say:</p>
+<p><em>I’ve found the washing machine for £549. It fits the dimensions, meets the requirements you gave me and can be delivered on Thursday. The retailer will remove the old machine. Would you like me to order it using the payment method you’ve authorised?</em></p>
+<p>You say yes.</p>
+<p>The interesting part is what happens afterwards.</p>
+<h2>What happens when the agent does not stop at checkout?</h2>
+<p>Most online transactions end with a confirmation.</p>
+<p>After that, responsibility returns to us.</p>
+<p>We notice the delivery email. We realise the time has changed. We check the diary. We contact the retailer. We rearrange it.</p>
+<p>An agent could remain attached to the purpose of the task.</p>
+<p>If the delivery company changes the window, it might notice that the new time conflicts with your calendar and tell you:</p>
+<p><em>The delivery has moved to between 10am and 2pm. It looks as though nobody will be home until 11.30. I can ask for an afternoon slot, or use the neighbour you have already authorised for deliveries. Which would you prefer?</em></p>
+<p>The agent is no longer simply answering a question or completing a checkout.</p>
+<p>It is keeping track of what the task was meant to achieve.</p>
+<p>Some cloud-based AI systems can already continue delegated work after the user has left the immediate conversation and return when they need information or approval.</p>
+<p>The natural progression is not difficult to imagine:</p>
+<p><strong>find → assess → act → keep an eye on it → intervene when necessary</strong></p>
+<p>That last part matters.</p>
+<p>A useful agent does not need to ask us about every internal step. Nor should it be free to do whatever it likes.</p>
+<p>What changes is the level at which we give the instruction.</p>
+<p>Instead of saying:</p>
+<p><em>Open this. Check that. Now do this.</em></p>
+<p>we begin to say:</p>
+<p><em>Keep an eye on this delivery and tell me if something changes.</em></p>
+<p>Or:</p>
+<p><em>Look for a better electricity tariff, but do not switch supplier without asking me.</em></p>
+<p>Or:</p>
+<p><em>Watch these flights. If the fare falls below £220 and the cancellation terms still match what I need, tell me.</em></p>
+<p>The user is specifying the intention, the boundaries and the point at which control should come back to them.</p>
+<p>The software handles the smaller steps in between.</p>
+<p>Permissions therefore become part of the interface.</p>
+<h2>Voice makes the change easier to see</h2>
+<p>Take away the keyboard and this becomes much more obvious.</p>
+<p>Imagine driving and saying:</p>
+<p><em>I need to deal with three things. Reply to Sarah and say I’ll look at the proposal tonight. Find a hotel near tomorrow’s meeting with parking and book it if it is under £120. And keep an eye on my delayed parcel — tell me if the delivery date changes again.</em></p>
+<p>Then you carry on driving.</p>
+<p>One task may finish immediately.</p>
+<p>One needs an external booking service.</p>
+<p>One may remain active for the rest of the day.</p>
+<p>You are not moving through three apps. You are establishing three jobs.</p>
+<p>The applications underneath still matter, but you no longer have to operate each one yourself.</p>
+<p>This is where an assistant starts to become more than a chat window.</p>
+<p>It becomes a layer between the person and their digital environment.</p>
+<h2>A restaurant is a good test</h2>
+<p>Consider something much less planned.</p>
+<p>You bump into an old friend and decide to get something to eat.</p>
+<p>Today that can mean opening maps, looking at restaurants, checking menus, reading reviews, working out the walking distance, checking availability, opening a reservation service and then navigating there.</p>
+<p>Now imagine saying:</p>
+<p><em>Find somewhere I would actually like within a twenty-minute walk. We want to eat as soon as possible. Check whether there’s a table for two, book it if there is, and then take us there.</em></p>
+<p>There is a surprising amount packed into that request.</p>
+<p>The system needs your current location and the current time. It needs to know how far you are willing to walk. It needs restaurant information and live availability. It may need dietary preferences. It needs a booking mechanism and then directions.</p>
+<p>But the interesting phrase is:</p>
+<p><strong>somewhere I would actually like.</strong></p>
+<p>You have not specified cuisine, price band, atmosphere, noise level and a dozen other filters.</p>
+<p>The request assumes that the system already knows something useful about you.</p>
+<p>Not everything.</p>
+<p>Not your entire history.</p>
+<p>Just enough relevant context to make a better choice.</p>
+<p>Many of the individual components already exist: location, maps, availability, reservation systems, personal preferences and conversational interfaces.</p>
+<p>The gap is increasingly in joining them together.</p>
+<p>The parts exist. The experience is still fragmented.</p>
+<h2>The agent may eventually speak first</h2>
+<p>The bigger shift comes when we no longer initiate every interaction.</p>
+<p>Suppose your train is cancelled.</p>
+<p>A persistent agent might notice and say:</p>
+<p><em>Your train has been cancelled. There is another service twenty minutes earlier and you can still reach it. I haven’t changed anything. Would you like me to move you onto it?</em></p>
+<p>The same idea could apply elsewhere.</p>
+<p>A hotel price drops and your existing booking is refundable.</p>
+<p>A delivery moves to a day when nobody will be at home.</p>
+<p>A flight changes and now clashes with the train you were planning to take to the airport.</p>
+<p>The software notices because it has been entrusted with an ongoing concern.</p>
+<p>That is different from simply waiting for another prompt.</p>
+<p>It means software can watch for the moment when our attention is genuinely needed.</p>
+<p>Not every task should work this way.</p>
+<p>Many should not.</p>
+<p>But there is an enormous amount of routine digital administration that exists largely because software currently waits for us to notice something, open the right service and deal with it.</p>
+<p>Some of that can plausibly disappear.</p>
+<h2>The website develops a second audience</h2>
+<p>If people begin delegating more of this work, businesses have to think differently about their own software.</p>
+<p>A shop will still need to work well for humans.</p>
+<p>Photography, editorial content, product information and a good checkout remain useful.</p>
+<p>But behind that interface there may increasingly be another surface.</p>
+<p>One that makes the service’s actual capabilities understandable to authorised software.</p>
+<p>Search the catalogue.</p>
+<p>Compare products.</p>
+<p>Check stock.</p>
+<p>Calculate delivery.</p>
+<p>Reserve something.</p>
+<p>Create an order.</p>
+<p>Amend a booking.</p>
+<p>A person sees the shop.</p>
+<p>An agent also needs to understand what the shop can do.</p>
+<p>That is a useful way of thinking about an agentic website.</p>
+<p>It is not primarily a new visual design style.</p>
+<p>It is a service that software acting for a customer can meaningfully and safely use.</p>
+<p>For years web designers have asked:</p>
+<p><em>Does this work properly on a smaller screen?</em></p>
+<p>A new question is appearing alongside it:</p>
+<p><em>Can an authorised AI understand and use this service without pretending to be a human clicking through the interface?</em></p>
+<h2>APIs, MCP and agents are less mysterious than they sound</h2>
+<p>The terminology around this can make it sound more exotic than it is.</p>
+<p>An API — an Application Programming Interface — is simply a structured way for one piece of software to request information or an action from another.</p>
+<p><em>Give me the product details.</em></p>
+<p><em>Check this reservation.</em></p>
+<p><em>Create this order.</em></p>
+<p>APIs have been part of the internet’s plumbing for decades.</p>
+<p>MCP — Model Context Protocol — serves a related purpose for AI systems. It provides a more consistent way for applications to expose tools and information that a model can understand how to use.</p>
+<p>A service can describe what it offers, what information each capability requires and what it will return.</p>
+<p>The MCP layer itself does not need to contain the intelligence. It may be little more than a clear, standard doorway into existing systems.</p>
+<p>The agent is the part deciding which doorway it needs.</p>
+<p>For the coat request, that decision-making might amount to working out that the dimensions or budget are missing, searching once they are known, removing products that cannot arrive in time, checking the remaining sellers, and stopping before money is spent because purchase requires approval.</p>
+<p>The software underneath each step may be completely ordinary.</p>
+<p>What is different is that the user is no longer manually choosing the sequence.</p>
+<p>A simple mental model is enough:</p>
+<p><strong>API:</strong> a doorway for software<br>
+<strong>MCP:</strong> a doorway described in a way AI can readily use<br>
+<strong>Agent:</strong> the software deciding which capabilities it needs and when</p>
+<p>Once separated like that, much of the agentic web stops looking mysterious.</p>
+<p>It is familiar software being operated in a different way.</p>
+<h2>Apps do not disappear</h2>
+<p>Our digital lives are currently organised around applications.</p>
+<p>Open the railway app.</p>
+<p>Open the calendar.</p>
+<p>Open maps.</p>
+<p>Open the hotel site.</p>
+<p>Open the bank.</p>
+<p>Take one piece of information from here and put it there.</p>
+<p>We have become so accustomed to this that it barely registers as work.</p>
+<p>Agents can increasingly sit above those systems.</p>
+<p>The railway company does not disappear.</p>
+<p>Its booking infrastructure remains important.</p>
+<p>The bank remains important.</p>
+<p>The mapping service remains important.</p>
+<p>What may become less necessary is us personally operating the boundary between each one.</p>
+<p>The software does not vanish.</p>
+<p>It simply moves further into the machinery.</p>
+<h2>The internet may become much larger on the inside</h2>
+<p>There is another change happening at the same time.</p>
+<p>AI systems are beginning to work across increasingly large environments containing documents, conversations, applications, databases, code and tools.</p>
+<p>They do not need to place all of that information into active attention at once.</p>
+<p>Imagine a company with years of history, dozens of products, millions of records and thousands of decisions.</p>
+<p>For one task, the AI may need seven documents, three previous decisions and a handful of database records.</p>
+<p>Everything else can remain where it is.</p>
+<p>That can create the impression of an enormous working environment even though only a small part of it is being actively used at any moment.</p>
+<p>Nothing magical has happened to the information. It still has to exist somewhere.</p>
+<p>The difference is that the software can increasingly handle more of the retrieval and organisation itself.</p>
+<p>From the user’s point of view, that can blur some familiar boundaries.</p>
+<p>Where does the assistant end and the application begin?</p>
+<p>Is the database something you visit, or simply somewhere the system knows how to retrieve a fact?</p>
+<p>Are you using a website, or asking software to use the service behind that website?</p>
+<p>Technically, those distinctions continue to matter.</p>
+<p>Experientially, they may matter much less.</p>
+<h2>Delegation creates a more serious security problem</h2>
+<p>All of this becomes more consequential once the agent can act.</p>
+<p>Reading a restaurant menu is one thing.</p>
+<p>Sending an email, cancelling a flight, exposing personal information or spending money is another.</p>
+<p>“Be careful” is not a security model.</p>
+<p>The systems underneath have to enforce the boundaries.</p>
+<p>Two very old ideas become even more important:</p>
+<p><strong>Authentication:</strong> who is making the request?</p>
+<p><strong>Authorisation:</strong> what are they allowed to do?</p>
+<p>An agent might be allowed to compare washing machines but not buy one.</p>
+<p>It might be able to make a restaurant reservation but not accept a large non-refundable deposit.</p>
+<p>It might be allowed to reorder the same £18 household item you buy every month, while anything unusual requires approval.</p>
+<p>This is important because the usefulness of an agent comes from not asking permission for every trivial step.</p>
+<p>If every action produces another dialogue box, we have simply rebuilt the old interface with more words.</p>
+<p>The aim is controlled delegation.</p>
+<p>Enough authority to be genuinely useful.</p>
+<p>Clear enough boundaries that the important decisions remain ours.</p>
+<p>The capabilities themselves should not need to be secret.</p>
+<p>We should assume that somebody can discover what functions a service exposes.</p>
+<p>Security comes from controlling who may use them, what they may do and what happens when they try to move beyond those limits.</p>
+<p>More autonomy makes those boundaries more important, not less.</p>
+<h2>What businesses should prepare for</h2>
+<p>None of this means adding “AI” to every website.</p>
+<p>It does not mean rebuilding everything around whichever protocol happens to be fashionable this year.</p>
+<p>The useful questions are more ordinary.</p>
+<p>Can another system reliably understand what you offer?</p>
+<p>Are your products, services, prices and availability represented clearly enough to use?</p>
+<p>Can important actions be requested programmatically where that would actually help?</p>
+<p>Are permissions explicit?</p>
+<p>Can a legitimate customer authorise an agent to do something useful without giving it unrestricted access?</p>
+<p>Can the result be checked afterwards?</p>
+<p>These are product questions as much as technical ones.</p>
+<p>The early web required a business to be online.</p>
+<p>The search era made discoverability increasingly important.</p>
+<p>Mobile required services to work well on the device in somebody’s hand.</p>
+<p>An agentic internet adds another requirement: some services may also need to become understandable and operable by software acting for their customers.</p>
+<p>And that changes what it means for a customer to arrive.</p>
+<p>They may never visit the homepage.</p>
+<p>Their agent may discover the service, compare it with alternatives, check that it satisfies their constraints, establish whether the company and offer appear trustworthy, complete an authorised transaction and keep track of what happens next.</p>
+<p>That is a different relationship between a business and the internet.</p>
+<h2>From somewhere we visit to something that works around us</h2>
+<p>The early web was largely about navigating information.</p>
+<p>Search engines made that information easier to find.</p>
+<p>Mobile reorganised much of the experience around applications.</p>
+<p>Generative AI made asking directly much more useful.</p>
+<p>Agents add another possibility: delegation.</p>
+<p>Not every interaction moves in that direction.</p>
+<p>Nor should it.</p>
+<p>Sometimes we will want to browse the shop, choose the hotel ourselves, spend an evening planning a holiday or simply enjoy using a good piece of software.</p>
+<p>But increasingly we may have another option.</p>
+<p>Do it ourselves.</p>
+<p>Or describe what matters, set the limits, and let software deal with the parts we do not particularly want to operate.</p>
+<p>The websites, applications, APIs and databases remain underneath.</p>
+<p>What changes is our relationship with them.</p>
+<p>The interface moves upwards.</p>
+<p>We spend less time telling computers which buttons to press and more time deciding what we actually want, what matters enough to check ourselves, and what we are comfortable delegating.</p>
+<p>That may prove to be the more important change.</p>
+<p>The next phase of the internet may be defined less by a new kind of screen than by a shift in agency itself.</p>
+<p>The internet stops being only somewhere we go to get things done.</p>
+<p>It starts becoming an environment in which trusted software can keep getting things done for us.</p>
         </div>
         <aside class="blog-related" aria-labelledby="related-title">
           <h2 id="related-title">Related research notes</h2>
