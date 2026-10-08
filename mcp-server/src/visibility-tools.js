@@ -40,6 +40,7 @@ function presentation(result) {
     no_clear_change: 'No clear change in visibility', mixed: 'Visibility results were mixed', inconclusive: 'The comparison is inconclusive' };
   const active = ['queued', 'running'].includes(result.status);
   const reasons = result.analysis?.reasons || [];
+  const analysisNotice = result.analysis?.discarded_findings ? `${result.analysis.discarded_findings} unsupported finding(s) were withheld; the remaining findings have valid evidence references.` : null;
   const interventions = result.analysis?.interventions || [];
   const sources = [...new Set([...(result.audit?.observations || []).map(item => item.source_url),
     ...(result.samples || []).flatMap(item => (item.capture?.sources || []).map(source => source.url))].filter(Boolean))].slice(0, 10);
@@ -58,7 +59,7 @@ function presentation(result) {
       { label: 'Failed captures', value: String(counts.failed) }
     ] : [{ label: 'Customer questions', value: String(result.questions.length) }, { label: 'Repeats per question', value: String(result.conditions.repetitions) }],
     highlights: compared ? [compared.comparable ? 'The saved model and test settings match.' : 'The model or test settings changed.',
-      compared.complete_coverage ? 'Every planned answer has a comparable result.' : `${compared.missing_or_failed_pairs} answer pairs are missing or failed.`] : reasons.slice(0, 3).map(item => `${item.status === 'hypothesis' ? 'Possible reason: ' : ''}${item.reason}`),
+      compared.complete_coverage ? 'Every planned answer has a comparable result.' : `${compared.missing_or_failed_pairs} answer pairs are missing or failed.`] : [...(analysisNotice ? [analysisNotice] : []), ...reasons.slice(0, 3).map(item => `${item.status === 'hypothesis' ? 'Possible reason: ' : ''}${item.reason}`)],
     gaps: interventions.slice(0, 3).map(item => item.title),
     next_action: result.status === 'ready' ? 'Start the first visibility check.' : active ? 'The runner is working. Read the saved progress shortly.'
       : compared ? 'Review the matched answers and competing explanations before deciding on another change.'
@@ -75,6 +76,15 @@ export function validateQuestions(questions, business, website) {
   if (new Set(questions.map(item => item.id)).size !== questions.length || new Set(questions.map(item => normalize(item.question))).size !== questions.length ||
       !questions.some(item => item.kind !== 'branded') || questions.some(item => item.kind !== 'branded' &&
         ((name.length > 2 && normalize(item.question).includes(name)) || normalize(item.question).includes(domain)))) throw new Error('invalid_questions');
+}
+
+async function researchAudit(input, fetchImpl) {
+  const audit = await auditWebsite(input, fetchImpl, { includeAnalysisContext: true });
+  // Limit stored, model-visible excerpts independently of the broader website checker.
+  audit._analysis_context.pages = audit._analysis_context.pages.map(page => ({ ...page, text: page.text.slice(0, 4000) }));
+  audit._analysis_context.checked_at = audit.audit.checked_at;
+  audit._analysis_context.audit_evidence = { audit: audit.audit, observations: audit.observations, gaps: audit.gaps };
+  return audit;
 }
 
 export function registerVisibilityTools(server, env = {}, fetchImpl = fetch, context = {}) {
@@ -103,7 +113,7 @@ export function registerVisibilityTools(server, env = {}, fetchImpl = fetch, con
     outputSchema: resultSchema, annotations: annotations('Prepare a Signal visibility study', false, true, false, false), _meta: commonMeta
   }, wrap(async input => {
     if (!env.VISIBILITY_STUDIES) throw new Error('storage_not_configured');
-    const audit = await auditWebsite(input, fetchImpl);
+    const audit = await researchAudit(input, fetchImpl);
     const pack = await prepareExtendedResearch(input, audit);
     const questions = input.questions || pack.questions;
     validateQuestions(questions, input.business_name, audit.audit.final_url);
@@ -127,7 +137,7 @@ export function registerVisibilityTools(server, env = {}, fetchImpl = fetch, con
     const saved = await studyRequest(env, input.study_id, 'get');
     if (saved.runs.some(run => run.request_key === input.request_key && run.phase === input.phase)) return stored('start', input);
     let run_audit;
-    try { run_audit = await auditWebsite(saved.public_context || { website_url: saved.website_url, business_name: saved.business }, fetchImpl); }
+    try { run_audit = await researchAudit(saved.public_context || { website_url: saved.website_url, business_name: saved.business }, fetchImpl); }
     catch {
       run_audit = { audit: { checked_at: new Date().toISOString(), final_url: saved.website_url, technical_readiness: 'partial' },
         observations: [], gaps: [], unknowns: ['The fresh website check was unavailable for this run.'] };
@@ -157,11 +167,16 @@ export function registerVisibilityTools(server, env = {}, fetchImpl = fetch, con
     annotations: annotations('Compare before and after visibility', true), _meta: commonMeta
   }, wrap(input => stored('compare', input)));
   server.registerTool('retry_visibility_run', {
-    title: 'Retry incomplete Signal answers',
-    description: 'Retry failed answers or unavailable analysis only when the user requests recovery. Uses the configured API allowance. Existing completed answers and failure history are retained; saved raw answers are reassessed without a new search. At most three requested retries. A baseline is locked after any implemented change. Never use retries to replace an unfavourable valid answer.',
-    inputSchema: { study_id: reference, run_id: runId }, outputSchema: resultSchema,
-    annotations: annotations('Retry incomplete Signal answers', false, true, false, false), _meta: commonMeta
-  }, wrap(input => stored('retry', input)));
+    title: 'Review or retry Signal results',
+    description: 'Retry failed answers or unavailable analysis only when the user requests recovery. Set review_analysis to true for an explicitly requested reasoning-only review; it retains every saved answer and assessment, including failures, and makes no new searches. Uses the configured API allowance. Refreshes bounded public-page context for reasoning. Existing completed answers and failure history are retained; saved raw answers are reassessed without a new search. At most three requested retries. A baseline is locked after any implemented change. Never use retries to replace an unfavourable valid answer.',
+    inputSchema: { study_id: reference, run_id: runId, review_analysis: z.boolean().optional().describe('Review reasoning using refreshed public evidence without retrying any captured answers or assessments. Only when the user requests a review.') }, outputSchema: resultSchema,
+    annotations: annotations('Review or retry Signal results', false, true, false, false), _meta: commonMeta
+  }, wrap(async input => {
+    const saved = await studyRequest(env, input.study_id, 'get');
+    let analysis_context;
+    try { analysis_context = (await researchAudit(saved.public_context || { website_url: saved.website_url, business_name: saved.business }, fetchImpl))._analysis_context; } catch { /* Saved evidence remains available. */ }
+    return stored('retry', { ...input, analysis_context });
+  }));
   server.registerTool('cancel_visibility_run', {
     title: 'Stop a Signal visibility check',
     description: 'Stop the selected active check at the user’s request. Already saved answers remain available. An in-flight paid request may already have started; stopping does not reverse its cost. This tool never starts another run.',

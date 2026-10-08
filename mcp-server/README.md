@@ -2,7 +2,7 @@
 
 Signal is a ChatGPT plugin for a complete visibility research cycle: check visibility, understand evidence, choose a change, and check again. Its existing Cloudflare Worker and MCP endpoint are preserved at `https://mcp.sr3h.uk/mcp`.
 
-Version 0.12.0 adds saved studies, an automatic Durable Object runner, fresh GPT API web searches, separate answer assessment, evidence-linked reasons and intervention suggestions, immutable implementation records and matched before-and-after comparisons. Deployment and host-refresh evidence are recorded separately in RELEASE_READINESS.md.
+Version 0.12 adds saved studies, an automatic Durable Object runner, fresh GPT API web searches, separate answer assessment, evidence-linked reasons and intervention suggestions, immutable implementation records and matched before-and-after comparisons. Deployment and host-refresh evidence are recorded separately in RELEASE_READINESS.md.
 
 ## Customer flow
 
@@ -44,3 +44,5 @@ npm run verify:skill:remote -- https://mcp.sr3h.uk/mcp
 ```
 
 The UI card is self-contained, responsive and safe for returned text. The skill retains its existing internal identity and digest-verified resources; its human-visible name and workflow are Signal. Refresh imported tools and skills in the existing ChatGPT connection after deployment. Server publication does not itself prove the host imported the update or that an intervention improved a customer's visibility. Public directory submission remains a separate explicit action.
+
+Version 0.12.1 improves reasoning recovery using bounded public page excerpts, preserves saved raw answers with failed identity assessments for diagnosis, withholds unsupported individual findings, recognises ProfilePage markup, and detects connection references on checked supporting pages. A requested reasoning-only review refreshes public evidence without changing any saved capture or assessment. These changes do not alter the independent capture questions or create an improvement claim.

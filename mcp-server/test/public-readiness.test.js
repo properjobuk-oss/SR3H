@@ -30,3 +30,32 @@ test("public document detection distinguishes valid, absent and inaccessible end
   const blocked = await run(403);
   assert.equal(blocked.observations.find(item => item.id === "api").status, "unverified");
 });
+
+
+test('ProfilePage recognition requires a named person or organisation rather than arbitrary mainEntity data', () => {
+  const markup = data => `<script type="application/ld+json">${JSON.stringify(data)}</script>`;
+  assert.deepEqual(richResultTypes(markup({ '@type': 'ProfilePage', mainEntity: { '@type': 'Person', name: 'Public Person' } })), ['ProfilePage']);
+  assert.deepEqual(richResultTypes(markup({ '@type': 'ProfilePage', mainEntity: { '@type': 'Person' } })), []);
+  assert.equal(richResultTypes(markup({ '@type': 'ProfilePage', mainEntity: { '@type': 'Product', name: 'Not a person' } })).includes('ProfilePage'), false);
+});
+
+test('bounded supporting-page checks find public MCP guidance while the homepage-only audit stays scoped', async () => {
+  const fetchImpl = async input => {
+    const path = new URL(input).pathname;
+    if (path === '/') return new Response('<title>Identity</title><a href="/connect">Connect</a>', { headers: { 'content-type': 'text/html' } });
+    if (path === '/connect') return new Response('<title>Connect</title><a href="/mcp">Public MCP connection</a>', { headers: { 'content-type': 'text/html' } });
+    return new Response('missing', { status: 404 });
+  };
+  const normal = await auditWebsite({ website_url: 'https://example.com/' }, fetchImpl);
+  assert.equal(normal.observations.find(item => item.id === 'mcp').status, 'missing');
+  const enriched = await auditWebsite({ website_url: 'https://example.com/' }, fetchImpl, { includeAnalysisContext: true });
+  const mcp = enriched.observations.find(item => item.id === 'mcp');
+  assert.equal(mcp.status, 'clear'); assert.equal(mcp.source_url, 'https://example.com/connect');
+  assert.match(mcp.evidence, /operation was not tested/);
+});
+
+
+test('copyable public MCP URLs are advertised references, while private code-block URLs are rejected', () => {
+  assert.deepEqual(publicReferences('<code>https://example.com/mcp</code>', 'https://example.com/'), { mcp: 'https://example.com/mcp' });
+  assert.deepEqual(publicReferences('<code>http://localhost/mcp</code><code>https://example.com/private</code>', 'https://example.com/'), {});
+});

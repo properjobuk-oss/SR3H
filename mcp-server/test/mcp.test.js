@@ -32,7 +32,7 @@ test("MCP client initializes and completes its workflow without using the SR3H O
   try {
     const listed = await client.listTools();
     assert.equal(client.getServerVersion().name, "Signal");
-    assert.equal(client.getServerVersion().version, "0.12.0");
+    assert.equal(client.getServerVersion().version, "0.12.1");
     assert.deepEqual(client.getServerCapabilities().extensions?.["io.modelcontextprotocol/skills"], {});
     assert.equal(listed.tools.length, 11);
     const checkTool = listed.tools.find((tool) => tool.name === "check_ai_presence");
@@ -162,7 +162,7 @@ test("HTTP health and error responses carry production safety headers", async ()
   assert.equal(health.headers.get("x-content-type-options"), "nosniff");
   const healthBody = await health.json();
   assert.equal(healthBody.service, "Signal");
-  assert.equal(healthBody.version, "0.12.0");
+  assert.equal(healthBody.version, "0.12.1");
 
   const missing = await handleRequest(new Request("https://mcp.example/nope"));
   assert.equal(missing.status, 404);

@@ -163,3 +163,11 @@ test("collects a bounded same-origin context without exposing it by default", as
   assert.deepEqual(enriched._analysis_context.pages.map((item) => item.url), ["https://acme.example/", "https://acme.example/services"]);
   assert.equal(enriched._analysis_context.pages.length <= LIMITS.contextPages, true);
 });
+
+
+test('missing literal supplied wording does not establish that the corresponding facts are absent', async () => {
+  const result = await auditWebsite({ website_url: 'https://acme.example', priority_services: ['Domestic heating maintenance'] }, fixtureFetch({ 'https://acme.example/': () => response(html, { type: 'text/html' }) }));
+  const gap = result.gaps.find(item => item.id === 'supplied_terms');
+  assert.match(gap.finding, /exact supplied wording/); assert.match(gap.finding, /Equivalent wording/);
+  assert.match(gap.action, /do not duplicate/);
+});

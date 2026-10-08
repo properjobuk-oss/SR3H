@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { VisibilityStudy, compareVisibility, newStudyReference, studyRequest } from '../src/visibility-study.js';
-import { captureRequest, captureVisibility, validateAssessment, VISIBILITY_PROTOCOL } from '../src/visibility-model.js';
+import { captureRequest, captureVisibility, analyseVisibility, validateAssessment, VISIBILITY_PROTOCOL } from '../src/visibility-model.js';
 import { validateQuestions } from '../src/visibility-tools.js';
 import { UsageGuard, reserveDiscoveryUsage } from '../src/usage-guard.js';
 
@@ -50,6 +50,7 @@ function fixture(options = {}) {
     }
     if (body.text.format.name === 'signal_saved_answer_assessment') {
       const input = JSON.parse(body.input);
+      if (options.assessmentFailure) return Response.json({ error: 'test assessment unavailable' }, { status: 503 });
       const named = input.answer.includes('Test Co');
       return payload({ appearance: named ? 'recommended' : 'not_seen', quote: named ? input.answer : '',
         evidence_url: named ? 'https://test.example/' : null, explanation: 'Classification of the saved answer.', other_providers: [] });
@@ -249,4 +250,92 @@ test('invalid requests cannot reset the Durable Object concurrency gate and inte
   assert.equal((await f.invoke('intervention', { title: 'premature' })).error, 'baseline_required');
   assert.equal(escaped, false);
   assert.equal((await f.complete()).status, 'complete');
+});
+
+
+test('reasoning retains failed raw answers and site context without changing capture inputs or counts', async () => {
+  const f = fixture({ assessmentFailure: true }), input = studyInput(1);
+  input.audit._analysis_context = { pages: [{ url: input.website_url, text: 'Approved public profile cards already exist.' }] };
+  const created = await f.invoke('create', input);
+  assert.equal('_analysis_context' in created.audit, false);
+  assert.equal('audit' in f.ctx.map.get('study'), false);
+  await f.invoke('start', { phase: 'baseline', request_key: 'first' });
+  const result = await f.complete();
+  assert.equal(result.counts.completed, 0);
+  assert.equal(result.counts.failed, 2);
+  assert.equal(result.counts.unbranded.checked, 0);
+  assert.equal(result.analysis.status, 'complete');
+  const reasoning = f.calls.find(call => call.text?.format.name === 'signal_visibility_findings');
+  const supplied = JSON.parse(reasoning.input);
+  assert.equal(supplied.samples.length, 2);
+  assert.equal(supplied.samples[0].status, 'failed');
+  assert.equal(supplied.site_context.pages[0].text, input.audit._analysis_context.pages[0].text);
+  assert.equal('_analysis_context' in supplied.audit, false);
+  for (const capture of f.calls.filter(call => call.tools)) assert.doesNotMatch(JSON.stringify(capture), /Approved public profile|site_context/);
+});
+
+test('analysis recovery refreshes reasoning context while preserving original audit and raw captures', async () => {
+  const f = fixture(), input = studyInput(1);
+  await f.invoke('create', input); const started = await f.invoke('start', { phase: 'baseline', request_key: 'first' });
+  await f.complete();
+  const before = await f.invoke('get', { include_samples: true });
+  const saved = f.ctx.map.get('study'); saved.runs[0].analysis_status = 'unavailable'; f.ctx.map.set('study', saved);
+  f.ctx.map.set(`analysis:${started.run.id}`, { status: 'unavailable', reasons: [], interventions: [], error: 'unsupported_analysis' });
+  const context = { checked_at: new Date().toISOString(), pages: [{ url: input.website_url, text: 'Verified public connection guidance.' }] };
+  await f.invoke('retry', { run_id: started.run.id, analysis_context: context });
+  await f.complete(); const after = await f.invoke('get', { include_samples: true });
+  assert.deepEqual(after.audit, before.audit);
+  assert.deepEqual(after.samples, before.samples);
+  assert.equal(f.calls.filter(call => call.tools).length, 2);
+  const reasoning = f.calls.filter(call => call.text?.format.name === 'signal_visibility_findings').at(-1);
+  assert.deepEqual(JSON.parse(reasoning.input).site_context, context);
+});
+
+test('existing studies with an embedded audit remain readable after the storage upgrade', async () => {
+  const f = fixture(), input = studyInput(1);
+  await f.invoke('create', input);
+  const legacy = f.ctx.map.get('study'); legacy.audit = input.audit; f.ctx.map.set('study', legacy); f.ctx.map.delete('audit:initial');
+  assert.deepEqual((await f.invoke('get')).audit, input.audit);
+  await f.invoke('start', { phase: 'baseline', request_key: 'legacy' });
+  assert.equal((await f.complete()).analysis.status, 'complete');
+});
+
+test('reasoning withholds invalid references without discarding valid identity evidence', async () => {
+  const study = studyInput(1); study.audit.observations = [{ id: 'mcp', status: 'clear' }]; study.audit.gaps = [{ id: 'metadata' }];
+  const samples = [{ id: 'saved-answer', question_id: 'q1', status: 'failed', answer: 'Another product uses the same name.', sources: [], error: 'identity_unverified' }];
+  const valid = { reason: 'Possible identity confusion', status: 'hypothesis', sample_ids: ['saved-answer'], audit_ids: ['mcp'], uncertainty: 'Not a measured mention', next_check: 'Inspect sources' };
+  const bad = { ...valid, sample_ids: ['invented-answer'] };
+  let findings = { reasons: [valid, bad, { ...valid, status: 'observed_gap' }], interventions: [] };
+  const fetchImpl = async () => Response.json({ status: 'completed', model: 'test', output: [{ type: 'message', content: [{ type: 'output_text', text: JSON.stringify(findings) }] }] });
+  const result = await analyseVisibility(study, samples, { OPENAI_API_KEY: 'test-only' }, fetchImpl);
+  assert.deepEqual(result.reasons, [valid]); assert.equal(result.discarded_findings, 2);
+  findings = { reasons: [bad], interventions: [] };
+  await assert.rejects(analyseVisibility(study, samples, { OPENAI_API_KEY: 'test-only' }, fetchImpl), /unsupported_analysis/);
+});
+
+
+test('an exact supplied phrase mismatch can never substantiate an observed factual gap', async () => {
+  const study = studyInput(1); study.audit.gaps = [{ id: 'supplied_terms', finding: 'Different literal wording' }];
+  const samples = [{ id: 'raw-answer', status: 'complete', answer: 'Other options', sources: [] }];
+  let request;
+  const fetchImpl = async (_url, init) => { request = JSON.parse(init.body); return Response.json({ status: 'completed', model: 'test', output: [{ type: 'message', content: [{ type: 'output_text', text: JSON.stringify({ reasons: [{ reason: 'Missing fact', status: 'observed_gap', sample_ids: ['raw-answer'], audit_ids: ['supplied_terms'] }], interventions: [] }) }] }] }); };
+  await assert.rejects(analyseVisibility(study, samples, { OPENAI_API_KEY: 'test-only' }, fetchImpl), /unsupported_analysis/);
+  const input = JSON.parse(request.input);
+  assert.deepEqual(input.allowed_evidence.checked_gap_ids, []);
+  assert.deepEqual(input.audit.gaps, []);
+  assert.equal(input.audit.wording_checks[0].id, 'supplied_terms');
+});
+
+
+test('requested reasoning-only review preserves even failed assessments and uses newly checked public evidence', async () => {
+  const f = fixture({ assessmentFailure: true }); await f.invoke('create', studyInput(1));
+  const started = await f.invoke('start', { phase: 'baseline', request_key: 'first' }); await f.complete();
+  const before = await f.invoke('get', { include_samples: true }); const paidBefore = f.calls.length;
+  const freshAudit = { audit: { checked_at: new Date().toISOString() }, gaps: [], observations: [{ id: 'mcp', status: 'clear' }] };
+  assert.equal((await f.invoke('retry', { run_id: started.run.id, review_analysis: true, analysis_context: { pages: [], audit_evidence: freshAudit } })).status, 'queued');
+  await f.complete(); const after = await f.invoke('get', { include_samples: true });
+  assert.deepEqual(after.samples, before.samples); assert.deepEqual(after.audit, before.audit);
+  assert.equal(f.calls.length - paidBefore, 1);
+  assert.deepEqual(JSON.parse(f.calls.at(-1).input).audit.observations, freshAudit.observations);
+  assert.equal(after.counts.completed, 0); assert.equal(after.counts.failed, 2);
 });

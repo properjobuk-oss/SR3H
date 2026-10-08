@@ -18,6 +18,13 @@ export function publicReferences(html, baseUrl) {
       for (const [id, pattern] of Object.entries(patterns)) if (!found[id] && pattern.test(text)) found[id] = href;
     } catch { /* Ignore non-public and malformed links. */ }
   }
+  // Connection pages often advertise their public MCP URL in a copyable code block.
+  for (const match of page.matchAll(/<code\b[^>]*>\s*(https?:\/\/[^<\s]+)\s*<\/code>/gi)) {
+    try {
+      const url = validatePublicUrl(match[1].replace(/&amp;/g, "&"));
+      if (!found.mcp && /(?:^|\/)mcp(?:\/|$)/i.test(url.pathname)) found.mcp = url.href;
+    } catch { /* A private or malformed URL is not public evidence. */ }
+  }
   return found;
 }
 
@@ -28,12 +35,20 @@ export function richResultTypes(html) {
     Product: ["name"], Article: ["headline"], NewsArticle: ["headline"], BlogPosting: ["headline"],
     BreadcrumbList: ["itemListElement"], FAQPage: ["mainEntity"], Recipe: ["name", "image"],
     Event: ["name", "startDate", "location"], JobPosting: ["title", "description"],
-    LocalBusiness: ["name", "address"], Organization: ["name"], SoftwareApplication: ["name"]
+    ProfilePage: ["mainEntity"], LocalBusiness: ["name", "address"], Organization: ["name"], SoftwareApplication: ["name"]
   };
   const visit = (value, depth = 0) => {
     if (!value || typeof value !== "object" || depth > 20) return;
     const types = Array.isArray(value["@type"]) ? value["@type"] : [value["@type"]];
-    for (const type of types) if (Object.hasOwn(required, type) && required[type].every(field => nonempty(value[field]))) found.add(type);
+    for (const type of types) {
+      if (!Object.hasOwn(required, type) || !required[type].every(field => nonempty(value[field]))) continue;
+      if (type === "ProfilePage") {
+        const entity = value.mainEntity;
+        const entityTypes = Array.isArray(entity?.["@type"]) ? entity["@type"] : [entity?.["@type"]];
+        if (!entityTypes.some(item => ["Person", "Organization"].includes(item)) || !nonempty(entity?.name)) continue;
+      }
+      found.add(type);
+    }
     Object.values(value).forEach(child => visit(child, depth + 1));
   };
   for (const match of html.matchAll(/<script\b[^>]*type\s*=\s*["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)) {

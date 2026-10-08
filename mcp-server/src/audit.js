@@ -218,9 +218,9 @@ function presence(text, terms = []) {
   return terms.map((term) => ({ term, found: new RegExp(escapeRegExp(term), "i").test(text) }));
 }
 
-function internalPageCandidates(html, baseUrl) {
+function internalPageCandidates(html, baseUrl, limit = LIMITS.contextPages - 1) {
   const base = new URL(baseUrl);
-  const priorities = /\b(?:about|service|product|pricing|price|cost|calculator|faq|how|what|solution|case|proof|contact)\b/i;
+  const priorities = /\b(?:about|service|product|pricing|price|cost|calculator|faq|how|what|solution|case|proof|contact|connect|integration|developer|docs|capabilities)\b/i;
   const seen = new Set([base.href]);
   return [...html.matchAll(/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)]
     .map((match) => {
@@ -232,14 +232,14 @@ function internalPageCandidates(html, baseUrl) {
         seen.add(url.href);
         const label = compactSpace(match[2].replace(/<[^>]+>/g, " "));
         const score = priorities.test(`${url.pathname} ${label}`) ? 1 : 0;
-        return { url: url.href, score };
+        return { url: url.href, label: label.slice(0, 160), score };
       } catch {
         return null;
       }
     })
     .filter(Boolean)
     .sort((a, b) => b.score - a.score)
-    .slice(0, LIMITS.contextPages - 1);
+    .slice(0, limit);
 }
 
 async function collectWebsiteContext(home, html, inspected, fetchImpl) {
@@ -247,6 +247,8 @@ async function collectWebsiteContext(home, html, inspected, fetchImpl) {
     url: home.finalUrl.href,
     title: inspected.title,
     description: inspected.description,
+    references: publicReferences(html, home.finalUrl.href),
+    links: internalPageCandidates(html, home.finalUrl.href, 30).map(({ url, label }) => ({ url, label })),
     text: inspected.visibleText.slice(0, 20_000)
   }];
   let remaining = LIMITS.contextChars - pages[0].text.length;
@@ -260,7 +262,7 @@ async function collectWebsiteContext(home, html, inspected, fetchImpl) {
       const body = await readLimitedText(page.response, 300_000);
       const details = inspectHtml(body, page.finalUrl.href, page.response.headers.get("x-robots-tag") || "");
       const text = details.visibleText.slice(0, Math.min(10_000, remaining));
-      pages.push({ url: page.finalUrl.href, title: details.title, description: details.description, text });
+      pages.push({ url: page.finalUrl.href, title: details.title, description: details.description, references: publicReferences(body, page.finalUrl.href), links: internalPageCandidates(body, page.finalUrl.href, 30).map(({ url, label }) => ({ url, label })), text });
       remaining -= text.length;
     } catch {
       // A failed supporting page must not prevent the homepage audit.
@@ -410,7 +412,7 @@ export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisCo
   addGap(!inspected.structuredData.types.length, "structured_data", "medium", "No parseable JSON-LD types were found.", "Add accurate Organization or LocalBusiness data and relevant Service or Product entities.");
   addGap(inspected.structuredData.parseErrors > 0, "structured_data_invalid", "medium", "At least one JSON-LD block could not be parsed.", "Validate and correct the page JSON-LD.");
   const missingTerms = termPresence.filter((item) => !item.found).map((item) => item.term);
-  addGap(missingTerms.length, "supplied_terms", "medium", `The checked page does not clearly mention: ${missingTerms.join(", ")}.`, "Add these facts in clear customer-facing language if they are accurate and important.");
+  addGap(missingTerms.length, "supplied_terms", "medium", `The exact supplied wording was not found: ${missingTerms.join(", ")}. Equivalent wording may already describe these facts.`, "Check equivalent wording before changing copy. Clarify only facts that are actually missing or unclear; do not duplicate accurate existing information.");
 
   const blocked = robotsStatus === "blocked" || inspected.noindex || page.finalUrl.protocol !== "https:";
   const partial = gaps.length > 0 || robotsStatus === "unverified";
@@ -441,8 +443,19 @@ export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisCo
       "Every page, external mention, AI model, search index or user journey."
     ],
     next_action: gaps[0]?.action || "Technical access signals are in place. To measure actual discovery, run the separate ten-question sample using representative customer questions.",
-    deeper_analysis: "AIDO is developed by SR3H. Learn about the method and its limits at https://sr3h.uk/signal.html."
+    deeper_analysis: "Signal is developed by SR3H. Learn about the method and its limits at https://sr3h.uk/signal.html."
   };
-  if (includeAnalysisContext) result._analysis_context = await collectWebsiteContext(page, html, inspected, fetchImpl);
+  if (includeAnalysisContext) {
+    result._analysis_context = await collectWebsiteContext(page, html, inspected, fetchImpl);
+    for (const id of ['mcp', 'plugin']) {
+      const found = result._analysis_context.pages.find(item => item.references?.[id]);
+      const observation = result.observations.find(item => item.id === id);
+      if (found && observation?.status === 'missing') {
+        observation.status = 'clear';
+        observation.source_url = found.url;
+        observation.evidence = `A public ${id === 'mcp' ? 'MCP' : 'ChatGPT app or plugin'} reference was found on ${found.url}: ${found.references[id]}. Its operation was not tested.`;
+      }
+    }
+  }
   return result;
 }

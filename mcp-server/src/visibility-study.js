@@ -113,8 +113,9 @@ export class VisibilityStudy {
     let study = await this.ctx.storage.get('study');
     if (operation === 'create') {
       if (study) throw new Error('study_exists');
-      study = { ...data, protocol: VISIBILITY_PROTOCOL, created_at: now(), runs: [], interventions: [] };
-      await this.ctx.storage.put('study', study);
+      const { audit, ...details } = data;
+      study = { ...details, protocol: VISIBILITY_PROTOCOL, created_at: now(), runs: [], interventions: [] };
+      await this.ctx.storage.put({ study, 'audit:initial': audit });
       return this.snapshot(study, {});
     }
     if (!study) throw new Error('study_not_found');
@@ -144,7 +145,7 @@ export class VisibilityStudy {
         intervention_id: intervention?.id || null, started_at: now(), completed_at: null, status: 'queued',
         total: study.questions.length * study.conditions.repetitions, analysis_status: 'pending', failure_count: 0 };
       // Keep each answer in its own storage record; a large study never exceeds the Durable Object value limit.
-      const values = { study: { ...study, runs: [...study.runs, run] }, [`audit:${run.id}`]: data.run_audit || study.audit };
+      const values = { study: { ...study, runs: [...study.runs, run] }, [`audit:${run.id}`]: data.run_audit || study.audit || await this.ctx.storage.get('audit:initial') };
       let index = 0;
       for (let repetition = 1; repetition <= study.conditions.repetitions; repetition++) {
         for (const question of study.questions) {
@@ -172,8 +173,8 @@ export class VisibilityStudy {
       if (run.status === 'cancelled') throw new Error('retry_not_available');
       if (run.phase === 'baseline' && study.interventions.some(item => item.implemented_at)) throw new Error('baseline_locked');
       const samples = await this.allSamples(run);
-      const retryable = samples.filter(sample => sample.status === 'failed' && sample.attempts < 3);
-      if (!retryable.length && run.analysis_status !== 'unavailable') throw new Error('retry_not_available');
+      const retryable = data.review_analysis ? [] : samples.filter(sample => sample.status === 'failed' && sample.attempts < 3);
+      if (!retryable.length && run.analysis_status !== 'unavailable' && !data.review_analysis) throw new Error('retry_not_available');
       if ((run.retry_count || 0) >= 3) throw new Error('retry_not_available');
       const values = {};
       for (const sample of retryable) {
@@ -183,6 +184,7 @@ export class VisibilityStudy {
       }
       run.retry_count = (run.retry_count || 0) + 1; run.status = 'queued'; run.completed_at = null; run.analysis_status = 'pending';
       values.study = study;
+      if (data.analysis_context) values[`analysis-context:${run.id}`] = data.analysis_context;
       await this.ctx.storage.put(values); await this.ctx.storage.setAlarm(Date.now() + 100);
       return this.snapshot(study, { run_id: run.id });
     }
@@ -223,9 +225,11 @@ export class VisibilityStudy {
     const samples = run ? await this.allSamples(run) : [];
     const offset = data.offset || 0, limit = data.limit || 5;
     const summary = counts(samples);
+    const savedAudit = run ? await this.ctx.storage.get(`audit:${run.id}`) || study.audit || await this.ctx.storage.get('audit:initial') : study.audit || await this.ctx.storage.get('audit:initial');
+    const { _analysis_context, ...audit } = savedAudit || {};
     return { business: study.business, website_url: study.website_url, created_at: study.created_at,
       protocol: study.protocol, conditions: study.conditions, questions: study.questions,
-      public_context: study.public_context, audit: run ? await this.ctx.storage.get(`audit:${run.id}`) || study.audit : study.audit,
+      public_context: study.public_context, audit,
       status: run?.status || 'ready', run: run || null, runs: study.runs, counts: summary,
       sample_index: samples.map(sample => ({ id: sample.id, question_id: sample.question_id, repetition: sample.repetition,
         status: sample.status, appearance: sample.assessment?.appearance || null, error: sample.error || null })),
@@ -282,11 +286,12 @@ export class VisibilityStudy {
       run.analysis_status = 'running';
       await this.ctx.storage.put('study', study);
       try {
-        if (!samples.some(sample => sample.status === 'complete')) throw new Error('no_completed_answers');
+        if (!samples.some(sample => sample.capture)) throw new Error('no_captured_answers');
         const usage = await reserveDiscoveryUsage(this.env, new URL(study.website_url).hostname, { visitor: study.visitor, bucket: 'signal' });
         if (!usage.allowed) throw new Error('analysis_allowance_unavailable');
-        const runAudit = await this.ctx.storage.get(`audit:${run.id}`) || study.audit;
-        analysis = await analyseVisibility({ ...study, audit: runAudit }, samples.filter(sample => sample.status === 'complete').map(sample => ({ ...sample, ...sample.capture })), this.env, this.fetchImpl);
+        const runAudit = await this.ctx.storage.get(`audit:${run.id}`) || study.audit || await this.ctx.storage.get('audit:initial');
+        const supplementalContext = await this.ctx.storage.get(`analysis-context:${run.id}`);
+        analysis = await analyseVisibility({ ...study, audit: supplementalContext?.audit_evidence || runAudit, site_context: supplementalContext || runAudit._analysis_context || null }, samples.filter(sample => sample.capture).map(sample => ({ ...sample, ...sample.capture })), this.env, this.fetchImpl);
       }
       catch (error) { analysis = { status: 'unavailable', reasons: [], interventions: [], error: failureCode(error) }; }
     }
