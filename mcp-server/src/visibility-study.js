@@ -87,8 +87,14 @@ export class VisibilityStudy {
     try {
       const operation = new URL(request.url).pathname.slice(1);
       const data = await request.json();
-      const result = await this.ctx.blockConcurrencyWhile(() => this.operate(operation, data));
-      return Response.json(result);
+      // Expected input errors must not escape the gate: Cloudflare resets an object
+      // when its blockConcurrencyWhile callback rejects, interrupting active research.
+      const outcome = await this.ctx.blockConcurrencyWhile(async () => {
+        try { return { result: await this.operate(operation, data) }; }
+        catch (error) { return { error }; }
+      });
+      if (outcome.error) throw outcome.error;
+      return Response.json(outcome.result);
     } catch (error) {
       const messages = new Set(['study_not_found', 'study_exists', 'run_active', 'baseline_exists', 'baseline_required',
         'implemented_change_required', 'model_not_configured', 'too_many_runs', 'run_not_found', 'invalid_intervention',

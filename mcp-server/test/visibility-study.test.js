@@ -235,3 +235,18 @@ test('a same-name business on another domain cannot count as target visibility',
   const capture = { answer: 'Test Co offers video editing.', sources: [{ url: 'https://other.example/' }], citations: [{ url: 'https://other.example/' }] };
   assert.throws(() => validateAssessment({ appearance: 'mentioned', quote: capture.answer, evidence_url: 'https://other.example/', explanation: '' }, capture, 'Test Co', 'https://test.example'), /identity_unverified/);
 });
+
+
+test('invalid requests cannot reset the Durable Object concurrency gate and interrupt research', async () => {
+  const f = fixture();
+  const lock = f.ctx.blockConcurrencyWhile;
+  let escaped = false;
+  f.ctx.blockConcurrencyWhile = fn => lock(async () => {
+    try { return await fn(); } catch (error) { escaped = true; throw error; }
+  });
+  await f.invoke('create', studyInput(1));
+  await f.invoke('start', { phase: 'baseline', request_key: 'first' });
+  assert.equal((await f.invoke('intervention', { title: 'premature' })).error, 'baseline_required');
+  assert.equal(escaped, false);
+  assert.equal((await f.complete()).status, 'complete');
+});

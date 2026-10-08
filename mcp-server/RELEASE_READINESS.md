@@ -40,8 +40,8 @@ These are preparation materials, not evidence that OpenAI review has been reques
 
 ## Current version status — 8 October 2026
 
-- **Production: Signal `0.12.0`.** Worker version `6eeda84e-152c-4cb3-8343-cbff22e04c48` at the existing endpoint. The new VisibilityStudy Durable Object is deployed.
-- All 75 automated tests and syntax checks pass. Tests cover neutral capture, real storage contracts, evidence validation, quotas, failed captures, identity ambiguity, explicit recovery, model drift, cancellation/deletion and immutable baseline comparisons.
+- **Production: Signal `0.12.0`.** Worker version `b4964625-2641-4b5a-874f-b6e41ff0c12b` at the existing endpoint. The new VisibilityStudy Durable Object is deployed.
+- All 76 automated tests and syntax checks pass. Tests cover neutral capture, real storage contracts, evidence validation, quotas, failed captures, identity ambiguity, explicit recovery, non-resetting input errors, model drift, cancellation/deletion and immutable baseline comparisons.
 - Remote MCP verification passes: server name/version, 11 tools, responsive `ui://aido/discoverability-report-v7.html` card, sourced technical audit, unsupported-summary rejection and private-network rejection.
 - The existing ChatGPT App `asdk_app_6aa43468438c8191b6274063a55c0033` retains its identity and permissions. Safari shows the name Signal, updated description and 11 imported actions (six Write, five Read).
 - Real provider smoke captures succeeded with dated raw answers, citations and the pinned `gpt-5.4-mini-2026-03-17` model. An initial branded result identified a same-name business on another domain; the final protocol rejects unverifiable identity rather than counting a false positive. A focused two-question final study completed the publication/reassessment path separately.
