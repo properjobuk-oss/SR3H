@@ -317,12 +317,12 @@ export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisCo
         searchAccess = "unverified";
         robotsEvidence = "The robots.txt address returned a webpage instead of crawler rules, so access could not be confirmed there.";
       } else {
-        const decision = evaluateRobots(robotsText);
+        const decision = evaluateRobots(robotsText, 'oai-searchbot', `${page.finalUrl.pathname}${page.finalUrl.search}`);
         robotsStatus = decision.allowed ? "clear" : "blocked";
         searchAccess = robotsStatus;
         robotsEvidence = decision.allowed
-          ? "OpenAI's search crawler is allowed to access the homepage."
-          : `OpenAI's search crawler is blocked from the homepage by this rule: ${decision.matchedRule?.type} ${decision.matchedRule?.path}.`;
+          ? "OpenAI's search crawler is allowed to access the checked page by these robots.txt rules."
+          : `OpenAI's search crawler is blocked from the checked page by this rule: ${decision.matchedRule?.type} ${decision.matchedRule?.path}.`;
         sitemapCandidates = [...robotsText.matchAll(/^\s*sitemap\s*:\s*(\S+)/gim)].map((match) => match[1]);
       }
     } else if (robotsFetch.response.status !== 404) {
@@ -403,7 +403,7 @@ export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisCo
 
   const gaps = [];
   const addGap = (condition, id, severity, finding, action) => { if (condition) gaps.push({ id, severity, finding, action }); };
-  addGap(robotsStatus === "blocked", "oai_searchbot_blocked", "high", "OpenAI's search crawler is blocked from the homepage.", "Review the OpenAI crawler rules in robots.txt if you want the page to appear in AI search.");
+  addGap(robotsStatus === "blocked", "oai_searchbot_blocked", "high", "OpenAI's search crawler is blocked from the checked page.", "Review the OpenAI crawler rules in robots.txt if you want the page to appear in AI search.");
   addGap(inspected.noindex, "noindex", "high", "The checked page asks search engines not to index it.", "Remove noindex only if this page is intended to be public and searchable.");
   addGap(page.finalUrl.protocol !== "https:", "https", "high", "The final page is not served over HTTPS.", "Serve the site over HTTPS and redirect HTTP to HTTPS.");
   addGap(!inspected.title || !inspected.description, "metadata", "medium", "The page title or meta description is missing.", "Add a specific title and concise description that accurately state the business and its offer.");
@@ -415,7 +415,7 @@ export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisCo
   addGap(missingTerms.length, "supplied_terms", "medium", `The exact supplied wording was not found: ${missingTerms.join(", ")}. Equivalent wording may already describe these facts.`, "Check equivalent wording before changing copy. Clarify only facts that are actually missing or unclear; do not duplicate accurate existing information.");
 
   const blocked = robotsStatus === "blocked" || inspected.noindex || page.finalUrl.protocol !== "https:";
-  const partial = gaps.length > 0 || robotsStatus === "unverified";
+  const partial = gaps.length > 0 || searchAccess === "unverified";
   const technicalReadiness = blocked ? "blocked" : partial ? "partial" : "clear";
   const result = {
     audit: {
@@ -425,7 +425,7 @@ export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisCo
       technical_readiness: technicalReadiness
     },
     summary: technicalReadiness === "clear"
-      ? "No technical access or indexing problems were found on the page checked. This does not show whether AI services understand the offer or will mention the business."
+      ? "The checked crawl and page-metadata rules found no issues. Actual search-index inclusion and interactive card operation were not tested. This does not show whether AI services understand the offer or will mention the business."
       : technicalReadiness === "blocked"
         ? "A technical setting may prevent search and AI systems from accessing or indexing this page. Fix the priority issue below before testing anything else."
         : "The page is public, but some technical or business information is missing or unclear. Fixing the items below will make it easier for search and AI systems to interpret.",
@@ -437,6 +437,8 @@ export async function auditWebsite(input, fetchImpl = fetch, { includeAnalysisCo
     },
     gaps,
     unknowns: [
+      "Actual search-index inclusion, the indexed page version and selected canonical URL.",
+      "Whether an interactive card renders and its controls work in the intended platform.",
       "Whether ChatGPT or another AI service will mention, cite or recommend the business.",
       "How well the site answers specific customer questions or compares with other providers.",
       "Customer demand, conversions, revenue or the effect of any future change.",

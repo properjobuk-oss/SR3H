@@ -96,6 +96,35 @@ test("reports blocking directives without presenting a success score", async () 
   assert.equal(result.gaps.some((gap) => gap.id === "noindex"), true);
 });
 
+test('crawler audit evaluates the requested profile path and query rather than the homepage', async () => {
+  for (const [path, rules, blocked] of [
+    ['/people/danny', 'User-agent: OAI-SearchBot\nAllow: /\nDisallow: /people/', true],
+    ['/people/danny', 'User-agent: OAI-SearchBot\nDisallow: /\nAllow: /people/', false],
+    ['/profile?private=yes', 'User-agent: OAI-SearchBot\nAllow: /\nDisallow: /*?private=*', true]
+  ]) {
+    const url = `https://acme.example${path}`;
+    const result = await auditWebsite({ website_url: url }, fixtureFetch({
+      [url]: response(html, { type: 'text/html' }),
+      'https://acme.example/robots.txt': response(rules),
+      'https://acme.example/sitemap.xml': response('<urlset></urlset>', { type: 'application/xml' })
+    }));
+    assert.equal(result.observations.find(item => item.id === 'oai_searchbot').status, blocked ? 'blocked' : 'clear');
+    assert.equal(result.gaps.some(item => item.id === 'oai_searchbot_blocked'), blocked);
+    assert.equal(result.audit.technical_readiness, blocked ? 'blocked' : 'clear');
+    assert.match(result.observations.find(item => item.id === 'oai_searchbot').evidence, /checked page/);
+  }
+});
+
+test('an HTML fallback at robots.txt cannot produce an all-clear crawler check', async () => {
+  const result = await auditWebsite({ website_url: 'https://acme.example/' }, fixtureFetch({
+    'https://acme.example/': response(html, { type: 'text/html' }),
+    'https://acme.example/robots.txt': response(html, { type: 'text/html' }),
+    'https://acme.example/sitemap.xml': response('<urlset></urlset>', { type: 'application/xml' })
+  }));
+  assert.equal(result.observations.find(item => item.id === 'search_access').status, 'unverified');
+  assert.equal(result.audit.technical_readiness, 'partial');
+});
+
 test("revalidates redirects and rejects a public URL redirecting to a private host", async () => {
   const fetchImpl = fixtureFetch({
     "https://safe.example/": response("", { status: 302, headers: { location: "http://127.0.0.1/admin" } })

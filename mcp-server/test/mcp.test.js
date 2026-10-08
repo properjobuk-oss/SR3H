@@ -32,7 +32,7 @@ test("MCP client initializes and completes its workflow without using the SR3H O
   try {
     const listed = await client.listTools();
     assert.equal(client.getServerVersion().name, "Signal");
-    assert.equal(client.getServerVersion().version, "0.14.0");
+    assert.equal(client.getServerVersion().version, "0.14.1");
     assert.deepEqual(client.getServerCapabilities().extensions?.["io.modelcontextprotocol/skills"], {});
     assert.equal(listed.tools.length, 11);
     const studyTool = listed.tools.find(tool => tool.name === 'create_visibility_study');
@@ -87,7 +87,10 @@ test("MCP client initializes and completes its workflow without using the SR3H O
     assert.equal("discoverability" in called.structuredContent, false);
     assert.equal("snapshot" in called.structuredContent, false);
     assert.equal(called.structuredContent.presentation.status, "clear");
-    assert.match(called.structuredContent.presentation.limitations_note, /does not show whether an AI assistant will mention or recommend/i);
+    assert.deepEqual(called.structuredContent.presentation.metrics.slice(1), [
+      { label: 'Technical review items', value: '0' }, { label: 'AI visibility', value: 'Not measured' }, { label: 'Card operation', value: 'Not tested' }
+    ]);
+    assert.match(called.structuredContent.presentation.limitations_note, /does not verify actual indexing, AI mentions or interactive card operation/i);
 
     const prepared = await client.callTool({ name: "prepare_ai_discovery_research", arguments: {
       website_url: "https://test.example",
@@ -172,7 +175,7 @@ test("HTTP health and error responses carry production safety headers", async ()
   assert.equal(health.headers.get("x-content-type-options"), "nosniff");
   const healthBody = await health.json();
   assert.equal(healthBody.service, "Signal");
-  assert.equal(healthBody.version, "0.14.0");
+  assert.equal(healthBody.version, "0.14.1");
 
   const missing = await handleRequest(new Request("https://mcp.example/nope"));
   assert.equal(missing.status, 404);

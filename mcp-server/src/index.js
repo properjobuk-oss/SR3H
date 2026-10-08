@@ -13,7 +13,7 @@ import { registerVisibilityTools } from "./visibility-tools.js";
 
 export { UsageGuard, VisibilityStudy };
 
-const SERVICE_VERSION = "0.14.0";
+const SERVICE_VERSION = "0.14.1";
 const MAX_MCP_REQUEST_BYTES = 64_000;
 const MAX_WEB_REQUEST_BYTES = 8_000;
 const WEB_ORIGINS = new Set([
@@ -179,13 +179,15 @@ function technicalPresentation(result, businessName) {
     summary: result.summary,
     status,
     metrics: [
-      { label: "Checks clear", value: `${clearObservations.length} of ${result.observations.length}` },
-      { label: "Gaps found", value: String(result.gaps.length) }
+      { label: "Clear observations", value: `${clearObservations.length} of ${result.observations.length}` },
+      { label: "Technical review items", value: String(result.gaps.length) },
+      { label: "AI visibility", value: "Not measured" },
+      { label: "Card operation", value: "Not tested" }
     ],
     highlights: clearObservations.slice(0, 3).map((item) => item.evidence),
     gaps: result.gaps.slice(0, 3).map((item) => item.finding),
     next_action: result.next_action,
-    limitations_note: "Website readiness does not show whether an AI assistant will mention or recommend the business.",
+    limitations_note: "This website check does not verify actual indexing, AI mentions or interactive card operation. Use a saved visibility study for measured mentions; test the card in its intended host.",
     source_urls: uniqueSources(result.observations.map((item) => item.source_url)),
     attribution: "Signal",
     about_url: "https://sr3h.uk/signal.html"
