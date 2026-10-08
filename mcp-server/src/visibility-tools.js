@@ -40,7 +40,7 @@ function presentation(result) {
     no_clear_change: 'No clear change in visibility', mixed: 'Visibility results were mixed', inconclusive: 'The comparison is inconclusive' };
   const active = ['queued', 'running'].includes(result.status);
   const reasons = result.analysis?.reasons || [];
-  const analysisNotice = result.analysis?.discarded_findings ? `${result.analysis.discarded_findings} unsupported finding(s) were withheld; the remaining findings have valid evidence references.` : null;
+  const analysisNotice = result.analysis?.review_status === 'unavailable' ? 'Recommendation review was unavailable. Unreviewed advice has been withheld.' : null;
   const interventions = result.analysis?.interventions || [];
   const sources = [...new Set([...(result.audit?.observations || []).map(item => item.source_url),
     ...(result.samples || []).flatMap(item => (item.capture?.sources || []).map(source => source.url))].filter(Boolean))].slice(0, 10);
@@ -63,9 +63,17 @@ function presentation(result) {
     gaps: interventions.slice(0, 3).map(item => item.title),
     next_action: result.status === 'ready' ? 'Start the first visibility check.' : active ? 'The runner is working. Read the saved progress shortly.'
       : compared ? 'Review the matched answers and competing explanations before deciding on another change.'
-        : result.analysis?.status === 'unavailable' ? 'Read the saved answers and request a retry of the reasoning review.' : 'Review the evidence and choose one change to test.',
+      : result.analysis?.status === 'unavailable' || result.analysis?.review_status === 'unavailable' ? 'Read the saved answers and request a retry of the reasoning review.'
+        : result.analysis?.next_action || 'Review the evidence and choose one change to test.',
+    recommendation_details: interventions.slice(0, 3).map(item => ({ title: item.title, change: item.change,
+      target_url: item.target_url, rationale: item.rationale, success_measure: item.success_measure, retest_when: item.retest_when,
+      question_ids: item.question_ids, evidence: (item.evidence || []).map(ref => ({ quote: ref.quote,
+        url: result.analysis?.evidence?.find(doc => doc.id === ref.source_id)?.url || null })) })),
+    finding_details: reasons.slice(0, 3).map(item => ({ reason: item.reason, next_check: item.next_check,
+      evidence: (item.evidence || []).map(ref => ({ quote: ref.quote,
+        url: result.analysis?.evidence?.find(doc => doc.id === ref.source_id)?.url || null })) })),
     limitations_note: compared?.limitation || 'These are fresh GPT API searches, with no personal chat history supplied. They measure this dated sample and do not establish consumer ChatGPT visibility or causes of non-appearance.',
-    source_urls: sources, checked_at: result.run?.completed_at || result.run?.started_at || result.created_at,
+    source_urls: [...new Set([...sources, ...(result.analysis?.evidence || []).map(item => item.url).filter(Boolean)])].slice(0, 10), checked_at: result.run?.completed_at || result.run?.started_at || result.created_at,
     attribution: 'Signal', about_url: 'https://sr3h.uk/signal.html',
     ...(compared ? { comparison_rows: compared.questions } : {}) };
 }
@@ -146,7 +154,7 @@ export function registerVisibilityTools(server, env = {}, fetchImpl = fetch, con
   }));
   server.registerTool('get_visibility_study', {
     title: 'Read Signal results and evidence',
-    description: 'Read saved research progress, exact branded and unbranded counts, evidence-linked possible reasons and proposed interventions. No new searches or paid calls. Include samples to inspect full raw answers, citations and assessments; paginate with next_offset. Distinguish checked gaps from hypotheses about why a business did not surface. Never claim a permanent rank or demand from sample counts.',
+    description: 'Read saved research progress, exact branded and unbranded counts, targeted public-source checks and independently reviewed diagnoses. Up to three interventions include a target page, quoted evidence, success measure and retest timing. No new searches or paid calls. Include samples to inspect full raw answers, citations and assessments; paginate with next_offset. Unknown index coverage or host rendering requires a diagnostic check, not an invented repair. Never claim a permanent rank or demand from sample counts.',
     inputSchema: { study_id: reference, run_id: runId.optional(), include_samples: z.boolean().default(false), offset: z.number().int().min(0).max(30).default(0), limit: z.number().int().min(1).max(5).default(5) },
     outputSchema: resultSchema, annotations: annotations('Read Signal results and evidence', true), _meta: commonMeta
   }, wrap(input => stored('get', input)));
@@ -156,6 +164,9 @@ export function registerVisibilityTools(server, env = {}, fetchImpl = fetch, con
     inputSchema: { study_id: reference, intervention_id: z.string().uuid().optional(), title: z.string().trim().min(3).max(160),
       change: z.string().trim().min(10).max(2000), rationale: z.string().trim().min(10).max(1600),
       sample_ids: z.array(z.string().min(1).max(90)).min(1).max(30), expected_effect: z.string().trim().min(5).max(800),
+      recommendation_id: z.string().regex(/^i[1-3]$/).optional().describe('Selected baseline recommendation. Signal retains its target page, success measure and frozen question IDs.'),
+      target_url: z.string().url().max(2048).optional(), success_measure: z.string().trim().min(8).max(800).optional(),
+      retest_when: z.string().trim().min(8).max(800).optional(), question_ids: z.array(z.string().regex(/^q(?:[1-9]|10)$/)).min(1).max(10).optional(),
       implemented_at: z.string().datetime().nullable().default(null), implementation_evidence_urls: z.array(z.string().url().max(2048)).max(8).default([]),
       concurrent_changes: z.string().trim().max(1200).default('Not supplied') },
     outputSchema: resultSchema, annotations: annotations('Record the chosen visibility change', false), _meta: commonMeta
@@ -168,7 +179,7 @@ export function registerVisibilityTools(server, env = {}, fetchImpl = fetch, con
   }, wrap(input => stored('compare', input)));
   server.registerTool('retry_visibility_run', {
     title: 'Review or retry Signal results',
-    description: 'Retry failed answers or unavailable analysis only when the user requests recovery. Set review_analysis to true for an explicitly requested reasoning-only review; it retains every saved answer and assessment, including failures, and makes no new searches. Uses the configured API allowance. Refreshes bounded public-page context for reasoning. Existing completed answers and failure history are retained; saved raw answers are reassessed without a new search. At most three requested retries. A baseline is locked after any implemented change. Never use retries to replace an unfavourable valid answer.',
+    description: 'Retry failed answers or unavailable analysis only when the user requests recovery. Set review_analysis to true for an explicitly requested diagnosis review; it retains every saved answer and assessment, including failures, and makes no new searches. Refreshes bounded public-page evidence, checks up to three previously cited external pages and independently verifies useful recommendations. Uses up to two reasoning calls from the configured API allowance. At most three requested retries. A baseline is locked after any implemented change. Never use retries to replace an unfavourable valid answer.',
     inputSchema: { study_id: reference, run_id: runId, review_analysis: z.boolean().optional().describe('Review reasoning using refreshed public evidence without retrying any captured answers or assessments. Only when the user requests a review.') }, outputSchema: resultSchema,
     annotations: annotations('Review or retry Signal results', false, true, false, false), _meta: commonMeta
   }, wrap(async input => {

@@ -195,6 +195,13 @@ export class VisibilityStudy {
       const samples = await this.allSamples(baseline);
       const ids = new Set(samples.filter(sample => sample.status === 'complete').map(sample => sample.id));
       if (data.sample_ids.some(id => !ids.has(id))) throw new Error('unknown_sample');
+      if (data.recommendation_id) {
+        const analysis = await this.ctx.storage.get(`analysis:${baseline.id}`);
+        const recommendation = analysis?.interventions?.find(item => item.id === data.recommendation_id);
+        if (!recommendation || analysis.review_status !== 'complete' || data.change !== recommendation.change) throw new Error('invalid_intervention');
+        for (const key of ['target_url', 'success_measure', 'retest_when', 'question_ids']) data[key] = recommendation[key];
+      }
+      if (data.question_ids?.some(id => !study.questions.some(question => question.id === id))) throw new Error('invalid_intervention');
       if (data.implemented_at && !data.implementation_evidence_urls.length) throw new Error('invalid_intervention');
       const identical = study.interventions.find(item => Object.keys(data).filter(key => key !== 'intervention_id').every(key => JSON.stringify(item[key]) === JSON.stringify(data[key])));
       if (identical) return { ...await this.snapshot(study, {}), recorded_intervention_id: identical.id };
@@ -291,7 +298,8 @@ export class VisibilityStudy {
         if (!usage.allowed) throw new Error('analysis_allowance_unavailable');
         const runAudit = await this.ctx.storage.get(`audit:${run.id}`) || study.audit || await this.ctx.storage.get('audit:initial');
         const supplementalContext = await this.ctx.storage.get(`analysis-context:${run.id}`);
-        analysis = await analyseVisibility({ ...study, audit: supplementalContext?.audit_evidence || runAudit, site_context: supplementalContext || runAudit._analysis_context || null }, samples.filter(sample => sample.capture).map(sample => ({ ...sample, ...sample.capture })), this.env, this.fetchImpl);
+        analysis = await analyseVisibility({ ...study, audit: supplementalContext?.audit_evidence || runAudit, site_context: supplementalContext || runAudit._analysis_context || null }, samples.filter(sample => sample.capture).map(sample => ({ ...sample, ...sample.capture })), this.env, this.fetchImpl,
+          { reserveReview: () => reserveDiscoveryUsage(this.env, new URL(study.website_url).hostname, { visitor: study.visitor, bucket: 'signal' }) });
       }
       catch (error) { analysis = { status: 'unavailable', reasons: [], interventions: [], error: failureCode(error) }; }
     }

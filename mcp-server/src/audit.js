@@ -56,7 +56,7 @@ async function readLimitedText(response, limit = LIMITS.bytes) {
   return new TextDecoder().decode(joined);
 }
 
-async function safeFetch(startUrl, fetchImpl, { accept = "text/html,*/*;q=0.8", maxBytes = LIMITS.bytes } = {}) {
+export async function safeFetch(startUrl, fetchImpl, { accept = "text/html,*/*;q=0.8", maxBytes = LIMITS.bytes } = {}) {
   let current = validatePublicUrl(startUrl);
   for (let redirects = 0; redirects <= LIMITS.redirects; redirects += 1) {
     const started = Date.now();

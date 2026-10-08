@@ -159,3 +159,15 @@ OpenAI review has not been requested. The remaining draft cases above should be 
 - Production Worker `39e1fd7f-c650-4248-820b-0d4629e3677b`, service `0.12.2`. All 86 tests and remote MCP checks pass. Browser checks at 390px and 1100px and in dark mode passed with no horizontal overflow or script errors; the evidence drawer opens and closes. Preview uses the actual saved MyLegend study presentation, not invented improvements.
 - The separate local MyLegend test report now labels its profile-card screenshots explicitly as MyLegend's card tested by Signal. MyLegend card source and profile content were not changed.
 - A fresh Safari ChatGPT test invoked only Signal `check_ai_presence` on the public Danny profile and rendered its native charcoal-and-green card (`Check public website access for AI`, approximately 768 × 709 pixels). ChatGPT also unnecessarily recreated a second panel; resource widget-description metadata and the Signal skill now clarify card ownership and discourage that duplication. Host narration remains model-generated.
+
+
+## Diagnosis and intervention verification — 0.13.0, 8 October 2026
+
+- Three bounded checks inspect actual cited public sources across different questions. Index coverage and host rendering remain explicit unknowns unless checked.
+- Every candidate requires literal supporting quotes. An independent reasoning request rejects claims not supported by those quotes or contradicted by the supplied pages. Existing schema/connection additions, untested card repairs and identity claims based only on unbranded absence are rejected.
+- Up to three retained interventions include a target page, success measure, timing and frozen questions. The chosen recommendation carries that plan into its implementation record. No website edits are performed.
+- 102 automated checks pass, including confirmed indexing repair, duplicate features, unavailable sitemap, incorrect identity, private redirects, reviewer failure, retention of measurements and schema-reference isolation. Card expansion passes at 390px/1100px and in dark mode, with literal untrusted text and no overflow or script errors.
+- Final production Worker: `228cf672-7d33-4bb3-8c5f-9289bc0e3c49`. Remote MCP, private-network rejection and digest-verified skill checks pass. Current v9 card also resolves through the previous v8 template URI for existing connections.
+- Live MyLegend release test: two frozen unbranded questions, one repeat each; 2/2 saved answers, 0 mentions, 0 recommendations. The requested reasoning-only review preserves the exact answers and assessments, rejects three findings and retains a specific indexing investigation. It recommends no website intervention without supporting evidence. Earlier studies remain intact.
+- A shared schema-fragment bug exposed by the live test was corrected and covered by a regression test. The corrected final run completes independent evidence review.
+- Current native ChatGPT rendering was not confirmed after the dedicated Safari test window closed. Browser card and production resource verification are separate from native-host acceptance. No MyLegend visibility improvement is claimed.

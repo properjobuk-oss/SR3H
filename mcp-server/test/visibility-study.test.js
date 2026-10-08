@@ -56,10 +56,13 @@ function fixture(options = {}) {
         evidence_url: named ? 'https://test.example/' : null, explanation: 'Classification of the saved answer.', other_providers: [] });
     }
     const input = JSON.parse(body.input);
-    return payload({ reasons: [{ reason: 'Independent coverage may be limited.', status: 'hypothesis',
-      sample_ids: [input.samples[0].id], audit_ids: [], uncertainty: 'Absence does not establish its cause.', next_check: 'Review competing sources.' }],
-      interventions: [{ title: 'Clarify service evidence', change: 'Add a clear service description with verifiable evidence.', rationale: 'Test whether better evidence helps.',
-        sample_ids: [input.samples[0].id], audit_ids: [], question_ids: ['q2'], uncertainty: 'No effect is guaranteed.' }] });
+    if (body.text.format.name === 'signal_evidence_review') {
+      return payload({ reason_reviews: input.candidates.reasons.map(item => ({ id: item.id, verdict: 'supported', explanation: 'The saved quote supports this stated uncertainty.' })),
+        intervention_reviews: input.candidates.interventions.map(item => ({ id: item.id, verdict: 'supported', explanation: 'The specific repair addresses the checked gap.' })) });
+    }
+    return payload({ reasons: [{ id: 'r1', stage: 'identity', reason: 'The named service needs identity verification before extending this result beyond the saved sources.', status: 'hypothesis',
+      sample_ids: [input.samples[0].id], audit_ids: [], evidence: [{ source_id: `answer:${input.samples[0].id}`, quote: input.samples[0].answer }],
+      uncertainty: 'This answer is a bounded sample.', next_check: 'Inspect the official domain and cited service for this answer.' }], interventions: [] });
   };
   const invoke = async (operation, data = {}) => {
     const response = await runner.fetch(new Request(`https://study.internal/${operation}`, { method: 'POST', body: JSON.stringify(data) }));
@@ -303,14 +306,14 @@ test('existing studies with an embedded audit remain readable after the storage 
 test('reasoning withholds invalid references without discarding valid identity evidence', async () => {
   const study = studyInput(1); study.audit.observations = [{ id: 'mcp', status: 'clear' }]; study.audit.gaps = [{ id: 'metadata' }];
   const samples = [{ id: 'saved-answer', question_id: 'q1', status: 'failed', answer: 'Another product uses the same name.', sources: [], error: 'identity_unverified' }];
-  const valid = { reason: 'Possible identity confusion', status: 'hypothesis', sample_ids: ['saved-answer'], audit_ids: ['mcp'], uncertainty: 'Not a measured mention', next_check: 'Inspect sources' };
+  const valid = { id: 'r1', stage: 'identity', reason: 'Possible identity confusion', status: 'hypothesis', sample_ids: ['saved-answer'], audit_ids: ['mcp'], evidence: [{ source_id: 'answer:saved-answer', quote: samples[0].answer }], uncertainty: 'Not a measured mention', next_check: 'Inspect the named service and its cited official domain' };
   const bad = { ...valid, sample_ids: ['invented-answer'] };
   let findings = { reasons: [valid, bad, { ...valid, status: 'observed_gap' }], interventions: [] };
-  const fetchImpl = async () => Response.json({ status: 'completed', model: 'test', output: [{ type: 'message', content: [{ type: 'output_text', text: JSON.stringify(findings) }] }] });
+  const fetchImpl = async (_url, init) => Response.json({ status: 'completed', model: 'test', output: [{ type: 'message', content: [{ type: 'output_text', text: JSON.stringify(JSON.parse(init.body).text.format.name === 'signal_evidence_review' ? { reason_reviews: [{ id: 'r1', verdict: 'supported', explanation: 'The failed identity answer supports a hypothesis.' }], intervention_reviews: [] } : findings) }] }] });
   const result = await analyseVisibility(study, samples, { OPENAI_API_KEY: 'test-only' }, fetchImpl);
   assert.deepEqual(result.reasons, [valid]); assert.equal(result.discarded_findings, 2);
   findings = { reasons: [bad], interventions: [] };
-  await assert.rejects(analyseVisibility(study, samples, { OPENAI_API_KEY: 'test-only' }, fetchImpl), /unsupported_analysis/);
+  assert.deepEqual((await analyseVisibility(study, samples, { OPENAI_API_KEY: 'test-only' }, fetchImpl)).reasons, []);
 });
 
 
@@ -319,7 +322,7 @@ test('an exact supplied phrase mismatch can never substantiate an observed factu
   const samples = [{ id: 'raw-answer', status: 'complete', answer: 'Other options', sources: [] }];
   let request;
   const fetchImpl = async (_url, init) => { request = JSON.parse(init.body); return Response.json({ status: 'completed', model: 'test', output: [{ type: 'message', content: [{ type: 'output_text', text: JSON.stringify({ reasons: [{ reason: 'Missing fact', status: 'observed_gap', sample_ids: ['raw-answer'], audit_ids: ['supplied_terms'] }], interventions: [] }) }] }] }); };
-  await assert.rejects(analyseVisibility(study, samples, { OPENAI_API_KEY: 'test-only' }, fetchImpl), /unsupported_analysis/);
+  assert.deepEqual((await analyseVisibility(study, samples, { OPENAI_API_KEY: 'test-only' }, fetchImpl)).reasons, []);
   const input = JSON.parse(request.input);
   assert.deepEqual(input.allowed_evidence.checked_gap_ids, []);
   assert.deepEqual(input.audit.gaps, []);
@@ -335,7 +338,29 @@ test('requested reasoning-only review preserves even failed assessments and uses
   assert.equal((await f.invoke('retry', { run_id: started.run.id, review_analysis: true, analysis_context: { pages: [], audit_evidence: freshAudit } })).status, 'queued');
   await f.complete(); const after = await f.invoke('get', { include_samples: true });
   assert.deepEqual(after.samples, before.samples); assert.deepEqual(after.audit, before.audit);
-  assert.equal(f.calls.length - paidBefore, 1);
-  assert.deepEqual(JSON.parse(f.calls.at(-1).input).audit.observations, freshAudit.observations);
+  assert.equal(f.calls.length - paidBefore, 2);
+  const reasoning = f.calls.filter(call => call.text?.format.name === 'signal_visibility_findings').at(-1);
+  assert.deepEqual(JSON.parse(reasoning.input).audit.observations, freshAudit.observations);
   assert.equal(after.counts.completed, 0); assert.equal(after.counts.failed, 2);
+});
+
+test('selecting a reviewed recommendation retains its exact test plan through implementation', async () => {
+  const f = fixture(); await f.invoke('create', studyInput(1));
+  const run = await f.invoke('start', { phase: 'baseline', request_key: 'first' }); const baseline = await f.complete();
+  const recommendation = { id: 'i1', change: 'Remove noindex from the intended public service page.',
+    target_url: 'https://test.example/service', success_measure: 'Verify indexing permission and repeat q2 mentions.',
+    retest_when: 'After the directive is deployed and the page is recrawled.', question_ids: ['q2'] };
+  f.ctx.map.set(`analysis:${run.run.id}`, { review_status: 'complete', interventions: [recommendation] });
+  const details = { title: 'Allow the public service page to be indexed', change: recommendation.change,
+    rationale: 'A checked directive excludes the intended public page.', sample_ids: [baseline.sample_index[1].id],
+    expected_effect: 'The page is eligible to be indexed.', recommendation_id: 'i1', implemented_at: null,
+    implementation_evidence_urls: [], concurrent_changes: 'None reported' };
+  const draft = await f.invoke('intervention', details);
+  const saved = draft.interventions[0];
+  for (const key of ['target_url', 'success_measure', 'retest_when', 'question_ids']) assert.deepEqual(saved[key], recommendation[key]);
+  const implemented = await f.invoke('intervention', { ...details, intervention_id: saved.id, implemented_at: new Date().toISOString(),
+    implementation_evidence_urls: [recommendation.target_url] });
+  assert.equal(implemented.recorded_intervention_id, saved.id);
+  assert.equal(implemented.interventions[0].success_measure, recommendation.success_measure);
+  assert.equal((await f.invoke('intervention', { ...details, recommendation_id: 'i2' })).error, 'invalid_intervention');
 });

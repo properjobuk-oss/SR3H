@@ -1,4 +1,4 @@
-export const AIDO_REPORT_URI = "ui://aido/discoverability-report-v8.html";
+export const AIDO_REPORT_URI = "ui://aido/discoverability-report-v9.html";
 export const AIDO_REPORT_MIME = "text/html;profile=mcp-app";
 const SIGNAL_WIDGET_DESCRIPTION = "Signal’s native interactive results card: charcoal Signal header, green accents, website checks or visibility measurements, findings, next step and expandable evidence. The business named in the report is the subject being assessed; it does not identify the card’s product. A MyLegend profile card is separate evidence under test. This resource renders the Signal report itself; avoid recreating a second report panel or repeating all its details in prose. If host rendering cannot be confirmed, describe that uncertainty rather than inventing a replacement card.";
 
@@ -38,7 +38,10 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
     .metric strong { font-size: 29px; line-height: 1.2; font-weight: 750; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
     .metric span { margin-top: 5px; color: var(--muted); font-size: 11px; line-height: 1.4; }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 22px; }
-    .panel { padding-top: 2px; }
+    .panel { padding-top: 2px; min-width: 0; }
+    #recommendations details { margin-top: 10px; }
+    #recommendations blockquote, #findingEvidence blockquote { margin: 12px 0; padding-left: 12px; border-left: 2px solid var(--line); overflow-wrap: anywhere; }
+    #recommendations a { color: var(--blue); }
     .panel h2, .next h2 { margin: 0 0 10px; font-size: 12px; font-weight: 750; }
     ul { margin: 0; padding-left: 18px; }
     li { margin: 7px 0; font-size: 14px; line-height: 1.5; }
@@ -89,11 +92,11 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
       <div class="metrics" id="metrics" hidden></div>
       <div class="grid" id="evidenceGrid" hidden>
         <section class="panel" id="highlightsPanel"><h2>What we found</h2><ul id="highlights"></ul></section>
-        <section class="panel" id="gapsPanel"><h2>Where to improve</h2><ul id="gaps"></ul></section>
+        <section class="panel" id="gapsPanel"><h2>Where to improve</h2><ul id="gaps"></ul><div id="recommendations"></div></section>
       </div>
       <section class="comparison" id="comparisonPanel" hidden><table><caption>Before → after by question</caption><thead><tr><th scope="col">Question</th><th scope="col">Mentions</th><th scope="col">Recommended</th></tr></thead><tbody id="comparisonRows"></tbody></table></section>
       <section class="next" id="nextPanel"><h2>Best next step</h2><p id="nextAction"></p></section>
-      <details id="details" hidden><summary>Evidence and limits</summary><p id="limitations"></p><ul class="sources" id="sources"></ul></details>
+      <details id="details" hidden><summary>Evidence and limits</summary><div id="findingEvidence"></div><p id="limitations"></p><ul class="sources" id="sources"></ul></details>
       <footer class="footer"><span id="checkedAt"></span><a id="about" href="https://sr3h.uk/signal.html" target="_blank" rel="noreferrer">Signal</a></footer>
     </div>
   </main>
@@ -159,7 +162,32 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
         metrics.hidden = !metrics.childElementCount;
 
         const highlightCount = fillList("highlights", data.highlights);
-        const gapCount = fillList("gaps", data.gaps);
+        const recommendations = byId("recommendations");
+        recommendations.replaceChildren();
+        for (const item of Array.isArray(data.recommendation_details) ? data.recommendation_details.slice(0, 3) : []) {
+          if (!item || !clean(item.title) || !clean(item.success_measure)) continue;
+          const detail = document.createElement("details");
+          const summary = document.createElement("summary"); summary.textContent = clean(item.title); detail.append(summary);
+          for (const [label, value] of [["Change", item.change], ["Why", item.rationale], ["Success", item.success_measure], ["Retest", item.retest_when]]) {
+            if (!clean(value)) continue;
+            const line = document.createElement("p"); const strong = document.createElement("strong"); strong.textContent = label + ": ";
+            line.append(strong, document.createTextNode(clean(value))); detail.append(line);
+          }
+          try {
+            const url = new URL(item.target_url);
+            if (["http:", "https:"].includes(url.protocol) && !url.username && !url.password) {
+              const link = document.createElement("a"); link.href = url.href; link.textContent = "Page to change";
+              link.target = "_blank"; link.rel = "noreferrer"; detail.append(link);
+            }
+          } catch { /* Ignore malformed evidence links. */ }
+          for (const ref of Array.isArray(item.evidence) ? item.evidence.slice(0, 4) : []) {
+            if (!clean(ref.quote)) continue;
+            const quote = document.createElement("blockquote"); quote.textContent = clean(ref.quote); detail.append(quote);
+          }
+          recommendations.append(detail);
+        }
+        const gapCount = recommendations.childElementCount || fillList("gaps", data.gaps);
+        byId("gaps").hidden = !!recommendations.childElementCount;
         byId("highlightsPanel").hidden = !highlightCount;
         byId("gapsPanel").hidden = !gapCount;
         byId("evidenceGrid").hidden = !(highlightCount || gapCount);
@@ -178,6 +206,16 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
         byId("comparisonPanel").hidden = !comparisonRows.childElementCount;
         setText("nextAction", data.next_action, "Review the evidence before making changes.");
 
+        const findingEvidence = byId("findingEvidence");
+        findingEvidence.replaceChildren();
+        for (const item of Array.isArray(data.finding_details) ? data.finding_details.slice(0, 3) : []) {
+          if (!item || !clean(item.reason)) continue;
+          const label = document.createElement("p"); label.textContent = clean(item.reason); findingEvidence.append(label);
+          for (const ref of Array.isArray(item.evidence) ? item.evidence.slice(0, 4) : []) {
+            if (!clean(ref.quote)) continue;
+            const quote = document.createElement("blockquote"); quote.textContent = clean(ref.quote); findingEvidence.append(quote);
+          }
+        }
         setText("limitations", data.limitations_note);
         const sources = byId("sources");
         sources.replaceChildren();
@@ -225,7 +263,7 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
         try {
           await request("ui/initialize", {
             appCapabilities: { availableDisplayModes: ["inline"] },
-            appInfo: { name: "Signal", version: "0.12.2" },
+            appInfo: { name: "Signal", version: "0.13.0" },
             protocolVersion: "2026-01-26"
           });
           initialized = true;
@@ -244,9 +282,11 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
 </html>`;
 
 export function registerAidoReportUi(server) {
+  // Existing ChatGPT connections can retain the previous tool template URI until refreshed.
+  for (const uri of [AIDO_REPORT_URI, 'ui://aido/discoverability-report-v8.html']) {
   server.registerResource(
-    "aido-discoverability-report",
-    AIDO_REPORT_URI,
+    uri === AIDO_REPORT_URI ? "aido-discoverability-report" : "signal-report-previous-template",
+    uri,
     {
       title: "Signal visibility report",
       description: SIGNAL_WIDGET_DESCRIPTION,
@@ -262,7 +302,7 @@ export function registerAidoReportUi(server) {
     },
     async () => ({
       contents: [{
-        uri: AIDO_REPORT_URI,
+        uri,
         mimeType: AIDO_REPORT_MIME,
         text: AIDO_REPORT_HTML,
         _meta: {
@@ -276,4 +316,5 @@ export function registerAidoReportUi(server) {
       }]
     })
   );
+  }
 }
