@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { VisibilityStudy, compareVisibility, newStudyReference, studyRequest } from '../src/visibility-study.js';
+import { registerVisibilityTools } from '../src/visibility-tools.js';
+import { z } from 'zod';
 import { captureRequest, captureVisibility, analyseVisibility, validateAssessment, VISIBILITY_PROTOCOL } from '../src/visibility-model.js';
 import { validateQuestions } from '../src/visibility-tools.js';
 import { UsageGuard, reserveDiscoveryUsage } from '../src/usage-guard.js';
@@ -363,4 +365,102 @@ test('selecting a reviewed recommendation retains its exact test plan through im
   assert.equal(implemented.recorded_intervention_id, saved.id);
   assert.equal(implemented.interventions[0].success_measure, recommendation.success_measure);
   assert.equal((await f.invoke('intervention', { ...details, recommendation_id: 'i2' })).error, 'invalid_intervention');
+});
+
+function toolHarness(runner, fetchImpl) {
+  const tools = new Map();
+  registerVisibilityTools({ registerTool: (name, config, handler) => tools.set(name, { config, handler }) }, {
+    VISIBILITY_STUDIES: { idFromName: name => name, get: () => ({ fetch: (url, init) => runner.fetch(new Request(url, init)) }) }
+  }, fetchImpl);
+  return async (name, input) => {
+    const tool = tools.get(name);
+    return tool.handler(z.object(tool.config.inputSchema).parse(input));
+  };
+}
+
+test('optional implementation wording is fetched, persisted and distinguished from its baseline excerpt', async () => {
+  for (const baselineText of ['Original public service description.', 'New owner approved public service description.']) {
+    const f = fixture();
+    const input = studyInput(1);
+    input.audit._analysis_context = { pages: [{ url: input.website_url, text: baselineText }] };
+    await f.invoke('create', input); await f.invoke('start', { phase: 'baseline', request_key: 'first' });
+    const baseline = await f.complete();
+    const frozen = structuredClone(f.ctx.map.get(`sample:${baseline.run.id}:0`));
+    let reads = 0;
+    const call = toolHarness(f.runner, async () => { reads++; return new Response('<main>New owner approved public service description.</main>', { headers: { 'content-type': 'text/html' } }); });
+    const details = { study_id: 'a'.repeat(64), title: 'Publish approved wording', change: 'Publish the new owner approved service description.',
+      rationale: 'The approved description is clearer.', sample_ids: [baseline.sample_index[1].id], expected_effect: 'Clarify public scope.',
+      implemented_at: new Date().toISOString(), implementation_evidence_urls: [input.website_url], target_url: input.website_url,
+      expected_public_text: 'New owner approved public service description.' };
+    const recorded = await call('record_visibility_intervention', details);
+    assert.notEqual(recorded.isError, true);
+    const item = recorded.structuredContent.interventions[0];
+    assert.equal(item.implementation_check.status, 'present');
+    assert.equal(item.implementation_check.baseline_presence, baselineText.startsWith('Original') ? 'absent' : 'present');
+    assert.match(recorded.structuredContent.presentation.highlights[0], baselineText.startsWith('Original') ? /baseline excerpt/ : /already present/);
+    const duplicate = await call('record_visibility_intervention', details);
+    assert.equal(duplicate.structuredContent.recorded_intervention_id, item.id); assert.equal(reads, 1);
+    const changed = await call('record_visibility_intervention', { ...details, intervention_id: item.id, change: 'A different change cannot overwrite the implemented record.' });
+    assert.equal(changed.isError, true);
+    assert.equal((await f.invoke('get')).interventions[0].change, details.change);
+    f.improve();
+    await f.invoke('start', { phase: 'reassessment', request_key: 'after', intervention_id: item.id }); await f.complete();
+    const comparison = await call('compare_visibility_runs', { study_id: details.study_id });
+    assert.equal(comparison.structuredContent.comparison.implementation_check.status, 'present');
+    assert.equal(comparison.structuredContent.comparison.repeat_evidence.status, 'single_check');
+    assert.deepEqual(f.ctx.map.get(`sample:${baseline.run.id}:0`), frozen);
+  }
+});
+
+test('a missing wording check remains explicit and does not remove the established user-confirmed reassessment flow', async () => {
+  const f = fixture(); await f.invoke('create', studyInput(1)); await f.invoke('start', { phase: 'baseline', request_key: 'first' });
+  const baseline = await f.complete();
+  const call = toolHarness(f.runner, async () => new Response('<main>Original description only.</main>', { headers: { 'content-type': 'text/html' } }));
+  const result = await call('record_visibility_intervention', { study_id: 'a'.repeat(64), title: 'Publish approved wording', change: 'Publish the new approved public service description.',
+    rationale: 'Clarify the public scope.', sample_ids: [baseline.sample_index[1].id], expected_effect: 'Clarify public scope.',
+    implemented_at: new Date().toISOString(), implementation_evidence_urls: ['https://test.example/'], target_url: 'https://test.example/', expected_public_text: 'New approved public service description.' });
+  assert.equal(result.structuredContent.interventions[0].implementation_check.status, 'not_found');
+  assert.match(result.structuredContent.presentation.highlights[0], /not found/);
+  assert.match(result.structuredContent.presentation.next_action, /before spending/);
+  const run = await f.invoke('start', { phase: 'reassessment', request_key: 'after', intervention_id: result.structuredContent.recorded_intervention_id });
+  assert.equal(run.status, 'queued');
+});
+
+test('repeat comparisons retain all same-change outcomes and exclude different changes and later runs', async () => {
+  const f = fixture(); await f.invoke('create', studyInput(1)); await f.invoke('start', { phase: 'baseline', request_key: 'first' });
+  const baseline = await f.complete();
+  const samplesBefore = structuredClone(await f.runner.allSamples(baseline.run));
+  const details = { title: 'Clarify public scope', change: 'Publish a clearer public description.', rationale: 'Clarify relevant public evidence.',
+    sample_ids: [baseline.sample_index[1].id], expected_effect: 'More relevant mentions.', implemented_at: new Date().toISOString(), implementation_evidence_urls: ['https://test.example/'] };
+  const change = await f.invoke('intervention', details); f.improve();
+  const runs = [];
+  for (const label of ['after-1', 'after-2']) {
+    const started = await f.invoke('start', { phase: 'reassessment', request_key: label, intervention_id: change.recorded_intervention_id });
+    await f.complete(); runs.push(started.run.id);
+  }
+  let result = await f.invoke('compare', { run_id: runs[0] });
+  assert.equal(result.comparison.repeat_evidence.comparable_runs, 1);
+  result = await f.invoke('compare', { run_id: runs[1] });
+  assert.equal(result.comparison.repeat_evidence.status, 'same_day_only');
+  const stored = f.ctx.map.get('study'); stored.runs.find(run => run.id === runs[1]).completed_at = '2030-01-01T08:00:00Z';
+  f.ctx.map.set('study', stored);
+  assert.equal((await f.invoke('compare', { run_id: runs[1] })).comparison.repeat_evidence.status, 'repeated_on_separate_dates');
+  const other = await f.invoke('intervention', { ...details, title: 'A different change' });
+  const third = await f.invoke('start', { phase: 'reassessment', request_key: 'other-change', intervention_id: other.recorded_intervention_id }); await f.complete();
+  result = await f.invoke('compare', { run_id: third.run.id });
+  assert.equal(result.comparison.repeat_evidence.comparable_runs, 1);
+  assert.deepEqual(await f.runner.allSamples(baseline.run), samplesBefore);
+});
+
+test('profile study creation requires explicit questions and refuses redirects to the platform homepage', async () => {
+  const f = fixture();
+  const call = toolHarness(f.runner, async url => String(url).includes('/p/danny') ? new Response(null, { status: 302, headers: { location: 'https://mylegend.id/' } }) :
+    new Response('<html><title>MyLegend</title><body>A platform for public profiles.</body></html>', { headers: { 'content-type': 'text/html' } }));
+  const input = { target_type: 'profile', website_url: 'https://mylegend.id/p/danny', business_name: 'Danny Griffin', priority_services: ['Public professional profile'] };
+  assert.equal((await call('create_visibility_study', input)).isError, true);
+  assert.equal((await call('create_visibility_study', { ...input, questions: [
+    { id: 'q1', kind: 'branded', question: 'What does Danny Griffin do professionally?' },
+    { id: 'q2', kind: 'category', question: 'Who offers independent product engineering?' }
+  ] })).isError, true);
+  assert.equal(f.ctx.map.size, 0);
 });

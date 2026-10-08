@@ -1,5 +1,6 @@
 import { captureVisibility, assessVisibility, analyseVisibility, VISIBILITY_PROTOCOL } from './visibility-model.js';
 import { reserveDiscoveryUsage } from './usage-guard.js';
+import { compactText, isTargetSource, summariseRepeatEvidence } from './visibility-evidence.js';
 
 const now = () => new Date().toISOString();
 const runComplete = run => ['complete', 'partial', 'cancelled'].includes(run.status);
@@ -73,6 +74,8 @@ export function compareVisibility(study, baseline, rerun, before, after) {
       after_recommendations: selected.filter(([, sample]) => recommend(sample)).length };
   });
   return { baseline_run_id: baseline.id, rerun_id: rerun.id, intervention_id: rerun.intervention_id,
+    baseline_completed_at: baseline.completed_at || null, reassessment_started_at: rerun.started_at || null,
+    reassessment_completed_at: rerun.completed_at || null, surface: rerun.conditions.surface || 'gpt_api_web_search',
     outcome, comparable: !incompatible, complete_coverage: completeCoverage, paired_samples: pairs.length,
     missing_or_failed_pairs: baseline.total - pairs.length, mentions, recommendations, questions: rows,
     limitation: incompatible ? 'The model or test conditions changed. A visibility improvement conclusion is unavailable.'
@@ -202,6 +205,14 @@ export class VisibilityStudy {
         for (const key of ['target_url', 'success_measure', 'retest_when', 'question_ids']) data[key] = recommendation[key];
       }
       if (data.question_ids?.some(id => !study.questions.some(question => question.id === id))) throw new Error('invalid_intervention');
+      if (data.implementation_check) {
+        if (!data.implemented_at || !data.expected_public_text || !isTargetSource(data.implementation_check.target_url, study.website_url) ||
+          data.implementation_check.expected_public_text !== data.expected_public_text) throw new Error('invalid_intervention');
+        const baselineAudit = await this.ctx.storage.get(`audit:${baseline.id}`) || await this.ctx.storage.get('audit:initial');
+        const page = baselineAudit?._analysis_context?.pages?.find(item => isTargetSource(item.url, data.implementation_check.target_url, 'profile'));
+        data.implementation_check.baseline_presence = page?.text ? compactText(page.text).includes(compactText(data.expected_public_text)) ? 'present' : 'absent' : 'unknown';
+        data.implementation_check.baseline_scope = 'Saved bounded public-page excerpt only; absence does not prove the wording was absent from the entire page.';
+      }
       if (data.implemented_at && !data.implementation_evidence_urls.length) throw new Error('invalid_intervention');
       const identical = study.interventions.find(item => Object.keys(data).filter(key => key !== 'intervention_id').every(key => JSON.stringify(item[key]) === JSON.stringify(data[key])));
       if (identical) return { ...await this.snapshot(study, {}), recorded_intervention_id: identical.id };
@@ -221,7 +232,14 @@ export class VisibilityStudy {
       const rerun = data.run_id ? study.runs.find(run => run.id === data.run_id) : study.runs.findLast(run => run.phase === 'reassessment');
       if (!baseline || !rerun || rerun.phase !== 'reassessment') throw new Error('run_not_found');
       if (!runComplete(baseline) || !runComplete(rerun)) throw new Error('run_not_complete');
-      return { ...await this.snapshot(study, { run_id: rerun.id }), comparison: compareVisibility(study, baseline, rerun, await this.allSamples(baseline), await this.allSamples(rerun)) };
+      const before = await this.allSamples(baseline);
+      const comparison = compareVisibility(study, baseline, rerun, before, await this.allSamples(rerun));
+      const related = study.runs.slice(0, study.runs.indexOf(rerun) + 1).filter(run => run.phase === 'reassessment' &&
+        run.intervention_id === rerun.intervention_id && runComplete(run));
+      const comparisons = await Promise.all(related.map(async run => run.id === rerun.id ? comparison : compareVisibility(study, baseline, run, before, await this.allSamples(run))));
+      comparison.repeat_evidence = summariseRepeatEvidence(comparisons, rerun.id);
+      comparison.implementation_check = study.interventions.find(item => item.id === rerun.intervention_id)?.implementation_check || null;
+      return { ...await this.snapshot(study, { run_id: rerun.id }), comparison };
     }
     throw new Error('invalid_operation');
   }
@@ -234,7 +252,7 @@ export class VisibilityStudy {
     const summary = counts(samples);
     const savedAudit = run ? await this.ctx.storage.get(`audit:${run.id}`) || study.audit || await this.ctx.storage.get('audit:initial') : study.audit || await this.ctx.storage.get('audit:initial');
     const { _analysis_context, ...audit } = savedAudit || {};
-    return { business: study.business, website_url: study.website_url, created_at: study.created_at,
+    return { business: study.business, website_url: study.website_url, target_type: study.target_type || 'business', created_at: study.created_at,
       protocol: study.protocol, conditions: study.conditions, questions: study.questions,
       public_context: study.public_context, audit,
       status: run?.status || 'ready', run: run || null, runs: study.runs, counts: summary,
@@ -244,7 +262,7 @@ export class VisibilityStudy {
       next_offset: data.include_samples && offset + limit < samples.length ? offset + limit : null,
       analysis: run ? await this.ctx.storage.get(`analysis:${run.id}`) || null : null,
       interventions: study.interventions,
-      limitation: 'Independent GPT API searches with no chat history or personal memory supplied. The saved study reference controls access; keep it private. These samples do not reproduce consumer ChatGPT or prove why a company did not appear.' };
+      limitation: 'Independent GPT API searches with no chat history or personal memory supplied. The saved study reference controls access; keep it private. These samples do not reproduce consumer ChatGPT or prove why the target did not appear.' };
   }
 
   async alarm() {

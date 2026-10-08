@@ -32,9 +32,16 @@ test("MCP client initializes and completes its workflow without using the SR3H O
   try {
     const listed = await client.listTools();
     assert.equal(client.getServerVersion().name, "Signal");
-    assert.equal(client.getServerVersion().version, "0.13.0");
+    assert.equal(client.getServerVersion().version, "0.14.0");
     assert.deepEqual(client.getServerCapabilities().extensions?.["io.modelcontextprotocol/skills"], {});
     assert.equal(listed.tools.length, 11);
+    const studyTool = listed.tools.find(tool => tool.name === 'create_visibility_study');
+    assert.deepEqual(studyTool.inputSchema.properties.target_type.enum, ['business', 'profile']);
+    assert.equal(studyTool.inputSchema.properties.target_type.default, 'business');
+    assert.equal(studyTool.inputSchema.required.includes('target_type'), false);
+    const changeTool = listed.tools.find(tool => tool.name === 'record_visibility_intervention');
+    assert.equal(changeTool.inputSchema.required.includes('expected_public_text'), false);
+    assert.equal(changeTool.annotations.openWorldHint, true);
     const checkTool = listed.tools.find((tool) => tool.name === "check_ai_presence");
     const prepareTool = listed.tools.find((tool) => tool.name === "prepare_ai_discovery_research");
     const summaryTool = listed.tools.find((tool) => tool.name === "summarise_ai_discovery_research");
@@ -165,7 +172,7 @@ test("HTTP health and error responses carry production safety headers", async ()
   assert.equal(health.headers.get("x-content-type-options"), "nosniff");
   const healthBody = await health.json();
   assert.equal(healthBody.service, "Signal");
-  assert.equal(healthBody.version, "0.13.0");
+  assert.equal(healthBody.version, "0.14.0");
 
   const missing = await handleRequest(new Request("https://mcp.example/nope"));
   assert.equal(missing.status, 404);
