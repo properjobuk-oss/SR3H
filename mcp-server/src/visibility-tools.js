@@ -9,7 +9,7 @@ const reference = z.string().regex(/^[a-f0-9]{64}$/).describe('Private study ref
 const runId = z.string().uuid();
 const question = z.object({ id: z.string().regex(/^q(?:[1-9]|10)$/), kind: z.enum(RESEARCH_KINDS), question: z.string().trim().min(8).max(280) }).strict();
 const resultSchema = z.object({ study_id: z.string(), business: z.string().optional(), status: z.string().optional() }).passthrough();
-const annotations = (title, readOnly, openWorld = false, destructive = false) => ({ title, readOnlyHint: readOnly, destructiveHint: destructive, idempotentHint: true, openWorldHint: openWorld });
+const annotations = (title, readOnly, openWorld = false, destructive = false, idempotent = true) => ({ title, readOnlyHint: readOnly, destructiveHint: destructive, idempotentHint: idempotent, openWorldHint: openWorld });
 const commonMeta = { ui: { resourceUri: AIDO_REPORT_URI }, 'openai/outputTemplate': AIDO_REPORT_URI };
 const errorMessages = {
   storage_not_configured: 'Saved research is not configured yet. The website check remains available.',
@@ -100,7 +100,7 @@ export function registerVisibilityTools(server, env = {}, fetchImpl = fetch, con
       location_or_service_area: z.string().trim().min(1).max(160).optional(), target_customer: z.string().trim().min(1).max(300).optional(),
       questions: z.array(question).min(2).max(10).optional(), repetitions: z.number().int().min(1).max(3).default(3),
       search_location: z.object({ country: z.string().regex(/^[A-Z]{2}$/), city: z.string().trim().min(1).max(80).optional(), region: z.string().trim().min(1).max(80).optional() }).strict().optional() },
-    outputSchema: resultSchema, annotations: annotations('Prepare a Signal visibility study', false, true), _meta: commonMeta
+    outputSchema: resultSchema, annotations: annotations('Prepare a Signal visibility study', false, true, false, false), _meta: commonMeta
   }, wrap(async input => {
     if (!env.VISIBILITY_STUDIES) throw new Error('storage_not_configured');
     const audit = await auditWebsite(input, fetchImpl);
@@ -160,7 +160,7 @@ export function registerVisibilityTools(server, env = {}, fetchImpl = fetch, con
     title: 'Retry incomplete Signal answers',
     description: 'Retry failed answers or unavailable analysis only when the user requests recovery. Uses the configured API allowance. Existing completed answers and failure history are retained; saved raw answers are reassessed without a new search. At most three requested retries. A baseline is locked after any implemented change. Never use retries to replace an unfavourable valid answer.',
     inputSchema: { study_id: reference, run_id: runId }, outputSchema: resultSchema,
-    annotations: annotations('Retry incomplete Signal answers', false, true), _meta: commonMeta
+    annotations: annotations('Retry incomplete Signal answers', false, true, false, false), _meta: commonMeta
   }, wrap(input => stored('retry', input)));
   server.registerTool('cancel_visibility_run', {
     title: 'Stop a Signal visibility check',

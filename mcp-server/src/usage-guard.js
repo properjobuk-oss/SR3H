@@ -39,8 +39,8 @@ export class UsageGuard {
     const target = cleanKey(body?.target, "invalid-target");
     const limits = body.bucket === 'signal' ? limitsFromEnv({
       DAILY_DISCOVERY_LIMIT: this.env.SIGNAL_DAILY_SAMPLE_LIMIT || '80',
-      DAILY_DISCOVERY_VISITOR_LIMIT: this.env.SIGNAL_DAILY_VISITOR_LIMIT || '40',
-      DAILY_DISCOVERY_TARGET_LIMIT: this.env.SIGNAL_DAILY_TARGET_LIMIT || '40'
+      DAILY_DISCOVERY_VISITOR_LIMIT: this.env.SIGNAL_DAILY_VISITOR_LIMIT || '80',
+      DAILY_DISCOVERY_TARGET_LIMIT: this.env.SIGNAL_DAILY_TARGET_LIMIT || '80'
     }, 80) : limitsFromEnv(this.env);
     const stored = await this.ctx.storage.get("daily-usage");
     const usage = stored?.day === day

@@ -192,8 +192,8 @@ test('isolated research uses a separate durable allowance without changing websi
   const env = { USAGE_GUARD: { idFromName: name => { bindingNames.push(name); return name; }, get: () => ({ fetch: (url, init) => guard.fetch(new Request(url, init)) }) } };
   assert.equal((await reserveDiscoveryUsage(env, 'test.example', { visitor: 'visitor', bucket: 'signal' })).allowed, true);
   assert.equal(bindingNames[0], 'signal-research-budget');
-  for (let index = 1; index < 40; index++) assert.equal((await reserveDiscoveryUsage(env, 'test.example', { visitor: 'visitor', bucket: 'signal' })).allowed, true);
-  assert.equal((await reserveDiscoveryUsage(env, 'test.example', { visitor: 'visitor', bucket: 'signal' })).reason, 'visitor_daily_limit');
+  for (let index = 1; index < 80; index++) assert.equal((await reserveDiscoveryUsage(env, 'test.example', { visitor: 'visitor', bucket: 'signal' })).allowed, true);
+  assert.equal((await reserveDiscoveryUsage(env, 'test.example', { visitor: 'visitor', bucket: 'signal' })).reason, 'global_daily_limit');
 });
 
 test('captures without an actually completed web search cannot become measurements', async () => {
