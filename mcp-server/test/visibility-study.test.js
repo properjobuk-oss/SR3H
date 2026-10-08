@@ -378,6 +378,68 @@ function toolHarness(runner, fetchImpl) {
   };
 }
 
+const autoStartInput = { website_url: 'https://test.example/', business_name: 'Test Co', priority_services: ['test services'], questions, repetitions: 1 };
+const autoStartWebsite = async url => {
+  const path = new URL(url).pathname;
+  if (path === '/') return new Response('<html><head><title>Test Co</title><meta name="description" content="Test services"><link rel="canonical" href="https://test.example/"></head><body><h1>Test Co</h1>Public test services.</body></html>', { headers: { 'content-type': 'text/html' } });
+  if (path === '/robots.txt') return new Response('User-agent: OAI-SearchBot\nAllow: /');
+  if (path === '/sitemap.xml') return new Response('<urlset></urlset>', { headers: { 'content-type': 'application/xml' } });
+  return new Response('missing', { status: 404 });
+};
+
+test('one-call AI check queues actual searches, saves answers and reuses the same baseline on retry', async () => {
+  const f = fixture(), call = toolHarness(f.runner, autoStartWebsite);
+  const started = await call('create_visibility_study', { ...autoStartInput, start_now: true });
+  assert.notEqual(started.isError, true);
+  const data = started.structuredContent;
+  assert.equal(data.status, 'queued'); assert.equal(data.run.total, 2); assert.equal(data.run.request_key, 'baseline');
+  assert.deepEqual(data.presentation.metrics[0], { label: 'AI searches', value: '2 queued' });
+  assert.equal(data.presentation.metrics.some(metric => metric.value === '0 / 0'), false);
+  assert.match(data.presentation.next_action, /get_visibility_study/);
+  assert.equal(f.calls.length, 0);
+  await f.complete();
+  const result = await call('get_visibility_study', { study_id: data.study_id, include_samples: true });
+  assert.equal(result.structuredContent.counts.completed, 2);
+  assert.equal(result.structuredContent.samples.length, 2);
+  assert.equal(f.calls.filter(request => request.tools).length, 2);
+  const replay = await call('run_visibility_study', { study_id: data.study_id, phase: 'baseline', request_key: 'baseline' });
+  assert.equal(replay.structuredContent.run.id, data.run.id);
+  assert.equal(f.calls.filter(request => request.tools).length, 2);
+});
+
+test('question preparation keeps its existing no-search behaviour', async () => {
+  const f = fixture(), call = toolHarness(f.runner, autoStartWebsite);
+  const prepared = await call('create_visibility_study', autoStartInput);
+  assert.equal(prepared.structuredContent.status, 'ready'); assert.equal(prepared.structuredContent.run, null);
+  assert.equal(f.ctx.alarm, null); assert.equal(f.calls.length, 0);
+});
+
+test('a lost one-call start response recovers the committed run without queueing another', async () => {
+  const f = fixture(), original = f.runner.fetch.bind(f.runner); let starts = 0;
+  f.runner.fetch = async request => {
+    const response = await original(request);
+    if (new URL(request.url).pathname === '/start' && starts++ === 0) throw new Error('lost response');
+    return response;
+  };
+  const call = toolHarness(f.runner, autoStartWebsite);
+  const started = await call('create_visibility_study', { ...autoStartInput, start_now: true });
+  assert.equal(started.structuredContent.status, 'queued'); assert.equal(started.structuredContent.runs.length, 1);
+  assert.equal(starts, 1); assert.equal(started.structuredContent.start_error, undefined);
+  assert.equal((await f.complete()).counts.completed, 2);
+});
+
+test('an unavailable model retains the study reference and does not present zero answers as a completed AI check', async () => {
+  const f = fixture(); delete f.runner.env.OPENAI_API_KEY;
+  const call = toolHarness(f.runner, autoStartWebsite);
+  const result = await call('create_visibility_study', { ...autoStartInput, start_now: true });
+  assert.match(result.structuredContent.study_id, /^[a-f0-9]{64}$/);
+  assert.equal(result.structuredContent.start_error, 'model_not_configured');
+  assert.equal(result.structuredContent.run, null); assert.equal(result.structuredContent.presentation.status, 'incomplete');
+  assert.match(result.structuredContent.presentation.headline, /could not start/);
+  assert.match(result.structuredContent.presentation.next_action, /do not create a replacement/);
+  assert.equal(f.calls.length, 0);
+});
+
 test('optional implementation wording is fetched, persisted and distinguished from its baseline excerpt', async () => {
   for (const baselineText of ['Original public service description.', 'New owner approved public service description.']) {
     const f = fixture();

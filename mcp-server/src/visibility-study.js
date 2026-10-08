@@ -38,7 +38,7 @@ function counts(samples) {
       source_only: selected.filter(sample => sample.assessment.appearance === 'source_only').length,
       not_seen: selected.filter(sample => sample.assessment.appearance === 'not_seen').length };
   };
-  return { completed: complete.length, failed: samples.filter(sample => sample.status === 'failed').length,
+  return { captured: samples.filter(sample => sample.capture).length, completed: complete.length, failed: samples.filter(sample => sample.status === 'failed').length,
     pending: samples.filter(sample => ['pending', 'running'].includes(sample.status)).length,
     branded: forKind(true), unbranded: forKind(false) };
 }

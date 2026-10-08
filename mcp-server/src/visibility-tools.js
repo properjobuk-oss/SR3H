@@ -47,25 +47,30 @@ function presentation(result) {
   const sources = [...new Set([...(result.audit?.observations || []).map(item => item.source_url),
     ...(result.samples || []).flatMap(item => (item.capture?.sources || []).map(source => source.url))].filter(Boolean))].slice(0, 10);
   return { report_type: compared ? 'visibility_comparison' : 'visibility_study', business_name: result.business,
-    headline: compared ? headings[compared.outcome] : active ? `Checking ${result.business}` : result.status === 'ready' ? `Ready to check ${result.business}` : `${result.business}: visibility check ${result.status === 'complete' ? 'complete' : 'incomplete'}`,
+    headline: result.start_error ? `The AI check for ${result.business} could not start` : compared ? headings[compared.outcome] : active ? `Checking ${result.business}` : result.status === 'ready' ? `Ready to check ${result.business}` : `${result.business}: visibility check ${result.status === 'complete' ? 'complete' : 'incomplete'}`,
     summary: compared ? 'The same questions were repeated after the recorded change.' : result.target_type === 'profile' ? `${progress}. Measures this person’s discovery; card operation requires a separate host test.` : progress,
     status: result.status === 'complete' ? 'complete' : 'incomplete',
     metrics: compared ? [
       { label: 'Unbranded mentions', value: `${compared.mentions.before} → ${compared.mentions.after}` },
       { label: 'Recommendations', value: `${compared.recommendations.before} → ${compared.recommendations.after}` },
       { label: 'Matched answers', value: `${compared.paired_samples} / ${result.run.total}` }
+    ] : result.run && active && !counts.completed && !counts.failed ? [
+      { label: 'AI searches', value: `${result.run.total} ${result.status === 'queued' ? 'queued' : 'running'}` },
+      { label: 'Mentions', value: 'Awaiting answers' },
+      { label: 'Recommendations', value: 'Awaiting answers' }
     ] : result.run ? [
+      { label: 'AI answers saved', value: `${counts.captured} / ${result.run.total}` },
       { label: 'Validated answers', value: `${counts.completed} / ${result.run.total}` },
       { label: 'Unbranded mentions', value: `${counts.unbranded.mentioned} / ${counts.unbranded.checked}` },
-      { label: 'Recommendations', value: `${counts.unbranded.recommended} / ${counts.unbranded.checked}` },
-      { label: 'Unverified answers', value: String(counts.failed) }
+      { label: 'Recommendations', value: `${counts.unbranded.recommended} / ${counts.unbranded.checked}` }
     ] : [{ label: 'Customer questions', value: String(result.questions.length) }, { label: 'Repeats per question', value: String(result.conditions.repetitions) }],
-    highlights: compared ? [compared.comparable ? 'The saved model and test settings match.' : 'The model or test settings changed.',
+    highlights: result.start_error ? [errorMessages[result.start_error] || 'The runner could not be started. The study and questions are saved.'] : compared ? [compared.comparable ? 'The saved model and test settings match.' : 'The model or test settings changed.',
       compared.complete_coverage ? 'Every planned answer has a comparable result.' : `${compared.missing_or_failed_pairs} answer pairs are missing or failed.`,
       ...(compared.repeat_evidence ? [repeatSummary(compared.repeat_evidence)] : []),
-      ...(compared.implementation_check ? [implementationSummary(compared.implementation_check)] : [])] : [...(recordedCheck ? [implementationSummary(recordedCheck)] : []), ...(analysisNotice ? [analysisNotice] : []), ...reasons.slice(0, 3).map(item => `${item.status === 'hypothesis' ? 'Possible reason: ' : ''}${item.reason}`)],
+      ...(compared.implementation_check ? [implementationSummary(compared.implementation_check)] : [])] : [...(counts.failed ? [`${counts.failed} answer(s) failed or could not be validated. They do not count as absences.`] : []), ...(recordedCheck ? [implementationSummary(recordedCheck)] : []), ...(analysisNotice ? [analysisNotice] : []), ...reasons.slice(0, 3).map(item => `${item.status === 'hypothesis' ? 'Possible reason: ' : ''}${item.reason}`)],
     gaps: interventions.slice(0, 3).map(item => item.title),
-    next_action: result.status === 'ready' ? 'Start the first visibility check.' : active ? 'The runner is working. Read the saved progress shortly.'
+    next_action: result.start_error ? 'Retain this study reference. Read get_visibility_study before retrying run_visibility_study with request_key baseline; do not create a replacement study.'
+      : result.status === 'ready' ? 'Start the first visibility check.' : active ? 'The runner is working. Read get_visibility_study with this private study reference until the saved answers complete; do not start another study.'
       : compared ? 'Review the matched answers and competing explanations before deciding on another change.'
       : recordedCheck && recordedCheck.status !== 'present' ? 'Inspect the public page and its publication state before spending another search run.'
       : result.analysis?.status === 'unavailable' || result.analysis?.review_status === 'unavailable' ? 'Read the saved answers and request a retry of the reasoning review.'
@@ -133,15 +138,16 @@ export function registerVisibilityTools(server, env = {}, fetchImpl = fetch, con
     return studyRequest(env, study_id, operation, data).then(result => ({ ...result, study_id }));
   };
   server.registerTool('create_visibility_study', {
-    title: 'Prepare a Signal visibility study',
-    description: 'Prepare and save an isolated visibility study for a user-confirmed public business or named public profile. Checks the site, freezes neutral questions and test settings, and returns a private study reference. No GPT searches run yet. Business default: ten questions, three repeats each. For one person, use target_type profile, their exact URL, their name as business_name and explicit questions. Saved references control access; keep them private.',
+    title: 'Prepare or start an AI visibility check',
+    description: 'Primary entry for actual AI visibility checks. Save isolated research for a user-confirmed business or public profile. Set start_now true when the user asks to run AI searches: creates the study and queues the baseline in one call. Otherwise prepares questions for review without searches. Follow get_visibility_study until completion; queued is not a final result. Keep the returned reference and do not create another study to poll or retry. Business default: ten questions, three repeats. Profiles require exact URL, name as business_name and explicit questions.',
     inputSchema: { website_url: z.string().url().max(2048), business_name: z.string().trim().min(2).max(120),
       target_type: z.enum(['business', 'profile']).default('business').describe('Use profile only for one named person at their exact public profile URL. Supply their name as business_name and explicit questions; shared-domain appearances do not count.'),
       priority_services: z.array(z.string().trim().min(1).max(120)).min(1).max(8),
       location_or_service_area: z.string().trim().min(1).max(160).optional(), target_customer: z.string().trim().min(1).max(300).optional(),
       questions: z.array(question).min(2).max(10).optional(), repetitions: z.number().int().min(1).max(3).default(3),
+      start_now: z.boolean().default(false).describe('Set true for a user-requested AI visibility check: prepare and queue its baseline immediately. Leave false only for a requested question review or preparation.'),
       search_location: z.object({ country: z.string().regex(/^[A-Z]{2}$/), city: z.string().trim().min(1).max(80).optional(), region: z.string().trim().min(1).max(80).optional() }).strict().optional() },
-    outputSchema: resultSchema, annotations: annotations('Prepare a Signal visibility study', false, true, false, false), _meta: commonMeta
+    outputSchema: resultSchema, annotations: annotations('Prepare or start an AI visibility check', false, true, false, false), _meta: commonMeta
   }, wrap(async input => {
     if (!env.VISIBILITY_STUDIES) throw new Error('storage_not_configured');
     if (input.target_type === 'profile' && !input.questions) throw new Error('invalid_questions');
@@ -159,7 +165,18 @@ export function registerVisibilityTools(server, env = {}, fetchImpl = fetch, con
         repetitions: input.repetitions, location: input.search_location || null, max_tool_calls: 2, personal_context_supplied: false,
         capture_instructions_version: VISIBILITY_PROTOCOL, surface: 'gpt_api_web_search',
         ...(input.target_type === 'profile' ? { identity_rule: 'exact-profile-url-1' } : {}) } });
-    return { ...result, study_id };
+    if (!input.start_now) return { ...result, study_id };
+    try {
+      const started = await studyRequest(env, study_id, 'start', { phase: 'baseline', request_key: 'baseline', run_audit: audit });
+      return { ...started, study_id };
+    } catch (error) {
+      // If the start response was lost, recover its committed run instead of starting another.
+      try {
+        const recovered = await studyRequest(env, study_id, 'get');
+        if (recovered.runs.some(run => run.phase === 'baseline')) return { ...recovered, study_id };
+      } catch { /* The original private reference still allows subsequent recovery. */ }
+      return { ...result, study_id, start_error: error.message === 'model_not_configured' ? error.message : 'runner_start_unavailable' };
+    }
   }));
   server.registerTool('run_visibility_study', {
     title: 'Run Signal visibility searches',

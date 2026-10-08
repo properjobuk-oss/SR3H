@@ -13,7 +13,7 @@ import { registerVisibilityTools } from "./visibility-tools.js";
 
 export { UsageGuard, VisibilityStudy };
 
-const SERVICE_VERSION = "0.14.1";
+const SERVICE_VERSION = "0.15.0";
 const MAX_MCP_REQUEST_BYTES = 64_000;
 const MAX_WEB_REQUEST_BYTES = 8_000;
 const WEB_ORIGINS = new Set([
@@ -265,7 +265,7 @@ export function createServer(fetchImpl = fetch, env = {}, context = {}) {
     version: SERVICE_VERSION,
     websiteUrl: "https://sr3h.uk"
   }, {
-    instructions: "Signal: Check visibility → Understand evidence → Choose a change → Check again. For independent searches, create_visibility_study saves neutral questions; run_visibility_study starts the background runner. Read get_visibility_study for progress, raw answers and evidence-linked hypotheses. Record only a user-selected intervention and confirmed implementation; rerun the frozen questions and compare_visibility_runs. Keep private study references private. API samples are distinct from consumer ChatGPT. Never infer demand or causation from answer counts. Website-only and within-chat samples remain available through the earlier tools."
+    instructions: "Signal: Check visibility → Understand evidence → Choose a change → Check again. For a request to run AI visibility checks, use create_visibility_study with start_now true and follow get_visibility_study through saved answers. Do not stop at a website audit or a prepared question pack. For an existing study, run_visibility_study starts or resumes its baseline with the same request key. Keep the private reference; never create another study to poll or retry a run. A request to review questions uses start_now false. check_ai_presence is only a website-access audit and cannot satisfy an AI-search request. Record only a user-selected intervention and confirmed implementation; rerun frozen questions and compare_visibility_runs. API samples are distinct from consumer ChatGPT; never infer demand or causation."
   });
   registerSkillImport(server);
   registerAidoReportUi(server);
@@ -273,7 +273,7 @@ export function createServer(fetchImpl = fetch, env = {}, context = {}) {
 
   server.registerTool("check_ai_presence", {
     title: "Check public website access for AI",
-    description: "Use this when a user asks why AI assistants may be overlooking a business, asks about AI visibility, AEO or GEO for a public website, or wants to check readiness for AI discovery. It fetches public pages and returns observed access and clarity facts, gaps and limits. Describe its result only as technical access signals, never as being technically ready for AI discovery. It does not call an AI model or run branded or unbranded searches. Do not use it to claim AI ranking, mentions, recommendations, demand or sales impact.",
+    description: "Website-access audit only: use for an explicitly requested crawl, robots.txt, metadata or technical website check. It runs no AI searches. For AI visibility, mentions, recommendations or why a target is absent, use create_visibility_study with start_now true and read get_visibility_study until completion. Do not substitute this audit for that request. Public pages and access rules alone cannot establish AI ranking, discovery, card operation or causes of non-appearance.",
     inputSchema: auditInputShape,
     outputSchema: technicalAuditResultSchema,
     annotations: {

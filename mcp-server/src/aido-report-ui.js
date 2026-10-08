@@ -263,7 +263,7 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
         try {
           await request("ui/initialize", {
             appCapabilities: { availableDisplayModes: ["inline"] },
-            appInfo: { name: "Signal", version: "0.14.1" },
+            appInfo: { name: "Signal", version: "0.15.0" },
             protocolVersion: "2026-01-26"
           });
           initialized = true;

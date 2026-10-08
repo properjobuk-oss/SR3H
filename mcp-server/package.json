@@ -1,6 +1,6 @@
 {
   "name": "@sr3h/ai-presence-checker",
-  "version": "0.14.1",
+  "version": "0.15.0",
   "private": true,
   "type": "module",
   "description": "Signal: isolated visibility research, evidence-linked interventions and before-and-after measurements.",
