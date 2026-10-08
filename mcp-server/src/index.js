@@ -13,7 +13,7 @@ import { registerVisibilityTools } from "./visibility-tools.js";
 
 export { UsageGuard, VisibilityStudy };
 
-const SERVICE_VERSION = "0.12.1";
+const SERVICE_VERSION = "0.12.2";
 const MAX_MCP_REQUEST_BYTES = 64_000;
 const MAX_WEB_REQUEST_BYTES = 8_000;
 const WEB_ORIGINS = new Set([

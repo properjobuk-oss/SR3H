@@ -18,7 +18,7 @@ try {
   if (health.headers.get("x-content-type-options") !== "nosniff") throw new Error("health endpoint is missing nosniff");
   const healthBody = await health.json();
   if (healthBody.ok !== true) throw new Error("health endpoint did not report ok");
-  if (healthBody.version !== "0.12.1") throw new Error(`expected version 0.12.1, received ${healthBody.version || "unknown"}`);
+  if (healthBody.version !== "0.12.2") throw new Error(`expected version 0.12.2, received ${healthBody.version || "unknown"}`);
   if (healthBody.service !== "Signal") throw new Error(`expected service name Signal, received ${healthBody.service || "unknown"}`);
 
   await client.connect(transport);
@@ -32,8 +32,8 @@ try {
   if (!prepareTool) throw new Error("prepare_ai_discovery_research was not advertised");
   if (!summaryTool) throw new Error("summarise_ai_discovery_research was not advertised");
   if (tools.tools.length !== 11) throw new Error(`expected 11 tools, received ${tools.tools.length}`);
-  if (tool._meta?.ui?.resourceUri !== "ui://aido/discoverability-report-v7.html") throw new Error("check tool is missing its Signal UI resource");
-  if (summaryTool._meta?.ui?.resourceUri !== "ui://aido/discoverability-report-v7.html") throw new Error("summary tool is missing its Signal UI resource");
+  if (tool._meta?.ui?.resourceUri !== "ui://aido/discoverability-report-v8.html") throw new Error("check tool is missing its Signal UI resource");
+  if (summaryTool._meta?.ui?.resourceUri !== "ui://aido/discoverability-report-v8.html") throw new Error("summary tool is missing its Signal UI resource");
   if (!/never infer/i.test(tool.inputSchema?.properties?.priority_services?.description || "")) throw new Error("check tool does not protect optional context provenance");
   if (!tool.outputSchema) throw new Error("check_ai_presence has no output schema");
   if (tool.annotations?.readOnlyHint !== true || tool.annotations?.openWorldHint !== true || tool.annotations?.destructiveHint !== false) {

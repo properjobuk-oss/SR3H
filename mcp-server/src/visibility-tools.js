@@ -53,10 +53,10 @@ function presentation(result) {
       { label: 'Recommendations', value: `${compared.recommendations.before} → ${compared.recommendations.after}` },
       { label: 'Matched answers', value: `${compared.paired_samples} / ${result.run.total}` }
     ] : result.run ? [
-      { label: 'Answers saved', value: `${counts.completed} / ${result.run.total}` },
+      { label: 'Validated answers', value: `${counts.completed} / ${result.run.total}` },
       { label: 'Unbranded mentions', value: `${counts.unbranded.mentioned} / ${counts.unbranded.checked}` },
       { label: 'Recommendations', value: `${counts.unbranded.recommended} / ${counts.unbranded.checked}` },
-      { label: 'Failed captures', value: String(counts.failed) }
+      { label: 'Unverified answers', value: String(counts.failed) }
     ] : [{ label: 'Customer questions', value: String(result.questions.length) }, { label: 'Repeats per question', value: String(result.conditions.repetitions) }],
     highlights: compared ? [compared.comparable ? 'The saved model and test settings match.' : 'The model or test settings changed.',
       compared.complete_coverage ? 'Every planned answer has a comparable result.' : `${compared.missing_or_failed_pairs} answer pairs are missing or failed.`] : [...(analysisNotice ? [analysisNotice] : []), ...reasons.slice(0, 3).map(item => `${item.status === 'hypothesis' ? 'Possible reason: ' : ''}${item.reason}`)],

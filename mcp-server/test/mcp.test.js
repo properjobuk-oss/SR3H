@@ -32,7 +32,7 @@ test("MCP client initializes and completes its workflow without using the SR3H O
   try {
     const listed = await client.listTools();
     assert.equal(client.getServerVersion().name, "Signal");
-    assert.equal(client.getServerVersion().version, "0.12.1");
+    assert.equal(client.getServerVersion().version, "0.12.2");
     assert.deepEqual(client.getServerCapabilities().extensions?.["io.modelcontextprotocol/skills"], {});
     assert.equal(listed.tools.length, 11);
     const checkTool = listed.tools.find((tool) => tool.name === "check_ai_presence");
@@ -46,8 +46,8 @@ test("MCP client initializes and completes its workflow without using the SR3H O
     assert.equal(prepareTool.annotations.readOnlyHint, true);
     assert.equal(prepareTool.annotations.openWorldHint, true);
     assert.equal(summaryTool.annotations.openWorldHint, false);
-    assert.equal(checkTool._meta.ui.resourceUri, "ui://aido/discoverability-report-v7.html");
-    assert.equal(summaryTool._meta.ui.resourceUri, "ui://aido/discoverability-report-v7.html");
+    assert.equal(checkTool._meta.ui.resourceUri, "ui://aido/discoverability-report-v8.html");
+    assert.equal(summaryTool._meta.ui.resourceUri, "ui://aido/discoverability-report-v8.html");
     assert.match(checkTool.inputSchema.properties.location_or_service_area.description, /only when the user explicitly supplied it/i);
     assert.match(checkTool.inputSchema.properties.priority_services.description, /never infer/i);
     assert.match(checkTool.inputSchema.properties.target_customer.description, /never infer/i);
@@ -162,7 +162,7 @@ test("HTTP health and error responses carry production safety headers", async ()
   assert.equal(health.headers.get("x-content-type-options"), "nosniff");
   const healthBody = await health.json();
   assert.equal(healthBody.service, "Signal");
-  assert.equal(healthBody.version, "0.12.1");
+  assert.equal(healthBody.version, "0.12.2");
 
   const missing = await handleRequest(new Request("https://mcp.example/nope"));
   assert.equal(missing.status, 404);
@@ -390,7 +390,7 @@ test("AIDO report resource is self-contained, safe and linked directly to result
   await client.connect(clientTransport);
   try {
     const resources = await client.listResources();
-    const report = resources.resources.find((item) => item.uri === "ui://aido/discoverability-report-v7.html");
+    const report = resources.resources.find((item) => item.uri === "ui://aido/discoverability-report-v8.html");
     assert.ok(report);
     assert.equal(report.mimeType, "text/html;profile=mcp-app");
     assert.deepEqual(report._meta.ui.csp, { connectDomains: [], resourceDomains: [] });
@@ -399,6 +399,7 @@ test("AIDO report resource is self-contained, safe and linked directly to result
     const result = await client.readResource({ uri: report.uri });
     assert.equal(result.contents.length, 1);
     assert.equal(result.contents[0].mimeType, "text/html;profile=mcp-app");
+    assert.match(result.contents[0]._meta["openai/widgetDescription"], /Signal.*native interactive results card/);
     assert.deepEqual(result.contents[0]._meta.ui.csp, { connectDomains: [], resourceDomains: [] });
     const html = result.contents[0].text;
     assert.match(html, /ui\/initialize/);
