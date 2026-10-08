@@ -1,13 +1,13 @@
 {
   "name": "@sr3h/ai-presence-checker",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "private": true,
   "type": "module",
-  "description": "Read-only AIDO website access, understanding and AI discoverability checks.",
+  "description": "Signal: isolated visibility research, evidence-linked interventions and before-and-after measurements.",
   "scripts": {
     "generate:skill": "node scripts/generate-skill-bundle.mjs",
     "precheck": "npm run generate:skill",
-    "check": "node --check src/index.js && node --check src/aido-report-ui.js && node --check src/audit.js && node --check src/discoverability.js && node --check src/extended-research.js && node --check src/usage-guard.js && node --check src/url-safety.js",
+    "check": "node --check src/index.js && node --check src/aido-report-ui.js && node --check src/audit.js && node --check src/discoverability.js && node --check src/extended-research.js && node --check src/usage-guard.js && node --check src/url-safety.js && node --check src/visibility-model.js && node --check src/visibility-study.js && node --check src/visibility-tools.js",
     "pretest": "npm run generate:skill",
     "test": "node --test",
     "probe:remote": "node scripts/probe-remote.mjs",

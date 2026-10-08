@@ -1,4 +1,4 @@
-export const AIDO_REPORT_URI = "ui://aido/discoverability-report-v5.html";
+export const AIDO_REPORT_URI = "ui://aido/discoverability-report-v7.html";
 export const AIDO_REPORT_MIME = "text/html;profile=mcp-app";
 
 export const AIDO_REPORT_HTML = String.raw`<!doctype html>
@@ -6,7 +6,7 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AIDO by SR3H</title>
+  <title>Signal</title>
   <style>
     :root {
       color-scheme: light dark;
@@ -70,6 +70,12 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
     summary { cursor: pointer; font-weight: 700; }
     .sources { margin-top: 8px; padding-left: 0; list-style: none; }
     .sources a { color: var(--blue); overflow-wrap: anywhere; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+    .comparison { margin-top: 18px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
+    th, td { padding: 12px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-size: 11px; font-weight: 700; }
+    td:first-child { min-width: 210px; }
+    caption { text-align: left; font-weight: 700; margin-bottom: 8px; }
     .footer { justify-content: space-between; gap: 12px; margin-top: 18px; padding-top: 13px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
     .footer a { color: inherit; text-decoration: none; }
     [hidden] { display: none !important; }
@@ -77,6 +83,10 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
       .body { padding: 18px; }
       .grid { grid-template-columns: 1fr; }
       h1 { font-size: 25px; }
+      table { table-layout: fixed; }
+      td:first-child, th:first-child { min-width: 0; width: 50%; }
+      th { font-size: 10px; padding-left: 4px; padding-right: 4px; }
+      td { padding-left: 4px; padding-right: 4px; overflow-wrap: anywhere; }
     }
     @media (prefers-color-scheme: dark) {
       :root { --ink: #f6f9fc; --muted: #aab7c7; --surface: #0b1728; --surface-2: #14243a; --line: #263b54; --blue: #65a9ff; --teal: #40d4c9; --good: #52d5b4; --warn: #ffb062; --bad: #ff7e8d; }
@@ -88,7 +98,7 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
   <main class="card" aria-live="polite">
     <div class="accent"></div>
     <div class="body">
-      <div class="topline"><div class="brand">AIDO</div><div class="kind" id="kind">Discoverability check</div></div>
+      <div class="topline"><div class="brand">Signal</div><div class="kind" id="kind">Discoverability check</div></div>
       <h1 id="headline">Preparing the result…</h1>
       <p class="summary" id="summary"></p>
       <div class="status" id="status"><span class="dot"></span><span id="statusText"></span></div>
@@ -97,9 +107,10 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
         <section class="panel" id="highlightsPanel"><h2>What we found</h2><ul id="highlights"></ul></section>
         <section class="panel" id="gapsPanel"><h2>Where to improve</h2><ul id="gaps"></ul></section>
       </div>
+      <section class="comparison" id="comparisonPanel" hidden><table><caption>Before → after by question</caption><thead><tr><th scope="col">Question</th><th scope="col">Mentions</th><th scope="col">Recommended</th></tr></thead><tbody id="comparisonRows"></tbody></table></section>
       <section class="next" id="nextPanel"><h2>Best next step</h2><p id="nextAction"></p></section>
       <details id="details" hidden><summary>Evidence and limits</summary><p id="limitations"></p><ul class="sources" id="sources"></ul></details>
-      <footer class="footer"><span id="checkedAt"></span><a id="about" href="https://sr3h.uk/signal.html" target="_blank" rel="noreferrer">AIDO by SR3H</a></footer>
+      <footer class="footer"><span id="checkedAt"></span><a id="about" href="https://sr3h.uk/signal.html" target="_blank" rel="noreferrer">Signal</a></footer>
     </div>
   </main>
   <script>
@@ -142,9 +153,9 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
       const render = (raw) => {
         const root = raw && typeof raw === "object" ? raw : {};
         const data = root.presentation && typeof root.presentation === "object" ? root.presentation : root;
-        const reportType = data.report_type === "discovery_sample" ? "AI discovery sample" : "Website readiness";
+        const reportType = data.report_type === "visibility_comparison" ? "Before and after" : data.report_type === "visibility_study" ? "Visibility study" : data.report_type === "discovery_sample" ? "AI discovery sample" : "Website readiness";
         setText("kind", reportType);
-        setText("headline", data.headline, "AIDO result");
+        setText("headline", data.headline, "Signal result");
         setText("summary", data.summary);
         const status = clean(data.status, "partial");
         byId("status").dataset.status = status;
@@ -168,6 +179,19 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
         byId("highlightsPanel").hidden = !highlightCount;
         byId("gapsPanel").hidden = !gapCount;
         byId("evidenceGrid").hidden = !(highlightCount || gapCount);
+        const comparisonRows = byId("comparisonRows");
+        comparisonRows.replaceChildren();
+        for (const item of Array.isArray(data.comparison_rows) ? data.comparison_rows.slice(0, 10) : []) {
+          if (!item || typeof item.question !== "string") continue;
+          const row = document.createElement("tr");
+          for (const value of [item.question + (item.kind === "branded" ? " (by name)" : ""),
+            String(item.before_mentions) + " → " + String(item.after_mentions),
+            String(item.before_recommendations) + " → " + String(item.after_recommendations)]) {
+            const cell = document.createElement("td"); cell.textContent = value; row.append(cell);
+          }
+          comparisonRows.append(row);
+        }
+        byId("comparisonPanel").hidden = !comparisonRows.childElementCount;
         setText("nextAction", data.next_action, "Review the evidence before making changes.");
 
         setText("limitations", data.limitations_note);
@@ -217,7 +241,7 @@ export const AIDO_REPORT_HTML = String.raw`<!doctype html>
         try {
           await request("ui/initialize", {
             appCapabilities: { availableDisplayModes: ["inline"] },
-            appInfo: { name: "AIDO by SR3H", version: "0.11.0" },
+            appInfo: { name: "Signal", version: "0.12.0" },
             protocolVersion: "2026-01-26"
           });
           initialized = true;
@@ -240,8 +264,8 @@ export function registerAidoReportUi(server) {
     "aido-discoverability-report",
     AIDO_REPORT_URI,
     {
-      title: "AIDO discoverability report",
-      description: "A compact presentation of an already completed AIDO readiness or discovery result.",
+      title: "Signal visibility report",
+      description: "A compact presentation of an already completed Signal readiness or discovery result.",
       mimeType: AIDO_REPORT_MIME,
       _meta: {
         ui: {

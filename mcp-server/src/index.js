@@ -8,10 +8,12 @@ import { checkDiscoverability, combineDiscoverabilityResult } from "./discoverab
 import { prepareExtendedResearch, RESEARCH_KINDS, summariseExtendedResearch } from "./extended-research.js";
 import { registerSkillImport } from "./skill-import.js";
 import { UsageGuard, usageContext } from "./usage-guard.js";
+import { VisibilityStudy } from "./visibility-study.js";
+import { registerVisibilityTools } from "./visibility-tools.js";
 
-export { UsageGuard };
+export { UsageGuard, VisibilityStudy };
 
-const SERVICE_VERSION = "0.11.0";
+const SERVICE_VERSION = "0.12.0";
 const MAX_MCP_REQUEST_BYTES = 64_000;
 const MAX_WEB_REQUEST_BYTES = 8_000;
 const WEB_ORIGINS = new Set([
@@ -100,7 +102,7 @@ const aidoCardSchema = z.object({
   next_action: z.string(),
   limitations_note: z.string(),
   source_urls: z.array(z.string().url()).max(10),
-  attribution: z.literal("AIDO by SR3H"),
+  attribution: z.literal("Signal"),
   about_url: z.literal("https://sr3h.uk/signal.html")
 }).strict();
 const researchSummarySchema = z.object({
@@ -185,7 +187,7 @@ function technicalPresentation(result, businessName) {
     next_action: result.next_action,
     limitations_note: "Website readiness does not show whether an AI assistant will mention or recommend the business.",
     source_urls: uniqueSources(result.observations.map((item) => item.source_url)),
-    attribution: "AIDO by SR3H",
+    attribution: "Signal",
     about_url: "https://sr3h.uk/signal.html"
   };
 }
@@ -210,7 +212,7 @@ function discoveryPresentation(result) {
     next_action: result.next_actions[0],
     limitations_note: result.limits[0],
     source_urls: uniqueSources(result.source_urls),
-    attribution: "AIDO by SR3H",
+    attribution: "Signal",
     about_url: "https://sr3h.uk/signal.html"
   };
 }
@@ -255,16 +257,17 @@ function conciseResult(result) {
   return `${lead}\nWhat to improve:\n${gaps}\nNext useful step: ${result.next_action}`;
 }
 
-export function createServer(fetchImpl = fetch) {
+export function createServer(fetchImpl = fetch, env = {}, context = {}) {
   const server = new McpServer({
-    name: "AIDO by SR3H",
+    name: "Signal",
     version: SERVICE_VERSION,
     websiteUrl: "https://sr3h.uk"
   }, {
-    instructions: "When a user supplies a public business URL and asks why AI assistants may overlook it, about AI visibility, AEO or GEO, or whether it is ready for AI discovery, use check_ai_presence first. It checks website readiness and does not run AI searches. Never invent optional context: pass location, priority services and target customer only when the user states them in the current conversation. Offer the optional ten-question discovery sample; a direct request already counts as consent. prepare_ai_discovery_research creates the neutral question pack without an OpenAI API call. Research each question separately with host tools, then send only completed observations with cited sources and a concise account of each observed answer to summarise_ai_discovery_research. The result tools supply their own evidence-bound card presentation. Say technical access signals are clear, partial or blocked; never say the business is technically ready for AI discovery. Never claim a fixed ranking, demand or sales impact."
+    instructions: "Signal: Check visibility → Understand evidence → Choose a change → Check again. For independent searches, create_visibility_study saves neutral questions; run_visibility_study starts the background runner. Read get_visibility_study for progress, raw answers and evidence-linked hypotheses. Record only a user-selected intervention and confirmed implementation; rerun the frozen questions and compare_visibility_runs. Keep private study references private. API samples are distinct from consumer ChatGPT. Never infer demand or causation from answer counts. Website-only and within-chat samples remain available through the earlier tools."
   });
   registerSkillImport(server);
   registerAidoReportUi(server);
+  registerVisibilityTools(server, env, fetchImpl, context);
 
   server.registerTool("check_ai_presence", {
     title: "Check public website access for AI",
@@ -469,7 +472,7 @@ export async function handleRequest(request, env = {}, fetchImpl = fetch) {
   if (url.pathname === "/check") return handleWebCheck(request, env, fetchImpl);
   if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }));
   if (url.pathname === "/health" && ["GET", "HEAD"].includes(request.method)) {
-    return cors(new Response(request.method === "HEAD" ? null : JSON.stringify({ ok: true, service: "AIDO by SR3H", version: SERVICE_VERSION }), {
+    return cors(new Response(request.method === "HEAD" ? null : JSON.stringify({ ok: true, service: "Signal", version: SERVICE_VERSION }), {
       headers: { "content-type": "application/json; charset=utf-8" }
     }));
   }

@@ -18,12 +18,12 @@ try {
   if (health.headers.get("x-content-type-options") !== "nosniff") throw new Error("health endpoint is missing nosniff");
   const healthBody = await health.json();
   if (healthBody.ok !== true) throw new Error("health endpoint did not report ok");
-  if (healthBody.version !== "0.11.0") throw new Error(`expected version 0.11.0, received ${healthBody.version || "unknown"}`);
-  if (healthBody.service !== "AIDO by SR3H") throw new Error(`expected service name AIDO by SR3H, received ${healthBody.service || "unknown"}`);
+  if (healthBody.version !== "0.12.0") throw new Error(`expected version 0.12.0, received ${healthBody.version || "unknown"}`);
+  if (healthBody.service !== "Signal") throw new Error(`expected service name Signal, received ${healthBody.service || "unknown"}`);
 
   await client.connect(transport);
   const serverVersion = client.getServerVersion();
-  if (serverVersion?.name !== "AIDO by SR3H") throw new Error(`expected server name AIDO by SR3H, received ${serverVersion?.name || "unknown"}`);
+  if (serverVersion?.name !== "Signal") throw new Error(`expected server name Signal, received ${serverVersion?.name || "unknown"}`);
   const tools = await client.listTools();
   const tool = tools.tools.find((candidate) => candidate.name === "check_ai_presence");
   const prepareTool = tools.tools.find((candidate) => candidate.name === "prepare_ai_discovery_research");
@@ -31,9 +31,9 @@ try {
   if (!tool) throw new Error("check_ai_presence was not advertised");
   if (!prepareTool) throw new Error("prepare_ai_discovery_research was not advertised");
   if (!summaryTool) throw new Error("summarise_ai_discovery_research was not advertised");
-  if (tools.tools.length !== 3) throw new Error(`expected 3 tools, received ${tools.tools.length}`);
-  if (tool._meta?.ui?.resourceUri !== "ui://aido/discoverability-report-v5.html") throw new Error("check tool is missing its AIDO UI resource");
-  if (summaryTool._meta?.ui?.resourceUri !== "ui://aido/discoverability-report-v5.html") throw new Error("summary tool is missing its AIDO UI resource");
+  if (tools.tools.length !== 11) throw new Error(`expected 11 tools, received ${tools.tools.length}`);
+  if (tool._meta?.ui?.resourceUri !== "ui://aido/discoverability-report-v7.html") throw new Error("check tool is missing its Signal UI resource");
+  if (summaryTool._meta?.ui?.resourceUri !== "ui://aido/discoverability-report-v7.html") throw new Error("summary tool is missing its Signal UI resource");
   if (!/never infer/i.test(tool.inputSchema?.properties?.priority_services?.description || "")) throw new Error("check tool does not protect optional context provenance");
   if (!tool.outputSchema) throw new Error("check_ai_presence has no output schema");
   if (tool.annotations?.readOnlyHint !== true || tool.annotations?.openWorldHint !== true || tool.annotations?.destructiveHint !== false) {
@@ -60,9 +60,9 @@ try {
   if (!summary.isError) throw new Error("extended summary accepted an unsupported absence without cited search evidence");
   const resources = await client.listResources();
   const reportResource = resources.resources.find((item) => item.uri === tool._meta.ui.resourceUri);
-  if (!reportResource || reportResource.mimeType !== "text/html;profile=mcp-app") throw new Error("AIDO report UI resource was not advertised correctly");
+  if (!reportResource || reportResource.mimeType !== "text/html;profile=mcp-app") throw new Error("Signal report UI resource was not advertised correctly");
   const reportContents = await client.readResource({ uri: reportResource.uri });
-  if (!reportContents.contents?.[0]?.text?.includes("ui/notifications/tool-result")) throw new Error("AIDO report UI resource was not readable");
+  if (!reportContents.contents?.[0]?.text?.includes("ui/notifications/tool-result")) throw new Error("Signal report UI resource was not readable");
   const rejected = await client.callTool({ name: tool.name, arguments: { website_url: "http://127.0.0.1/private" } });
   if (rejected.isError !== true || !rejected.content?.[0]?.text?.includes("invalid_url")) {
     throw new Error("private-network target was not rejected as expected");

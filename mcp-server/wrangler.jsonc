@@ -42,19 +42,24 @@
       {
         "name": "USAGE_GUARD",
         "class_name": "UsageGuard"
-      }
+      },
+      { "name": "VISIBILITY_STUDIES", "class_name": "VisibilityStudy" }
     ]
   },
   "exports": {
     "UsageGuard": {
       "type": "durable-object",
       "storage": "sqlite"
-    }
+    },
+    "VisibilityStudy": { "type": "durable-object", "storage": "sqlite" }
   },
   "vars": {
     "DAILY_DISCOVERY_LIMIT": "20",
     "DAILY_DISCOVERY_VISITOR_LIMIT": "2",
-    "DAILY_DISCOVERY_TARGET_LIMIT": "2"
+    "DAILY_DISCOVERY_TARGET_LIMIT": "2",
+    "SIGNAL_DAILY_SAMPLE_LIMIT": "80",
+    "SIGNAL_DAILY_VISITOR_LIMIT": "40",
+    "SIGNAL_DAILY_TARGET_LIMIT": "40"
   },
   "observability": {
     "enabled": true,

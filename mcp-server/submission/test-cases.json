@@ -1,6 +1,6 @@
 {
-  "version": "0.11.0",
-  "test_context": "Run positive cases with AIDO by SR3H launched from its app page or attached to the chat. Invocation from an ordinary unconnected chat is controlled by ChatGPT and is not guaranteed.",
+  "version": "0.12.0",
+  "test_context": "Run positive cases with Signal launched from its app page or attached to the chat. Invocation from an ordinary unconnected chat is controlled by ChatGPT and is not guaranteed.",
   "positive": [
     {
       "id": "readiness-direct",

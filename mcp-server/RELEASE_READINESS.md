@@ -4,14 +4,14 @@
 
 The first-party `/check` route performs a read-only technical check of public website signals and, when configured, a six-question API-backed understanding and search sample.
 
-The MCP route is separate. `check_ai_presence` inspects the public site without calling an AI model. Version 0.11 deterministically prepares an optional ten-question workflow without an OpenAI API call, then summarises evidence collected with research tools available in the user's ChatGPT session. The readiness and summary tools build their own result cards from verified output. The MCP does not claim control of ChatGPT's web-search availability or usage limits. Every completed observation requires a concise answer record and dated source evidence, and a mention or recommendation also requires evidence from the target business itself.
+The MCP is Signal. Version 0.12 adds saved studies and a background runner for independent GPT API web searches, evidence-linked hypotheses and interventions, recorded implemented changes and matched reassessment. Neutral captures contain only the question and fixed settings; target context enters after the raw answer is saved. The three earlier website/within-chat tools remain compatible and make no SR3H API calls. Results are dated samples, not consumer ChatGPT rankings or causal proof.
 
 ## Required evidence before review submission
 
 - Stable public HTTPS endpoint owned by SR3H: `https://mcp.sr3h.uk/mcp`.
 - Health, initialization, tool listing and representative tool calls verified remotely.
 - Input and output schemas scanned successfully in the OpenAI submission portal.
-- Accurate read-only, non-destructive and open-world annotations.
+- Accurate per-tool read/write, destructive and open-world annotations.
 - Rate limiting, bounded fetches, redirect validation, private-address rejection and production failure logging verified.
 - Website-form OpenAI requests use `store: false` and strict, bounded output schemas. Each of its six isolated question checks is restricted to one required web-search call; provider failure leaves the technical check usable.
 - Public support, privacy and terms URLs matching the verified publisher:
@@ -38,7 +38,18 @@ The MCP route is separate. `check_ai_presence` inspects the public site without 
 
 These are preparation materials, not evidence that OpenAI review has been requested or passed.
 
-## Current version status
+## Current version status — 8 October 2026
+
+- **Production: Signal `0.12.0`.** Worker version `6c0ecfb7-d015-45e7-8f58-4f7342372a31` at the existing endpoint. The new VisibilityStudy Durable Object is deployed.
+- All 75 automated tests and syntax checks pass. Tests cover neutral capture, real storage contracts, evidence validation, quotas, failed captures, identity ambiguity, explicit recovery, model drift, cancellation/deletion and immutable baseline comparisons.
+- Remote MCP verification passes: server name/version, 11 tools, responsive `ui://aido/discoverability-report-v7.html` card, sourced technical audit, unsupported-summary rejection and private-network rejection.
+- The existing ChatGPT App `asdk_app_6aa43468438c8191b6274063a55c0033` retains its identity and permissions. Safari shows the name Signal, updated description and 11 imported actions (six Write, five Read).
+- Real provider smoke captures succeeded with dated raw answers, citations and the pinned `gpt-5.4-mini-2026-03-17` model. An initial branded result identified a same-name business on another domain; the final protocol rejects unverifiable identity rather than counting a false positive. A focused two-question final study verifies the publication/reassessment path separately.
+- The mobile and desktop comparison card was rendered at 390 and 1100 pixels with no page errors or document overflow. The local fixture checks layout only.
+- Saved references control access, rather than account authentication. Public privacy, terms and support pages describe storage, deletion, API use, allowance and comparison limits.
+- This updates the existing development connection; OpenAI directory submission has not been requested.
+
+## Historical version 0.11 status
 
 - **Production: `0.11.0`.** Deployed on 12 September 2026 as Worker version `55045cb0-0ed2-4cc3-a929-7b1a90a73252` from commit `1a231b5`. Remote MCP, ten-question planner and skill-integrity checks pass. The customer-facing app, MCP server and result card are named **AIDO by SR3H**.
 - The MCP has three tools. The readiness and sourced-summary tools attach server-generated component data; question preparation remains text and structured data only. It makes no SR3H OpenAI API calls.

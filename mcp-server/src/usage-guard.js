@@ -5,11 +5,11 @@ function boundedLimit(value, fallback, maximum) {
   return Number.isFinite(parsed) && parsed > 0 ? Math.min(parsed, maximum) : fallback;
 }
 
-function limitsFromEnv(env = {}) {
+function limitsFromEnv(env = {}, maximum = 20) {
   return {
     global: boundedLimit(env.DAILY_DISCOVERY_LIMIT, DEFAULT_LIMITS.global, 500),
-    visitor: boundedLimit(env.DAILY_DISCOVERY_VISITOR_LIMIT, DEFAULT_LIMITS.visitor, 20),
-    target: boundedLimit(env.DAILY_DISCOVERY_TARGET_LIMIT, DEFAULT_LIMITS.target, 20)
+    visitor: boundedLimit(env.DAILY_DISCOVERY_VISITOR_LIMIT, DEFAULT_LIMITS.visitor, maximum),
+    target: boundedLimit(env.DAILY_DISCOVERY_TARGET_LIMIT, DEFAULT_LIMITS.target, maximum)
   };
 }
 
@@ -37,7 +37,11 @@ export class UsageGuard {
     const day = /^\d{4}-\d{2}-\d{2}$/.test(body?.day || "") ? body.day : new Date().toISOString().slice(0, 10);
     const visitor = cleanKey(body?.visitor, "unknown");
     const target = cleanKey(body?.target, "invalid-target");
-    const limits = limitsFromEnv(this.env);
+    const limits = body.bucket === 'signal' ? limitsFromEnv({
+      DAILY_DISCOVERY_LIMIT: this.env.SIGNAL_DAILY_SAMPLE_LIMIT || '80',
+      DAILY_DISCOVERY_VISITOR_LIMIT: this.env.SIGNAL_DAILY_VISITOR_LIMIT || '40',
+      DAILY_DISCOVERY_TARGET_LIMIT: this.env.SIGNAL_DAILY_TARGET_LIMIT || '40'
+    }, 80) : limitsFromEnv(this.env);
     const stored = await this.ctx.storage.get("daily-usage");
     const usage = stored?.day === day
       ? stored
@@ -84,7 +88,7 @@ export async function usageContext(request, env = {}) {
 export async function reserveDiscoveryUsage(env, target, context = {}) {
   if (!env.USAGE_GUARD) return { allowed: false, reason: 'quota_unavailable' };
   try {
-    const id = env.USAGE_GUARD.idFromName("aido-discovery-budget");
+    const id = env.USAGE_GUARD.idFromName(context.bucket === "signal" ? "signal-research-budget" : "aido-discovery-budget");
     const stub = env.USAGE_GUARD.get(id);
     const response = await stub.fetch("https://usage-guard.internal/reserve", {
       method: "POST",
@@ -92,7 +96,8 @@ export async function reserveDiscoveryUsage(env, target, context = {}) {
       body: JSON.stringify({
         day: new Date().toISOString().slice(0, 10),
         visitor: context.visitor || "unknown",
-        target
+        target,
+        bucket: context.bucket === "signal" ? "signal" : "website"
       })
     });
     if (!response.ok) return { allowed: false, reason: "quota_unavailable" };

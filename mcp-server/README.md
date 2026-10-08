@@ -1,71 +1,46 @@
-# AIDO by SR3H
+# Signal
 
-AIDO is the product. This repository contains two deliberately separate routes. The SR3H website checker inspects public-site evidence and, when configured, uses SR3H's OpenAI API project for a bounded six-question search sample. The MCP inspects the public site, prepares a ten-question pack and summarises sourced observations without calling the OpenAI API. In ChatGPT, the optional searches use research tools available in the user's own session.
+Signal is a ChatGPT plugin for a complete visibility research cycle: check visibility, understand evidence, choose a change, and check again. Its existing Cloudflare Worker and MCP endpoint are preserved at `https://mcp.sr3h.uk/mcp`.
 
-The checker is not a standalone autonomous agent. ChatGPT supplies the conversational intelligence, chooses when to call the MCP tool and explains the structured result to the user.
+Version 0.12.0 adds saved studies, an automatic Durable Object runner, fresh GPT API web searches, separate answer assessment, evidence-linked reasons and intervention suggestions, immutable implementation records and matched before-and-after comparisons. Deployment and host-refresh evidence are recorded separately in RELEASE_READINESS.md.
 
-The only required input is the public website URL. Optional business name, location or service area, priority products or services, and target-customer context make the questions more relevant. They are treated as supplied context, not as verified facts or proof of demand.
+## Customer flow
 
-## Version status
+The user supplies a public business website and a confirmed service. Signal freezes ten questions and three repeats by default; a focused study can use two to ten custom questions and one to three repeats. Branded diagnostics remain separate from unbranded customer questions.
 
-- Version `0.11.0` is deployed and remotely verified. The private ChatGPT app and MCP are named **AIDO by SR3H**. Refresh imported tools and skills before testing the updated ChatGPT experience.
-- The public health endpoint is `https://mcp.sr3h.uk/health` and the MCP endpoint is `https://mcp.sr3h.uk/mcp`.
-- The website form's technical check remains available if its optional paid discovery layer is unavailable.
-- The MCP tools do not use the SR3H OpenAI API key.
+The background runner captures each raw answer with sources, citations, actual model, request time and usage. The neutral capture receives only the question and frozen settings, with API storage disabled and no personal history or target briefing. A separate request introduces the target to classify the already saved answer. Missing searches, incomplete answers, unsupported classifications and interrupted captures remain explicit failures, not negative visibility results. Interrupted requests are never silently replayed.
 
-See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the evidence boundary and remaining release checks.
-
-## Endpoints
-
-- `GET https://mcp.sr3h.uk/health` — deployment health.
-- `POST https://mcp.sr3h.uk/check` — first-party SR3H website checker, including its separately limited API-backed sample when available.
-- `POST https://mcp.sr3h.uk/mcp` — stateless Streamable HTTP MCP endpoint.
+The findings distinguish checked website gaps from hypotheses explaining non-appearance. Each suggested change links to saved evidence and the frozen questions to retest. The user chooses a change and confirms its implementation date and evidence. Signal retains the baseline and reruns the same questions. Comparison checks actual model identity and matched coverage, reports mentions and recommendations separately, and preserves increases, decreases, mixed results and no clear change. Missing pairs or model drift make the conclusion inconclusive. It does not prove statistical significance, causation, demand or consumer ChatGPT visibility.
 
 ## MCP tools
 
-- `check_ai_presence` inspects public website evidence. It runs no model or AI search.
-- `prepare_ai_discovery_research` deterministically prepares ten tailored questions after the user explicitly opts in. It runs no model or search.
-- `summarise_ai_discovery_research` converts one to ten sourced observations into exact counts, gaps and practical next actions. Every completed observation needs a concise answer record and dated source evidence; a claimed mention or recommendation must also cite the target business itself.
+- `create_visibility_study`: check the public site and save the frozen plan; no GPT searches.
+- `run_visibility_study`: start an idempotent baseline or reassessment in the background.
+- `get_visibility_study`: read progress, findings and paginated raw evidence without new API calls.
+- `record_visibility_intervention`: record a chosen proposal or confirmed implementation; does not change the website.
+- `compare_visibility_runs`: compare saved, matched before-and-after results without new API calls.
+- `retry_visibility_run`: explicitly recover failed answers or analysis while retaining prior evidence and failure history.
+- `cancel_visibility_run`: stop a requested run and retain completed evidence.
+- `delete_visibility_study`: delete a study and its evidence only at the user's explicit request.
 
-The check and summary tools each attach the same compact component directly, using presentation fields generated by the server from the verified result. This removes a second model-authored rendering call. All three tools remain useful in clients that do not support the card. The component is self-contained, loads no external assets, makes no network requests and treats tool output as untrusted text.
+The three existing technical/within-chat tools remain compatible: `check_ai_presence`, `prepare_ai_discovery_research` and `summarise_ai_discovery_research`. Those tools still make no SR3H OpenAI API calls. They are distinct from the saved isolated research path.
 
-The extended workflow deliberately separates question preparation, ChatGPT-session research and evidence reporting. If the connected ChatGPT client provides web search, it can search each question independently. The MCP cannot force that host tool to run or guarantee its usage accounting. If browsing is unavailable, the client must say so and must not fabricate observations. AIDO never asks for the user's OpenAI API key.
+## Storage and access
 
-The packaged workflow skill is at `skills/aido-discoverability-check/`. The MCP advertises the standard skills extension and exposes the skill files as digest-verified MCP resources, so ChatGPT's **Scan Tools** flow can import it directly. Refresh or scan again after material skill changes because imported skills are snapshots.
+The Worker uses the existing encrypted `OPENAI_API_KEY` and `ABUSE_HASH_SECRET` secrets. `VISIBILITY_STUDIES` stores one Durable Object per cryptographically random 256-bit private reference. Raw answers use separate storage records to stay below individual value limits. No study list is exposed. Anyone holding a reference can access its study; this is capability access, not an authenticated user account. Keep references in the private chat and out of public reports, URLs and logs. The user can delete stored records. In-flight results cannot recreate a deleted study. Up to eight runs and ten implementation records are retained per study.
 
-## Local verification
+The isolated runner has a separate persistent allowance from the website form: at most 80 sample/analysis reservations per UTC day globally, 40 per hashed visitor and 40 per target website. A sample allows one capture and one assessment; run analysis also reserves allowance. Settings are configurable through the SIGNAL_DAILY_* Worker variables. These are bounded service allowances, not monetary billing caps. Failed calls can incur usage; no automatic provider retry is made.
+
+The existing website form retains its independent six-question sample, quota and 24-hour result cache. Saved study reruns never use that cache.
+
+## Verification and deployment
 
 ```sh
-npm install
 npm run check
 npm test
-npm run dev
+npm run deploy
+npm run verify:remote -- https://mcp.sr3h.uk/mcp https://sr3h.uk
+npm run verify:skill:remote -- https://mcp.sr3h.uk/mcp
 ```
 
-Verify a deployed endpoint with the same SDK client used by MCP consumers:
-
-```sh
-npm run verify:remote -- https://your-worker.example/mcp https://sr3h.uk
-npm run verify:skill:remote -- https://your-worker.example/mcp
-npm run verify:extended:remote -- https://your-worker.example/mcp https://example.com "Example Business" "priority service" "United Kingdom"
-```
-
-The first-party website checker uses separate Cloudflare burst limits for technical checks and paid discovery samples, plus a persistent daily allowance for the paid layer: 20 samples in total, no more than two per visitor and two per target website per UTC day. Once an allowance is reached, the technical check remains available but no paid model call is made. A completed website sample plans six relevant questions, then runs six isolated web searches: one branded and five unbranded. Each search is limited to one web-search tool call and a short structured response. OpenAI API storage is disabled. Completed website-check results may be cached for 24 hours to avoid paying for the same check repeatedly.
-
-MCP requests have a 64 KB limit and bounded website fetches. The MCP tools do not read the Worker OpenAI secret, call the OpenAI API or run web searches. Submitted page contents and raw visitor IP addresses are not written to an application database.
-
-Set the OpenAI secret without committing it:
-
-```sh
-npx wrangler secret put OPENAI_API_KEY
-```
-
-Without that secret, the first-party website form still completes its deterministic technical check and marks its live discovery sample unavailable. The MCP workflow is unaffected. Production stores the value only as an encrypted Cloudflare Worker secret; it is not present in this repository or browser code.
-
-Public information: [support](https://sr3h.uk/ai-presence-support.html), [privacy](https://sr3h.uk/ai-presence-privacy.html), and [terms](https://sr3h.uk/ai-presence-terms.html).
-
-## Deployment and review boundary
-
-Cloudflare Workers hosts the public HTTPS service at `mcp.sr3h.uk`. Cloudflare was chosen because SR3H already uses its domain infrastructure and because Workers provides the custom HTTPS route, edge execution, rate limiting, persistent quota storage and observability used by this service. MCP does not require Cloudflare; another production host could be used if it provided the same security, reliability and operational controls.
-
-Deploying the Worker makes the MCP endpoint reachable. It does not publish the plugin in ChatGPT. Review submission remains a later, explicit step after deployed testing, privacy and support documentation, publisher verification and final approval of the tool behaviour.
+The UI card is self-contained, responsive and safe for returned text. The skill retains its existing internal identity and digest-verified resources; its human-visible name and workflow are Signal. Refresh imported tools and skills in the existing ChatGPT connection after deployment. Server publication does not itself prove the host imported the update or that an intervention improved a customer's visibility. Public directory submission remains a separate explicit action.

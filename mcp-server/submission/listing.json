@@ -1,8 +1,8 @@
 {
-  "name": "AIDO by SR3H",
+  "name": "Signal",
   "publisher": "SR3H LTD",
-  "short_description": "Find why AI may overlook a business, check website readiness and test customer questions with cited evidence.",
-  "long_description": "AIDO gives businesses an evidence-based view of AI discoverability. It first checks whether a public website is accessible and clearly explains the business, its services and relevant evidence. With the user's agreement, it can prepare ten realistic customer questions for ChatGPT to research separately, then distinguish whether the business was absent, cited, mentioned or recommended. Results use dated sources, exact counts and practical next steps. AIDO does not claim a permanent AI ranking, customer demand or sales impact.",
+  "short_description": "Check AI visibility, understand weaknesses, choose a change and measure what happens next.",
+  "long_description": "Signal runs fresh GPT web-search tests to investigate how a public business appears for real customer questions. It saves raw answers and sources, separates name searches from neutral discovery, distinguishes observed gaps from possible explanations, and suggests specific interventions grounded in the evidence. Record a chosen change, repeat the same questions and compare mentions and recommendations before and after. Results show observed improvement, deterioration, mixed results or no clear change; they do not promise a permanent ranking or establish causal, demand or sales effects. Saved studies use private references; anyone with a reference can access that study.",
   "category_preference": "Business",
   "website_url": "https://sr3h.uk/signal.html",
   "support_url": "https://sr3h.uk/ai-presence-support.html",
@@ -10,11 +10,13 @@
   "terms_url": "https://sr3h.uk/ai-presence-terms.html",
   "mcp_url": "https://mcp.sr3h.uk/mcp",
   "authentication": "None",
-  "availability": ["United Kingdom"],
+  "availability": [
+    "United Kingdom"
+  ],
   "logo_path": "../../assets/projects/aido-demand-intelligence.png",
   "starter_prompts": [
-    "Check whether my business website is ready for AI discovery.",
-    "Why might AI assistants be overlooking my business?",
-    "Test ten customer questions to see when my business appears."
+    "Check how my business appears for customer questions.",
+    "Why might my business not be surfacing, and what change should I test?",
+    "Repeat my saved questions and compare visibility after the change."
   ]
 }

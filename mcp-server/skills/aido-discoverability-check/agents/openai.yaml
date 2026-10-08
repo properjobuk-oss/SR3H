@@ -1,13 +1,13 @@
 interface:
-  display_name: "AIDO by SR3H"
-  short_description: "Find why AI may overlook a business and test its discoverability"
+  display_name: "Signal"
+  short_description: "Check visibility, investigate weaknesses and compare changes"
   default_prompt: "Check my website's AI discoverability, then offer the sourced ten-question sample."
 
 dependencies:
   tools:
     - type: "mcp"
       value: "aido-discoverability-check"
-      description: "Read-only public website evidence and AIDO research analysis"
+      description: "Public website evidence and saved Signal visibility studies"
       transport: "streamable_http"
       url: "https://mcp.sr3h.uk/mcp"
 
