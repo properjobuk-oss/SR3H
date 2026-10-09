@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { captureRequest, captureVisibility, analyseVisibility, validateAssessment, VISIBILITY_PROTOCOL } from '../src/visibility-model.js';
 import { validateQuestions } from '../src/visibility-tools.js';
 import { UsageGuard, reserveDiscoveryUsage } from '../src/usage-guard.js';
+import { PROFILE_IDENTITY_RULE } from '../src/visibility-evidence.js';
 
 function memoryContext() {
   const map = new Map();
@@ -46,9 +47,10 @@ function fixture(options = {}) {
       if (options.captureFailure) return Response.json({ error: 'provider error with sensitive detail' }, { status: 503 });
       const named = body.input.includes('Test Co') || improved;
       const answer = named ? 'Test Co is worth considering for test services.' : 'Other Co offers test services.';
+      const source = options.captureSource || (named ? 'https://test.example/' : 'https://other.example/');
       return Response.json({ id: 'captured-response', status: 'completed', model: options.model || 'gpt-5.4-mini-2026-03-17',
-        output: [ { type: 'web_search_call', status: 'completed', action: { sources: [{ url: named ? 'https://test.example/' : 'https://other.example/' }] } },
-          { type: 'message', content: [{ type: 'output_text', text: answer, annotations: [{ type: 'url_citation', url: named ? 'https://test.example/' : 'https://other.example/' }] }] } ] });
+        output: [ { type: 'web_search_call', status: 'completed', action: { sources: [{ url: source }] } },
+          { type: 'message', content: [{ type: 'output_text', text: answer, annotations: [{ type: 'url_citation', url: source }] }] } ] });
     }
     if (body.text.format.name === 'signal_saved_answer_assessment') {
       const input = JSON.parse(body.input);
@@ -131,6 +133,8 @@ test('provider failures remain failures, never zero-visibility evidence', async 
   await f.invoke('create', studyInput(1)); await f.invoke('start', { phase: 'baseline', request_key: 'first' });
   const result = await f.complete();
   assert.equal(result.status, 'partial'); assert.equal(result.counts.failed, 2); assert.equal(result.counts.unbranded.checked, 0);
+  assert.equal(result.counts.captured, 0); assert.equal(result.counts.capture_failed, 2); assert.equal(result.counts.assessment_failed, 0);
+  assert.equal(result.sample_index[0].capture_status, 'failed'); assert.equal(result.sample_index[0].assessment_status, 'pending');
   assert.equal(result.analysis.status, 'unavailable');
   assert.equal(f.calls.some(call => call.text), false);
   assert.equal(JSON.stringify(result).includes('sensitive detail'), false);
@@ -268,6 +272,9 @@ test('reasoning retains failed raw answers and site context without changing cap
   const result = await f.complete();
   assert.equal(result.counts.completed, 0);
   assert.equal(result.counts.failed, 2);
+  assert.equal(result.counts.captured, 2); assert.equal(result.counts.capture_failed, 0); assert.equal(result.counts.assessment_failed, 2);
+  assert.equal(result.counts.identity_unverified, 0);
+  assert.equal(result.sample_index[0].capture_status, 'complete'); assert.equal(result.sample_index[0].assessment_status, 'failed');
   assert.equal(result.counts.unbranded.checked, 0);
   assert.equal(result.analysis.status, 'complete');
   const reasoning = f.calls.find(call => call.text?.format.name === 'signal_visibility_findings');
@@ -277,6 +284,21 @@ test('reasoning retains failed raw answers and site context without changing cap
   assert.equal(supplied.site_context.pages[0].text, input.audit._analysis_context.pages[0].text);
   assert.equal('_analysis_context' in supplied.audit, false);
   for (const capture of f.calls.filter(call => call.tools)) assert.doesNotMatch(JSON.stringify(capture), /Approved public profile|site_context/);
+});
+
+test('unverified target evidence stays distinct from failed capture and valid absence', async () => {
+  const f = fixture({ captureSource: 'https://other.example/' });
+  await f.invoke('create', studyInput(1)); await f.invoke('start', { phase: 'baseline', request_key: 'first' });
+  const result = await f.complete();
+  assert.equal(result.counts.captured, 2); assert.equal(result.counts.capture_failed, 0);
+  assert.equal(result.counts.assessment_failed, 1); assert.equal(result.counts.identity_unverified, 1);
+  assert.equal(result.sample_index[0].capture_status, 'complete'); assert.equal(result.sample_index[0].assessment_status, 'unverified');
+  assert.equal(result.counts.branded.checked, 0); assert.equal(result.counts.branded.not_seen, 0);
+  assert.equal(result.counts.unbranded.checked, 1); assert.equal(result.counts.unbranded.not_seen, 1);
+  const report = (await toolHarness(f.runner, autoStartWebsite)('get_visibility_study', { study_id: 'a'.repeat(64) })).structuredContent.presentation;
+  assert.equal(report.metrics.find(metric => metric.label === 'AI answers saved').value, '2 / 2');
+  assert.match(report.highlights.join(' '), /saved answer\(s\) could not be validated/);
+  assert.doesNotMatch(report.highlights.join(' '), /AI search answer\(s\) could not be saved/);
 });
 
 test('analysis recovery refreshes reasoning context while preserving original audit and raw captures', async () => {
@@ -525,4 +547,28 @@ test('profile study creation requires explicit questions and refuses redirects t
     { id: 'q2', kind: 'category', question: 'Who offers independent product engineering?' }
   ] })).isError, true);
   assert.equal(f.ctx.map.size, 0);
+});
+
+test('new profile studies freeze the profile-card identity rule before any searches', async () => {
+  const f = fixture(), website = 'https://mylegend.id/people/danny-griffin';
+  const call = toolHarness(f.runner, async url => String(url) === website
+    ? new Response(`<html><head><title>Danny Griffin</title><link rel="canonical" href="${website}"></head><body><h1>Danny Griffin</h1>Approved public profile.</body></html>`, { headers: { 'content-type': 'text/html' } })
+    : new Response('missing', { status: 404 }));
+  const created = await call('create_visibility_study', { target_type: 'profile', website_url: website,
+    business_name: 'Danny Griffin', priority_services: ['Public professional profile'], questions: [
+      { id: 'q1', kind: 'branded', question: 'What does Danny Griffin do professionally?' },
+      { id: 'q2', kind: 'category', question: 'Who offers independent product engineering?' }
+    ] });
+  assert.notEqual(created.isError, true);
+  assert.equal(created.structuredContent.conditions.identity_rule, PROFILE_IDENTITY_RULE);
+  assert.equal(f.calls.length, 0);
+});
+
+test('different frozen identity rules prevent a before-and-after improvement claim', () => {
+  const sample = { question_id: 'q2', kind: 'category', repetition: 1, status: 'complete',
+    capture: { model: 'same-model' }, assessment: { assessor_model: 'same-assessor', appearance: 'not_seen' } };
+  const before = { id: 'before', total: 1, conditions: { identity_rule: 'exact-profile-url-1' } };
+  const after = { id: 'after', total: 1, conditions: { identity_rule: PROFILE_IDENTITY_RULE } };
+  const comparison = compareVisibility(studyInput(), before, after, [sample], [{ ...sample, assessment: { ...sample.assessment, appearance: 'mentioned' } }]);
+  assert.equal(comparison.comparable, false); assert.equal(comparison.outcome, 'inconclusive');
 });

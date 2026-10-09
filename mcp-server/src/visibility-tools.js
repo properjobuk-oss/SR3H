@@ -4,7 +4,7 @@ import { prepareExtendedResearch, RESEARCH_KINDS } from './extended-research.js'
 import { newStudyReference, studyRequest } from './visibility-study.js';
 import { DEFAULT_VISIBILITY_MODEL, VISIBILITY_PROTOCOL } from './visibility-model.js';
 import { AIDO_REPORT_URI } from './aido-report-ui.js';
-import { checkPublicWording, isTargetSource } from './visibility-evidence.js';
+import { checkPublicWording, isTargetSource, PROFILE_IDENTITY_RULE } from './visibility-evidence.js';
 
 const reference = z.string().regex(/^[a-f0-9]{64}$/).describe('Private study reference returned by create_visibility_study. Use only the reference belonging to this user’s study; never expose it in public reports.');
 const runId = z.string().uuid();
@@ -67,7 +67,10 @@ function presentation(result) {
     highlights: result.start_error ? [errorMessages[result.start_error] || 'The runner could not be started. The study and questions are saved.'] : compared ? [compared.comparable ? 'The saved model and test settings match.' : 'The model or test settings changed.',
       compared.complete_coverage ? 'Every planned answer has a comparable result.' : `${compared.missing_or_failed_pairs} answer pairs are missing or failed.`,
       ...(compared.repeat_evidence ? [repeatSummary(compared.repeat_evidence)] : []),
-      ...(compared.implementation_check ? [implementationSummary(compared.implementation_check)] : [])] : [...(counts.failed ? [`${counts.failed} answer(s) failed or could not be validated. They do not count as absences.`] : []), ...(recordedCheck ? [implementationSummary(recordedCheck)] : []), ...(analysisNotice ? [analysisNotice] : []), ...reasons.slice(0, 3).map(item => `${item.status === 'hypothesis' ? 'Possible reason: ' : ''}${item.reason}`)],
+      ...(compared.implementation_check ? [implementationSummary(compared.implementation_check)] : [])] : [
+        ...(counts.capture_failed ? [`${counts.capture_failed} AI search answer(s) could not be saved.`] : []),
+        ...(counts.assessment_failed ? [`${counts.assessment_failed} saved answer(s) could not be validated${counts.identity_unverified ? `; ${counts.identity_unverified} have unverified target identity or conflicting visibility evidence` : ''}. They do not count as absences.`] : []),
+        ...(recordedCheck ? [implementationSummary(recordedCheck)] : []), ...(analysisNotice ? [analysisNotice] : []), ...reasons.slice(0, 3).map(item => `${item.status === 'hypothesis' ? 'Possible reason: ' : ''}${item.reason}`)],
     gaps: interventions.slice(0, 3).map(item => item.title),
     next_action: result.start_error ? 'Retain this study reference. Read get_visibility_study before retrying run_visibility_study with request_key baseline; do not create a replacement study.'
       : result.status === 'ready' ? 'Start the first visibility check.' : active ? 'The runner is working. Read get_visibility_study with this private study reference until the saved answers complete; do not start another study.'
@@ -164,7 +167,7 @@ export function registerVisibilityTools(server, env = {}, fetchImpl = fetch, con
       conditions: { protocol: VISIBILITY_PROTOCOL, model: env.OPENAI_VISIBILITY_MODEL || env.OPENAI_DISCOVERY_MODEL || DEFAULT_VISIBILITY_MODEL,
         repetitions: input.repetitions, location: input.search_location || null, max_tool_calls: 2, personal_context_supplied: false,
         capture_instructions_version: VISIBILITY_PROTOCOL, surface: 'gpt_api_web_search',
-        ...(input.target_type === 'profile' ? { identity_rule: 'exact-profile-url-1' } : {}) } });
+        ...(input.target_type === 'profile' ? { identity_rule: PROFILE_IDENTITY_RULE } : {}) } });
     if (!input.start_now) return { ...result, study_id };
     try {
       const started = await studyRequest(env, study_id, 'start', { phase: 'baseline', request_key: 'baseline', run_audit: audit });

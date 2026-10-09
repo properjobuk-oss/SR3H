@@ -29,6 +29,16 @@ function failureCode(error) {
   return error?.name === 'AbortError' ? 'provider_timeout' : known.includes(error?.message) ? error.message : 'provider_or_evidence_error';
 }
 
+const identityErrors = new Set(['unsupported_appearance', 'unsupported_source', 'unsupported_absence', 'identity_unverified']);
+function sampleProgress(sample) {
+  return {
+    capture_status: sample.capture ? 'complete' : sample.status === 'failed' ? 'failed' : sample.status,
+    assessment_status: sample.assessment ? 'complete' : sample.capture && sample.status === 'failed'
+      ? identityErrors.has(sample.error) ? 'unverified' : 'failed'
+      : sample.capture && sample.status === 'running' ? 'running' : 'pending'
+  };
+}
+
 function counts(samples) {
   const complete = samples.filter(sample => sample.status === 'complete');
   const forKind = branded => {
@@ -38,7 +48,11 @@ function counts(samples) {
       source_only: selected.filter(sample => sample.assessment.appearance === 'source_only').length,
       not_seen: selected.filter(sample => sample.assessment.appearance === 'not_seen').length };
   };
-  return { captured: samples.filter(sample => sample.capture).length, completed: complete.length, failed: samples.filter(sample => sample.status === 'failed').length,
+  const failed = samples.filter(sample => sample.status === 'failed');
+  return { captured: samples.filter(sample => sample.capture).length, completed: complete.length, failed: failed.length,
+    capture_failed: failed.filter(sample => !sample.capture).length,
+    assessment_failed: failed.filter(sample => sample.capture).length,
+    identity_unverified: failed.filter(sample => sample.capture && identityErrors.has(sample.error)).length,
     pending: samples.filter(sample => ['pending', 'running'].includes(sample.status)).length,
     branded: forKind(true), unbranded: forKind(false) };
 }
@@ -257,7 +271,7 @@ export class VisibilityStudy {
       public_context: study.public_context, audit,
       status: run?.status || 'ready', run: run || null, runs: study.runs, counts: summary,
       sample_index: samples.map(sample => ({ id: sample.id, question_id: sample.question_id, repetition: sample.repetition,
-        status: sample.status, appearance: sample.assessment?.appearance || null, error: sample.error || null })),
+        status: sample.status, ...sampleProgress(sample), appearance: sample.assessment?.appearance || null, error: sample.error || null })),
       samples: data.include_samples ? samples.slice(offset, offset + limit) : [],
       next_offset: data.include_samples && offset + limit < samples.length ? offset + limit : null,
       analysis: run ? await this.ctx.storage.get(`analysis:${run.id}`) || null : null,
