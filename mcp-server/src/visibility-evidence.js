@@ -2,8 +2,9 @@ import { safeFetch } from './audit.js';
 import { validatePublicUrl } from './url-safety.js';
 
 export const compactText = value => String(value || '').replace(/\s+/g, ' ').trim();
+export const PROFILE_IDENTITY_RULE = 'exact-profile-url-2';
 
-export function isTargetSource(value, website, targetType = 'business') {
+export function isTargetSource(value, website, targetType = 'business', identityRule = 'exact-profile-url-1') {
   try {
     const source = validatePublicUrl(value), target = validatePublicUrl(website);
     const host = url => url.hostname.replace(/^www\./, '').toLowerCase();
@@ -14,7 +15,20 @@ export function isTargetSource(value, website, targetType = 'business') {
       copy.searchParams.sort();
       return `${host(copy)}:${copy.port}${copy.pathname.replace(/\/$/, '')}${copy.search}`;
     };
-    return identity(source) === identity(target);
+    if (identity(source) === identity(target)) return true;
+    // MyLegend publishes the same approved person at a profile and its rich-card
+    // route. Accept only that known pair, never arbitrary child pages or people.
+    // Saved studies using the first identity rule keep their original URL scope.
+    if (identityRule !== PROFILE_IDENTITY_RULE || host(source) !== 'mylegend.id' || host(target) !== 'mylegend.id') return false;
+    const profile = url => {
+      const copy = new URL(url);
+      const path = copy.pathname.replace(/\/$/, '');
+      if (!/^\/people\/[a-z0-9-]+(?:\/card)?$/.test(path)) return null;
+      copy.pathname = path.replace(/\/card$/, '');
+      return identity(copy);
+    };
+    const targetProfile = profile(target);
+    return targetProfile !== null && profile(source) === targetProfile;
   } catch { return false; }
 }
 

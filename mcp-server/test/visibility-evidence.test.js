@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { checkPublicWording, isTargetSource, summariseRepeatEvidence } from '../src/visibility-evidence.js';
+import { checkPublicWording, isTargetSource, summariseRepeatEvidence, PROFILE_IDENTITY_RULE } from '../src/visibility-evidence.js';
 import { assessVisibility, validateAssessment, captureRequest } from '../src/visibility-model.js';
 
 const profile = 'https://mylegend.id/p/danny';
@@ -22,6 +22,39 @@ test('a same-name person or shared platform cannot establish profile visibility'
   assert.throws(() => validateAssessment(assessment('recommended', quote, other), captured(quote, [other]), 'Danny Griffin', profile, 'profile'), /identity_unverified/);
   assert.throws(() => validateAssessment(assessment('recommended', quote, other), captured(quote, [profile, other]), 'Danny Griffin', profile, 'profile'), /identity_unverified/);
   assert.throws(() => validateAssessment(assessment('source_only', '', 'https://mylegend.id/'), captured('Profile platforms are available.', ['https://mylegend.id/']), 'Danny Griffin', profile, 'profile'), /unsupported_source/);
+});
+
+test('the new identity rule accepts only a MyLegend person profile and its own card', () => {
+  const person = 'https://mylegend.id/people/danny-griffin';
+  const card = `${person}/card`;
+  assert.equal(isTargetSource(card, person, 'profile'), false);
+  assert.equal(isTargetSource(`${card}/?utm_source=chat#work`, person, 'profile', PROFILE_IDENTITY_RULE), true);
+  assert.equal(isTargetSource(person, card, 'profile', PROFILE_IDENTITY_RULE), true);
+  for (const source of ['https://mylegend.id/people/morgan/card', `${person}/messages`, `${person}/card/embed`,
+    `${card}?id=other`, 'https://other.mylegend.id/people/danny-griffin/card']) {
+    assert.equal(isTargetSource(source, person, 'profile', PROFILE_IDENTITY_RULE), false);
+  }
+  assert.equal(isTargetSource('https://unrelated.example/people/danny-griffin/card', 'https://unrelated.example/people/danny-griffin', 'profile', PROFILE_IDENTITY_RULE), false);
+  const quote = 'Danny Griffin is a product designer.';
+  assert.equal(validateAssessment(assessment('mentioned', quote, card), captured(quote, [card]), 'Danny Griffin', person, 'profile', PROFILE_IDENTITY_RULE).appearance, 'mentioned');
+  assert.throws(() => validateAssessment(assessment('mentioned', quote, card), captured(quote, [card]), 'Danny Griffin', person, 'profile'), /identity_unverified/);
+});
+
+test('profile card assessment honors the frozen identity rule without changing the search', async () => {
+  const person = 'https://mylegend.id/people/danny-griffin', card = `${person}/card`;
+  const quote = 'Danny Griffin is a product designer.';
+  const capture = captured(quote, [card]);
+  const study = { target_type: 'profile', business: 'Danny Griffin', website_url: person, conditions: { model: 'test', identity_rule: PROFILE_IDENTITY_RULE } };
+  let request;
+  const fetchImpl = async (_, init) => {
+    request = JSON.parse(init.body);
+    return Response.json({ status: 'completed', model: 'test', output: [{ type: 'message', content: [{ type: 'output_text', text: JSON.stringify(assessment('mentioned', quote, card)) }] }] });
+  };
+  assert.equal((await assessVisibility(capture, study, { OPENAI_API_KEY: 'test' }, fetchImpl)).appearance, 'mentioned');
+  assert.match(request.instructions, /Only that exact profile\/card pair is accepted/);
+  assert.equal(JSON.parse(request.input).identity_rule, PROFILE_IDENTITY_RULE);
+  assert.equal('tools' in request, false);
+  await assert.rejects(assessVisibility(capture, { ...study, conditions: { model: 'test', identity_rule: 'exact-profile-url-1' } }, { OPENAI_API_KEY: 'test' }, fetchImpl), /identity_unverified/);
 });
 
 test('profile mentions, source-only evidence and absence use the exact person independently of card rendering', () => {
