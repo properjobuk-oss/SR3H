@@ -1,7 +1,7 @@
 .welcome-page{background:#f8f6f1}
 .welcome-page main{max-width:none;padding:0}
 .welcome-header .header-inner{max-width:1440px;padding-left:46px;padding-right:46px}
-.welcome-greeting{font-size:13px;color:#52616a;line-height:1.5;letter-spacing:0}
+.welcome-greeting{flex-shrink:0;white-space:nowrap;font-size:13px;color:#52616a;line-height:1.5;letter-spacing:0}
 .welcome-greeting span{display:block;font-family:Georgia,serif;font-size:21px;color:#123344;letter-spacing:-.025em}
 .welcome-return{font-size:11px;color:#536779}
 .welcome-header .support-nav{font-size:12px}
