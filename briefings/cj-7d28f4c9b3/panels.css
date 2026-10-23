@@ -509,21 +509,21 @@
 
 /* Visit opens on the Radcliffe photograph. */
 .visit-welcome.support-page{padding-top:28px}
-.visit-hero{position:relative;isolation:isolate;overflow:hidden;border-radius:8px;min-height:390px;display:flex;align-items:flex-end;justify-content:flex-end;background:#17364f}
-.visit-hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 12%;z-index:-2}
-.visit-hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,transparent 22%,rgba(5,23,40,.3) 55%,rgba(5,23,40,.72)),linear-gradient(0deg,rgba(5,23,40,.5),transparent 65%)}
-.visit-hero-copy{padding:44px;max-width:580px;color:#fff}
-.visit-hero .visit-hero-copy h1{font-size:clamp(38px,4.4vw,62px);line-height:1.1;color:#fff;margin:0 0 16px;letter-spacing:-.04em}
-.visit-hero .support-deck{color:#fff;font-size:16px;margin:0 0 7px}
-.visit-hero .visit-arrival{color:#fff;font-size:12px;margin:0}
+.visit-hero{position:relative;isolation:isolate;overflow:hidden;border-radius:8px;min-height:420px;display:flex;align-items:flex-start;justify-content:flex-start;background:#17364f}
+.visit-hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 12%;transform:scaleX(-1);z-index:-2}
+.visit-hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(5,23,40,.78),rgba(5,23,40,.3) 48%,transparent 78%),linear-gradient(0deg,rgba(5,23,40,.5),transparent 65%)}
+.visit-hero-copy{padding:44px;max-width:680px;color:#fff}
+.visit-hero .visit-hero-copy h1{font-size:clamp(44px,5.3vw,74px);line-height:1.1;color:#fff;margin:0 0 16px;letter-spacing:-.04em}
+.visit-hero .support-deck{color:#fff;font-size:18px;margin:0 0 9px}
+.visit-hero .visit-arrival{color:#fff;font-size:13px;margin:0}
 @media(max-width:760px){
  .visit-welcome.support-page{padding-top:20px}
  .visit-hero{min-height:330px;justify-content:flex-start}
  .visit-hero>img{object-position:25% 12%}
- .visit-hero::after{background:linear-gradient(0deg,rgba(5,23,40,.92),rgba(5,23,40,.1) 75%)}
+ .visit-hero::after{background:linear-gradient(180deg,rgba(5,23,40,.78),rgba(5,23,40,.1) 80%)}
  .visit-hero-copy{padding:24px;max-width:100%}
- .visit-hero .visit-hero-copy h1{font-size:38px;margin-bottom:12px}
- .visit-hero .support-deck{font-size:14px}
- .visit-hero .visit-arrival{font-size:11px}
+ .visit-hero .visit-hero-copy h1{font-size:42px;margin-bottom:12px}
+ .visit-hero .support-deck{font-size:15px}
+ .visit-hero .visit-arrival{font-size:12px}
 }
-@media(max-width:360px){.visit-hero-copy{padding:20px}.visit-hero .visit-hero-copy h1{font-size:34px}}
+@media(max-width:360px){.visit-hero-copy{padding:20px}.visit-hero .visit-hero-copy h1{font-size:36px}}
