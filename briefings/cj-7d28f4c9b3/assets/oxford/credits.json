@@ -104,19 +104,21 @@
   },
   {
     "key": "army-navy-club",
-    "author": "Debonairchap",
-    "license": "CC BY-SA 3.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Army_and_Navy_Club_1.JPG",
-    "changes": "Resized and converted to WebP; display crops applied."
+    "author": "Amy Murrell / Army & Navy Club",
+    "license": "Club photography",
+    "licenseUrl": null,
+    "source": "https://therag.co.uk/",
+    "changes": "Resized and converted to WebP; complete composition retained after the entrance animation.",
+    "imageUrl": "https://therag.co.uk/wp-content/uploads/2022/05/RAG-Club-2021-Amy-Murrell-2021-32-scaled.jpg"
   },
   {
     "key": "randolph",
-    "author": "DanielMichaelPerry",
-    "license": "CC0",
-    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-    "source": "https://commons.wikimedia.org/wiki/File:The_Randolph_Hotel_Oxford.jpg",
-    "changes": "Resized and converted to WebP; display crops applied."
+    "author": "The Randolph Hotel Oxford / Graduate by Hilton",
+    "license": "Official hotel photography",
+    "licenseUrl": null,
+    "source": "https://www.hilton.com/en/hotels/lonrdgu-graduate-oxford-uk/",
+    "changes": "Official hotel image resized and converted to WebP; supplied composition retained after entrance animation.",
+    "imageUrl": "https://www.hilton.com/im/en/LONRDGU/21441573/210913-graduate-oxford-uk-1320-b.tif"
   },
   {
     "key": "rose-crown",
@@ -125,5 +127,20 @@
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
     "source": "https://commons.wikimedia.org/wiki/File:The_Rose_%26_Crown_-_geograph.org.uk_-_6660206.jpg",
     "changes": "Resized and converted to WebP; display crops applied."
+  },
+  {
+    "key": "randolph-morse",
+    "author": "The Randolph Hotel Oxford / Graduate by Hilton",
+    "license": "Official hotel photography",
+    "source": "https://www.hilton.com/en/hotels/lonrdgu-graduate-oxford-uk/",
+    "imageUrl": "https://www.hilton.com/im/en/LONRDGU/21441352/210913-graduate-oxford-uk-0908-c.tif",
+    "changes": "Official hotel image resized and converted to WebP; supplied composition retained after entrance animation."
+  },
+  {
+    "key": "grassroots-workspace",
+    "author": "Grassroots project photography, via Bidwells",
+    "license": "Project photography",
+    "source": "https://www.bidwells.co.uk/projects/grassroots-business-incubator-ose/",
+    "changes": "Existing welcome-page photograph, resized and converted to WebP."
   }
 ]
