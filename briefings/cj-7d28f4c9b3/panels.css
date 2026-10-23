@@ -527,3 +527,11 @@
  .visit-hero .visit-arrival{font-size:12px}
 }
 @media(max-width:360px){.visit-hero-copy{padding:20px}.visit-hero .visit-hero-copy h1{font-size:36px}}
+
+/* Full chapters expand in the page, separately from short detail cards. */
+.reading-transcript{max-width:1200px;margin:22px auto 0;padding:0;border:1px solid #c4d1db;border-radius:8px;background:#fff}
+.reading-transcript>summary{font-family:var(--sans);font-size:16px;font-weight:600;color:#092747;line-height:1.5;padding:17px 22px;cursor:pointer;min-height:58px}
+.reading-transcript>summary:hover{background:#eaf3f8;border-radius:8px}
+.reading-transcript[open]>summary{border-bottom:1px solid #d8e2e9}
+.reading-transcript>.chapter-content{margin:0;padding:0 34px 38px;min-height:calc(100svh - 160px)}
+@media(max-width:760px){.reading-transcript{margin-top:18px}.reading-transcript>summary{font-size:15px;padding:16px 18px}.reading-transcript>.chapter-content{padding:0 18px 28px}}
