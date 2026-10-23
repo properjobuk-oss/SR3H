@@ -73,3 +73,10 @@
 .reading-navigation .chapter-dot:is(:hover,.selected){background:#092747;color:#fff;border-color:#092747}
 @media(max-width:700px){.reading-navigation{padding:16px 22px 0;gap:14px}.reading-navigation nav{gap:6px}.reading-navigation .chapter-dot{width:36px;height:44px}.reading-navigation>span{font-size:11px}}
 @media(max-width:360px){.reading-navigation{padding-left:16px;padding-right:16px;gap:10px}.reading-navigation nav{gap:4px}.reading-navigation .chapter-dot{width:31px}}
+
+.demo-platforms{display:flex;align-items:center;gap:28px;margin:0 0 24px;color:#111}
+.demo-platforms>img{width:90px;height:auto;display:block}
+.demo-platforms>span{display:inline-flex;align-items:center;gap:8px;font-size:17px;font-weight:600;line-height:1}
+.demo-platforms>span>img{width:25px;height:25px;display:block}
+.home-demo-copy>p.demo-description{font-family:var(--sans);font-size:16px;line-height:1.65;color:#405b63;max-width:360px;margin-bottom:26px}
+@media(max-width:760px){.home-demo-copy>p.demo-description{font-size:15px}.demo-platforms{gap:24px;margin-bottom:20px}}
