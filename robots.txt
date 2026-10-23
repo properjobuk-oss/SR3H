@@ -13,6 +13,17 @@ User-agent: GPTBot
 Disallow: /briefings/
 Allow: /
 
+# Shared-link previews; search crawlers remain excluded below.
+User-agent: facebookexternalhit
+User-agent: Facebot
+User-agent: Twitterbot
+User-agent: WhatsApp
+User-agent: TelegramBot
+User-agent: LinkedInBot
+User-agent: Slackbot-LinkExpanding
+User-agent: Discordbot
+Allow: /
+
 User-agent: *
 Disallow: /briefings/
 Allow: /
