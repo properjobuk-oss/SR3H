@@ -1,5 +1,16 @@
 (() => {
   'use strict';
+  const gallery=document.querySelector('.welcome-gallery');
+  if(gallery){
+    const slides=[...gallery.querySelectorAll('.welcome-slide')];
+    const toggle=gallery.querySelector('.welcome-motion-toggle');
+    const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+    let paused=false,index=0;
+    const apply=()=>{document.body.classList.toggle('welcome-paused',paused||reduced.matches);toggle.hidden=reduced.matches;toggle.setAttribute('aria-pressed',String(paused));toggle.textContent=paused?'Play motion':'Pause motion';};
+    toggle.addEventListener('click',()=>{paused=!paused;apply();});
+    reduced.addEventListener('change',apply);apply();
+    setInterval(()=>{if(paused||reduced.matches||document.hidden)return;slides[index].classList.remove('is-current');slides[index].setAttribute('aria-hidden','true');index=(index+1)%slides.length;slides[index].classList.add('is-current');slides[index].removeAttribute('aria-hidden');},9000);
+  }
   const readingKey='sr3h-chris-briefing-reading-v1';
   const returnKey='sr3h-chris-briefing-return-v1';
   const chapter=document.querySelector('[data-chapter]');
