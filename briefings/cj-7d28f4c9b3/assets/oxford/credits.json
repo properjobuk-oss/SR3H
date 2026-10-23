@@ -101,5 +101,29 @@
     "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
     "source": "https://commons.wikimedia.org/wiki/File:Turf_Tavern_in_Oxford,_England.jpg",
     "changes": "Resized and converted to WebP; display crops applied."
+  },
+  {
+    "key": "army-navy-club",
+    "author": "Debonairchap",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Army_and_Navy_Club_1.JPG",
+    "changes": "Resized and converted to WebP; display crops applied."
+  },
+  {
+    "key": "randolph",
+    "author": "DanielMichaelPerry",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source": "https://commons.wikimedia.org/wiki/File:The_Randolph_Hotel_Oxford.jpg",
+    "changes": "Resized and converted to WebP; display crops applied."
+  },
+  {
+    "key": "rose-crown",
+    "author": "N Chadwick",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:The_Rose_%26_Crown_-_geograph.org.uk_-_6660206.jpg",
+    "changes": "Resized and converted to WebP; display crops applied."
   }
 ]

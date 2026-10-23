@@ -520,7 +520,7 @@
  .visit-welcome.support-page{padding-top:20px}
  .visit-hero{min-height:330px;justify-content:flex-start}
  .visit-hero>img{object-position:25% 12%}
- .visit-hero::after{background:linear-gradient(180deg,rgba(5,23,40,.78),rgba(5,23,40,.1) 80%)}
+ .visit-hero::after{background:linear-gradient(180deg,rgba(5,23,40,.82),rgba(5,23,40,.4) 75%,rgba(5,23,40,.2))}
  .visit-hero-copy{padding:24px;max-width:100%}
  .visit-hero .visit-hero-copy h1{font-size:42px;margin-bottom:12px}
  .visit-hero .support-deck{font-size:15px}
@@ -535,3 +535,31 @@
 .reading-transcript[open]>summary{border-bottom:1px solid #d8e2e9}
 .reading-transcript>.chapter-content{margin:0;padding:0 34px 38px;min-height:calc(100svh - 160px)}
 @media(max-width:760px){.reading-transcript{margin-top:18px}.reading-transcript>summary{font-size:15px;padding:16px 18px}.reading-transcript>.chapter-content{padding:0 18px 28px}}
+
+/* Four days, with the outline immediately below the hero. */
+.visit-days{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 28px;margin-top:24px;max-width:430px}
+.visit-days a{display:block;padding:7px 0;border-top:1px solid #ffffff50;color:white;line-height:1.4}
+.visit-days strong{display:block;font-size:13px;font-weight:600}
+.visit-days span{font-size:12px;color:#eef5fc}
+.visit-days a:hover{border-color:#fff;color:#fff;text-decoration:underline;text-underline-offset:4px}
+.visit-agenda{margin-top:34px}
+.visit-agenda>h2{font-size:30px;color:#092747;margin:0 0 20px}
+.agenda-day{border-top:1px solid #d8e2e9;padding:24px 0;scroll-margin-top:0}
+.agenda-day h3{font-size:24px;color:#092747;margin:0 0 18px;line-height:1.35}
+.agenda-day h3 span{font-family:var(--sans);font-size:12px;letter-spacing:0;font-weight:400;color:#536779;display:block;margin-top:4px}
+.agenda-day-layout.has-photos{display:grid;grid-template-columns:1.4fr 1fr;gap:32px;align-items:start}
+.agenda-day dl{margin:0;max-width:650px}
+.agenda-item{display:grid;grid-template-columns:90px minmax(0,1fr);gap:18px;padding:11px 0}
+.agenda-item:first-child{padding-top:0}
+.agenda-item dt{font-size:13px;font-weight:600;line-height:1.6;color:#123c59}
+.agenda-item dd{font-size:14px;line-height:1.6;color:#203d50;margin:0}
+.agenda-item dd p{font-size:13px;line-height:1.6;color:#536779;margin:4px 0 0}
+.agenda-item a{color:#215c9c;border-bottom:1px solid #c5d6e4}
+.agenda-item a:hover{border-color:#215c9c}
+.agenda-photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.agenda-photo:only-child{grid-column:1/-1;max-width:330px;width:100%}
+.agenda-photo img{width:100%;height:185px;object-fit:contain;display:block;border-radius:5px;background:#edf1f3}
+.agenda-photo:only-child img{height:auto;aspect-ratio:4/3;object-fit:cover}
+.agenda-photo figcaption{display:flex;flex-wrap:wrap;gap:5px 12px;justify-content:space-between;margin-top:8px;font-size:11px;line-height:1.5;color:#215c9c}
+.agenda-photo figcaption a:hover{text-decoration:underline}
+@media(max-width:760px){.visit-hero{min-height:410px}.visit-days{max-width:330px;gap:7px 20px;margin-top:20px}.visit-days strong{font-size:12px}.visit-days span{font-size:11px}.visit-agenda{margin-top:28px}.agenda-day-layout.has-photos{grid-template-columns:1fr;gap:20px}.agenda-day h3{font-size:23px}.agenda-item{grid-template-columns:78px minmax(0,1fr);gap:12px}.agenda-item dd{font-size:13px}.agenda-item dt{font-size:12px}.agenda-item dd p{font-size:12px}.agenda-photos{max-width:440px}.agenda-photo img{height:180px}}
