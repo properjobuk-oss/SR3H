@@ -1,16 +1,20 @@
 # OpenAI search discovery. This is separate from model training.
 User-agent: OAI-SearchBot
+Disallow: /briefings/
 Allow: /
 
 # User-requested page visits from ChatGPT.
 User-agent: ChatGPT-User
+Disallow: /briefings/
 Allow: /
 
 # OpenAI model-training crawler.
 User-agent: GPTBot
+Disallow: /briefings/
 Allow: /
 
 User-agent: *
+Disallow: /briefings/
 Allow: /
 
 Sitemap: https://sr3h.uk/sitemap.xml

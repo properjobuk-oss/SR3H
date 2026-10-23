@@ -1,0 +1,105 @@
+[
+  {
+    "key": "museum",
+    "file": "File:1369352 I THE MUSEUM OF THE HISTORY OF SCIENCE Oxford 20250617 0001.jpg",
+    "author": "Tilman2007",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:1369352_I_THE_MUSEUM_OF_THE_HISTORY_OF_SCIENCE_Oxford_20250617_0001.jpg",
+    "changes": "Resized and converted to WebP; display crops may apply."
+  },
+  {
+    "key": "bodleian",
+    "file": "File:Divinity School Interior 2, Bodleian Library, Oxford, UK - Diliff.jpg",
+    "author": "David Iliff",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Divinity_School_Interior_2,_Bodleian_Library,_Oxford,_UK_-_Diliff.jpg",
+    "changes": "Resized and converted to WebP; display crops may apply."
+  },
+  {
+    "key": "magdalen",
+    "file": "File:Magdalen College - main building from the bridge.jpg",
+    "author": "Decan",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Magdalen_College_-_main_building_from_the_bridge.jpg",
+    "changes": "Resized and converted to WebP; display crops may apply."
+  },
+  {
+    "key": "boyle-pump",
+    "file": "File:Replica of the Hooke-Boyle Air Pump, Science in the 18th Century, The King George III Collection, Science Museum, London.jpg",
+    "author": "John Cummings",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Replica_of_the_Hooke-Boyle_Air_Pump,_Science_in_the_18th_Century,_The_King_George_III_Collection,_Science_Museum,_London.jpg",
+    "changes": "Resized and converted to WebP; display crops may apply."
+  },
+  {
+    "key": "sheldonian",
+    "file": "File:Sheldonian Theatre Interior, Oxford, UK - Diliff.jpg",
+    "author": "David Iliff",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Sheldonian_Theatre_Interior,_Oxford,_UK_-_Diliff.jpg",
+    "changes": "Resized and converted to WebP; display crops may apply."
+  },
+  {
+    "key": "radcliffe",
+    "file": "File:The Radcliffe Camera at sunset.jpg",
+    "author": "Joshuagrubb",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:The_Radcliffe_Camera_at_sunset.jpg",
+    "changes": "Resized and converted to WebP; display crops may apply."
+  },
+  {
+    "key": "christ-church-stairs",
+    "file": "File:Christ Church, Oxford, The Grand Staircase.jpg",
+    "author": "Jonas Magnus Lystad",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source": "https://commons.wikimedia.org/wiki/File:Christ_Church,_Oxford,_The_Grand_Staircase.jpg",
+    "changes": "Resized and converted to WebP; display crops may apply."
+  },
+  {
+    "key": "christ-church-hall",
+    "file": "File:Christ Church Great Hall.jpg",
+    "author": "Tristan Surtel",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Christ_Church_Great_Hall.jpg",
+    "changes": "Resized and converted to WebP; display crops may apply."
+  },
+  {
+    "key": "boyle-plaque",
+    "file": "File:Boyle and Hooke plaque 1.jpg",
+    "author": "Set in Stone Project",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Boyle_and_Hooke_plaque_1.jpg",
+    "changes": "Resized and converted to WebP; display crops may apply."
+  },
+  {
+    "key": "oxford-instruments",
+    "author": "History of Science Museum, University of Oxford",
+    "source": "https://mhs.web.ox.ac.uk/node/804176",
+    "provenance": "Image supplied in Swagelok-and-Oxford.pdf; original institutional attribution retained.",
+    "changes": "Resized and converted to WebP."
+  },
+  {
+    "key": "diamond-gas-cell",
+    "author": "Diamond Light Source",
+    "source": "https://www.diamond.ac.uk/Instruments/Crystallography/I15-1/sample-environments.html",
+    "provenance": "Image supplied in Swagelok-and-Oxford.pdf; original institutional attribution retained.",
+    "changes": "Resized and converted to WebP."
+  },
+  {
+    "key": "turf-tavern",
+    "author": "Jim Linwood",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Turf_Tavern_in_Oxford,_England.jpg",
+    "changes": "Resized and converted to WebP; display crops applied."
+  }
+]
