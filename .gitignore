@@ -8,3 +8,5 @@
 *.p12
 *.p8
 *.log
+/_site/
+__pycache__/

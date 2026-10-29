@@ -1,4 +1,5 @@
-# Keep server code and internal working documents out of the GitHub Pages build.
+# Fallback exclusions if branch-based Jekyll publishing is ever re-enabled.
+# Production uses .github/workflows/pages.yml and scripts/public-site-files.json.
 # This does not make files in the GitHub repository private.
 exclude:
   - mcp-server

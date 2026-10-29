@@ -8,4 +8,4 @@ Before deploying the Worker, run its tests and dry build. Confirm the rate-limit
 
 Application URL checks reject private address literals and recheck redirects. DNS resolution and connection-level protection still require verification in the hosting environment, including public hostnames resolving to private addresses and DNS rebinding. Do not reuse this fetcher on a network with private services without enforcing destination IP restrictions at connection time.
 
-The GitHub Pages build excludes server source and working documentation. Files remain visible to anyone who can access the repository; exclusions are not access controls. Imported MCP skill instructions are intentionally visible to clients.
+The GitHub Pages workflow uploads only the exact public files listed in `scripts/public-site-files.json`. Server source, working documentation, scripts and local artifacts are not in that build. Files remain visible to anyone who can access the repository; publication boundaries are not repository access controls. Imported MCP skill instructions are intentionally visible to clients.
