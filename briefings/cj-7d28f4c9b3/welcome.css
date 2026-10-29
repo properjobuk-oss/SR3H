@@ -261,3 +261,35 @@
 @media(max-width:1050px){.visit-agenda .agenda-day{padding:28px}.visit-agenda .agenda-item{grid-template-columns:102px minmax(0,1fr);gap:16px}.visit-agenda .agenda-item dt{font-size:18px}.visit-agenda .agenda-item dd{font-size:21px}}
 @media(max-width:760px){.visit-agenda .agenda-day{padding:26px 20px 30px}.visit-agenda .agenda-day h3{font-size:29px}.visit-agenda .agenda-item{grid-template-columns:96px minmax(0,1fr);gap:16px;padding:19px 0}.visit-agenda .agenda-item dt{font-size:17px}.visit-agenda .agenda-item dd{font-size:21px;line-height:1.35}.visit-agenda .agenda-item dd p{font-size:12px;margin-top:8px}}
 @media(max-width:360px){.visit-agenda .agenda-day{padding:24px 16px}.visit-agenda .agenda-day h3{font-size:26px}.visit-agenda .agenda-item{grid-template-columns:86px minmax(0,1fr);gap:12px}.visit-agenda .agenda-item dt{font-size:16px}.visit-agenda .agenda-item dd{font-size:19px}}
+
+/* Hospitality review: a useful welcome, with the four days close at hand. */
+.welcome-slide.welcome-hotel img{object-position:63% 50%}
+.welcome-bodleian img{object-position:50% 25%}
+.stay-overview{max-width:1296px;margin:0 auto;padding:8px 0 58px}
+.stay-overview-heading{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:24px}
+.stay-overview-heading h2{font-size:34px;line-height:1.15;letter-spacing:-.035em;color:#352b2d}
+.stay-overview-heading h2 em{color:#856b4b;font-weight:400}
+.stay-overview-heading>a{font-size:12px;color:#645548;border-bottom:1px solid #c6b28e;padding:5px 0}
+.stay-overview-heading>a span{margin-left:22px}
+.stay-days{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid #c9bba4;border-bottom:1px solid #c9bba4}
+.stay-days>a{position:relative;min-width:0;display:flex;flex-direction:column;padding:24px 23px 25px;border-right:1px solid #ded7cb;transition:background .25s}
+.stay-days>a:first-child{padding-left:0}
+.stay-days>a:last-child{border-right:0;padding-right:0}
+.stay-date{font-size:10px;line-height:1.6;letter-spacing:.025em;color:#766757;margin-bottom:13px;padding-right:17px}
+.stay-days strong{font-family:Georgia,serif;font-size:25px;line-height:1.15;letter-spacing:-.025em;font-weight:400;color:#352b2d;margin-bottom:12px}
+.stay-detail{font-size:11px;line-height:1.7;color:#66716c;max-width:235px}
+.stay-day-arrow{position:absolute;top:24px;right:13px;color:#8b7553;font-size:17px;line-height:1;transition:transform .25s}
+.stay-days>a:last-child .stay-day-arrow{right:0}
+.stay-days>a:hover{background:#e9e6db66}
+.stay-days>a:hover .stay-day-arrow{transform:translate(2px,-2px)}
+.visit-section-nav{display:flex;flex-wrap:wrap;align-items:center;gap:30px;padding:15px 0 14px;border-bottom:1px solid #d7cbb8}
+.visit-section-nav a{font-size:12px;line-height:1.5;color:#5e4a44;min-height:40px;display:inline-flex;align-items:center;border-bottom:1px solid transparent}
+.visit-section-nav a:hover{border-bottom-color:#9b8260}
+#visit-people{scroll-margin-top:24px}
+.visit-agenda .agenda-photo figcaption{font-size:11px;gap:8px 16px;margin-top:6px}
+.visit-agenda .agenda-photo figcaption a{display:inline-flex;align-items:center;min-height:40px}
+@media(max-width:1400px){.stay-overview{margin-left:72px;margin-right:72px}}
+@media(max-width:1100px){.stay-overview{margin-left:40px;margin-right:40px;padding-bottom:42px}.stay-days{grid-template-columns:repeat(2,minmax(0,1fr))}.stay-days>a{padding:22px}.stay-days>a:nth-child(2){border-right:0}.stay-days>a:nth-child(n+3){border-top:1px solid #ded7cb}.stay-days>a:nth-child(3){padding-left:0}.stay-days>a:last-child{padding-right:22px}.stay-days>a:last-child .stay-day-arrow{right:13px}}
+@media(max-width:760px){.stay-overview{margin:0 24px;padding-top:5px;padding-bottom:34px}.stay-overview-heading{gap:15px;align-items:flex-end;margin-bottom:19px}.stay-overview-heading h2{font-size:30px;max-width:215px}.stay-overview-heading>a{white-space:nowrap;font-size:11px}.stay-overview-heading>a span{margin-left:10px}.stay-days>a{padding:21px 12px 21px 17px}.stay-days>a:first-child,.stay-days>a:nth-child(3){padding-left:0}.stay-days>a:last-child{padding-right:12px}.stay-date{font-size:10px;letter-spacing:0;line-height:1.6;margin-bottom:11px}.stay-days strong{font-size:23px;line-height:1.16;padding-right:7px}.stay-detail{font-size:11px;line-height:1.7}.stay-day-arrow{right:8px;top:22px;font-size:14px}.stay-days>a:last-child .stay-day-arrow{right:8px}.visit-section-nav{gap:22px;padding:10px 0}.visit-section-nav a{font-size:11px}.visit-agenda .agenda-photo figcaption{font-size:11px}#visit-people{scroll-margin-top:24px}}
+@media(max-width:360px){.stay-overview{margin-left:20px;margin-right:20px}.stay-overview-heading h2{font-size:27px}.stay-days strong{font-size:21px}.stay-date{max-width:130px}.visit-section-nav{gap:16px}.visit-section-nav a{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.stay-days>a,.stay-day-arrow{transition:none}.stay-days>a:hover .stay-day-arrow{transform:none}}
