@@ -8,7 +8,8 @@ GitHub Pages publishes a separate build containing only reviewed public files.
 
 - `index.html` contains the public page content and metadata.
 - `styles.css` contains site tokens, layout, visual treatment and responsive rules.
-- `site.js` contains three small behaviours: intro playback, scroll reveal and work-card motion.
+- `home.css` and `home.js` contain the homepage product cards, screenshot previews and Munchkin animation.
+- `site.js` contains shared motion and website-check behaviour.
 - `assets/` contains the public brand and watermark media.
 - `docs/brand-source-of-truth.md` records approved public language.
 

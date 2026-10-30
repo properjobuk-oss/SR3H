@@ -15,6 +15,14 @@ Machine-readable services: https://sr3h.uk/ai-services.json
 - Discovery and recommendations: research into how AI finds information, compares options and recommends businesses, products or services, including the evidence behind recommendations and commercial influence.
 - Software development: design and engineering of useful working products, including non-AI software where it serves the task better.
 
+## ChatGPT plugins
+
+We design, build and release plugins, tools, skills, interactive cards and workspaces for ChatGPT.
+
+- Mandate: https://chatgpt.com/plugins/plugin_asdk_app_6acf8c6dec04819182aa2a549d46543e
+- Proper Job: https://chatgpt.com/plugins/plugin_asdk_app_6a9ace9128dc8191a71c188f2b07d422
+- MyLegend: https://chatgpt.com/plugins/plugin_asdk_app_6acf5ae7e37c81919918975794ac13af
+
 ## Research initiatives
 
 - SR3H research: how AI interprets what people need, discovers and assesses information, compares businesses or products, and moves from answers towards actions. We examine the evidence behind recommendations and how organic, sponsored or other commercial interests may affect what people see.

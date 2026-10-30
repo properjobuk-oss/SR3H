@@ -5,7 +5,7 @@
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>SR3H | AI Research &amp; Software Development, Oxford</title>
-    <meta name="description" content="SR3H is an independent AI research and software development lab in Oxford, building useful tools with a focus on relevance, privacy and user control.">
+    <meta name="description" content="Independent AI research and software development in Oxford. We design and build software for the web, mobile and ChatGPT, with a focus on privacy and user control.">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="SR3H LTD">
     <meta name="color-scheme" content="light">
@@ -17,7 +17,7 @@
     <meta name="apple-mobile-web-app-title" content="SR3H">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta property="og:title" content="SR3H | AI Research &amp; Software Development, Oxford">
-    <meta property="og:description" content="SR3H is an independent AI research and software development lab in Oxford, building useful tools with a focus on relevance, privacy and user control.">
+    <meta property="og:description" content="Independent AI research and software development in Oxford. We design and build software for the web, mobile and ChatGPT, with a focus on privacy and user control.">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="SR3H">
     <meta property="og:locale" content="en_GB">
@@ -28,7 +28,7 @@
     <meta property="og:image:alt" content="SR3H">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="SR3H | AI Research &amp; Software Development, Oxford">
-    <meta name="twitter:description" content="SR3H is an independent AI research and software development lab in Oxford, building useful tools with a focus on relevance, privacy and user control.">
+    <meta name="twitter:description" content="Independent AI research and software development in Oxford. We design and build software for the web, mobile and ChatGPT, with a focus on privacy and user control.">
     <meta name="twitter:image" content="https://sr3h.uk/assets/sr3h-logo-og.png">
     <meta name="twitter:image:alt" content="SR3H">
     <link rel="canonical" href="https://sr3h.uk/">
@@ -44,6 +44,8 @@
     <link rel="preload" href="assets/sr3h-quiet-material.jpg" as="image">
     <link rel="preload" href="assets/sr3h-logo-reveal.mp4?v=20260912-1" as="video" type="video/mp4">
     <link rel="stylesheet" href="styles.css?v=20261009-1">
+    <link rel="stylesheet" href="home.css?v=20261030-1">
+    <script src="home.js?v=20261030-1" defer></script>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -178,9 +180,9 @@
           {
             "@type": "Service",
             "@id": "https://sr3h.uk/#mcp-engineering",
-            "name": "MCP app and AI tool engineering",
+            "name": "ChatGPT plugin and MCP tool engineering",
             "serviceType": "Model Context Protocol apps, tools and commercial integrations",
-            "description": "Design and engineering of focused MCP tools and AI-assisted services with explicit data, permission and commercial boundaries.",
+            "description": "Design, build and release of ChatGPT plugins, tools, skills, interactive cards and workspaces, with clear data and permission boundaries.",
             "provider": {
               "@id": "https://sr3h.uk/#organization"
             }
@@ -201,74 +203,41 @@
     <script>if (!window.location.hash) document.documentElement.classList.add("intro-enabled");</script>
     <script src="navigation.js?v=20260915-2" defer></script>
   </head>
-  <body>
+  <body class="home-page">
     <div class="intro-overlay" aria-hidden="true">
       <video class="intro-video" src="assets/sr3h-logo-reveal.mp4?v=20260912-1" muted playsinline webkit-playsinline autoplay preload="auto"></video>
     </div>
 
-    <header class="site-header" aria-label="SR3H">
-      <a class="brand" href="index.html" aria-label="SR3H home">
-        <img src="assets/sr3h-logo-header.png" width="940" height="380" alt="SR3H">
-      </a>
-      <nav class="nav nav--full" aria-label="Primary">
-        <a href="#work">Work</a>
-        <a href="#platform">Research</a>
-        <a href="journal.html">Blog</a>
-        <a class="nav-signal-link" href="signal.html" aria-label="Signal"><img src="assets/projects/signal-nav-mark.png" width="24" height="24" alt=""><span>Signal</span></a>
-        <a class="nav-mylegend-link" href="https://mylegend.id/" aria-label="MyLegend"><img src="assets/projects/mylegend-nav-mark.png" width="24" height="24" alt=""><span>MyLegend</span></a>
-        <a href="#contact">Contact</a>
-      <a href="about.html">About</a></nav>
-    </header>
-
-    <main>
-      <section class="hero" id="home" aria-labelledby="hero-title">
+<header class="site-header" aria-label="SR3H"><a class="brand" href="index.html" aria-label="SR3H home"><img src="assets/sr3h-logo-header.png" width="940" height="380" alt="SR3H"></a>
+<nav class="nav nav--full" aria-label="Primary"><a href="#work">Work</a><a href="#chatgpt">ChatGPT</a><a href="#platform">Research</a><a href="journal.html">Blog</a><a class="nav-signal-link" href="signal.html" aria-label="Signal"><img src="assets/projects/signal-nav-mark.png" width="24" height="24" alt=""><span>Signal</span></a><a class="nav-mylegend-link" href="https://mylegend.id/" aria-label="MyLegend"><img src="assets/projects/mylegend-nav-mark.png" width="24" height="24" alt=""><span>MyLegend</span></a><a href="about.html">About</a><a href="#contact">Contact</a></nav></header>
+<main>
+<section class="hero" id="home" aria-labelledby="hero-title">
         <div class="hero-copy">
           <h1 id="hero-title">Understanding AI. Making it useful.</h1>
           <p class="intro">SR3H is an independent AI research and software development lab in Oxford.</p>
-          <p class="hero-detail">We investigate how AI works and build useful software. Our research focuses on improving the quality and relevance of AI output while protecting personal data and keeping people in control.</p>
+          <p class="hero-detail">We design and build software for the web, mobile and ChatGPT. Our research focuses on relevance, privacy and user control.</p>
           <p class="hero-location">Based at Grassroots, the science and technology workspace managed by Oxford Innovation Space.</p>
           <div class="actions" aria-label="Primary actions">
-            <a class="button primary" href="#platform">Explore our research</a>
+            <a class="button primary" href="#chatgpt">Try our ChatGPT plugins</a>
             <a class="button secondary" href="#work">Explore our work</a>
           </div>
         </div>
       </section>
-
-      <section class="section work-section" id="work" aria-labelledby="work-title">
-        <div class="section-inner">
-          <div class="section-heading">
-            <div>
-              <h2 class="eyebrow" id="work-title">Selected work</h2>
-            </div>
-          </div>
-
-          <div class="project-grid featured-projects">
-            <a class="work-item project-card project-card--mylegend project-card--linked" href="https://mylegend.id/" aria-label="Explore MyLegend">
+<section class="section work-section" id="work" aria-labelledby="work-title"><div class="section-inner">
+<div class="section-heading"><h2 id="work-title">Apps and products</h2></div>
+<div class="project-grid featured-projects">
+<a class="work-item project-card project-card--mylegend project-card--hover-preview project-card--linked" href="https://mylegend.id/" aria-label="Explore MyLegend">
               <div class="project-media">
                 <img src="assets/projects/mylegend-welcome.svg" width="390" height="845" alt="MyLegend iPhone welcome screen with the blue logo centred on a dark blue background" loading="lazy" decoding="async">
+                <img class="project-media-alt" src="assets/projects/mylegend-morgan-phone.png" alt="" aria-hidden="true" width="390" height="845" loading="lazy" decoding="async">
               </div>
               <div class="project-content">
                 <p class="project-label">Personal profile and AI agent</p>
                 <h3>MyLegend</h3>
-                <p>Your profile and personal AI agent, with control over what is shared. MyLegend introduces you, answers questions from information you approve, and lets people request a reply. <span class="project-page-link">Explore ↗</span></p>
+                <p>A profile and personal AI agent that answers questions using information you approve. You control what is shared. <span class="project-page-link">Explore ↗</span></p>
               </div>
             </a>
-
-            <article class="work-item project-card project-card--brane project-card--hover-preview">
-              <div class="project-media">
-                <img src="assets/projects/brane-poster.png" alt="Brane identity poster reading Your context. Under your control." loading="lazy" decoding="async">
-                <img class="project-media-alt" src="assets/projects/brane-node-galaxy.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
-              </div>
-              <div class="project-content">
-                <p class="project-label">Research project · Context and privacy</p>
-                <h3>Brane</h3>
-                <p>Personal context for AI, with control over what is shared. Brane explores how selected information can improve an answer without exposing an entire personal history.</p>
-                <p class="project-detail">Its Safari extension also shows which trackers are present on each page.</p>
-                <p><a class="project-link" href="blog/who-owns-the-context.html">Read the research question ↗</a></p>
-              </div>
-            </article>
-
-            <article class="work-item project-card project-card--proper project-card--phone project-card--hover-preview">
+<article class="work-item project-card project-card--proper project-card--phone project-card--hover-preview">
               <div class="project-media project-media--phone">
                 <img src="assets/projects/proper-job-phone.png" alt="Proper Job home screen" loading="lazy" decoding="async">
                 <img class="project-media-alt" src="assets/projects/proper-job-hover.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
@@ -276,10 +245,71 @@
               <div class="project-content">
                 <p class="project-label">Public website and MCP app</p>
                 <h3>Proper Job</h3>
-                <p>Clear guide-price ranges for UK building work, showing the assumptions and cost drivers behind each estimate. Also available as an MCP app for AI assistants. <a class="project-link" href="https://www.proper-job.uk/" target="_blank" rel="noopener noreferrer" aria-label="Visit the Proper Job website">Website ↗</a></p>
+                <p>Guide-price ranges for UK building work, with assumptions and cost drivers shown. <a class="project-link" href="https://www.proper-job.uk/" target="_blank" rel="noopener noreferrer" aria-label="Visit the Proper Job website">Website ↗</a></p>
               </div>
             </article>
-            <a class="work-item project-card project-card--conchup project-card--phone project-card--hover-preview project-card--linked" href="conchup.html" aria-label="Explore Conchup">
+<article class="work-item project-card project-card--brane project-card--hover-preview">
+              <div class="project-media">
+                <img src="assets/projects/brane-poster.png" alt="Brane identity poster reading Your context. Under your control." loading="lazy" decoding="async">
+                <img class="project-media-alt" src="assets/projects/brane-node-galaxy.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
+              </div>
+              <div class="project-content">
+                <p class="project-label">Research project · Context and privacy</p>
+                <h3>Brane</h3>
+                <p>Research into how selected personal context can improve AI answers, with control over what is shared.</p>
+                <p><a class="project-link" href="blog/who-owns-the-context.html">Read about context ↗</a></p>
+              </div>
+            </article>
+
+</div>
+</div></section>
+<section class="section plugins-section" id="chatgpt" aria-labelledby="plugins-title"><div class="section-inner">
+<div class="section-heading"><h2 id="plugins-title">Built for ChatGPT</h2><p>We design, build and release plugins, tools, skills, interactive cards and workspaces for ChatGPT.</p></div>
+<div class="plugin-grid">
+<article class="plugin-card">
+  <div class="plugin-art plugin-art--mandate"><img src="assets/plugins/mandate-logo.png" alt="Mandate" loading="lazy" decoding="async"><span class="plugin-screenshot plugin-screenshot--mandate" aria-hidden="true"><img src="assets/plugins/mandate-card-dark.png" alt="" loading="eager" decoding="async"></span><span class="plugin-platform"><img src="assets/plugins/chatgpt-mark-white.svg" width="22" height="22" alt="" aria-hidden="true"><span>ChatGPT plugin</span></span><button class="plugin-preview-trigger" type="button" data-card-preview="Mandate" data-card-image="assets/plugins/mandate-card-dark.png" data-card-description="Mandate demo project in dark mode with green and orange branding" aria-label="View Mandate card preview" aria-haspopup="dialog"></button></div>
+  <div class="plugin-copy"><h3>Mandate</h3><p>A lightweight version of our in-house engineering and requirements software. Define what a product should do and record its requirements and decisions.</p><a class="plugin-cta" href="https://chatgpt.com/plugins/plugin_asdk_app_6acf8c6dec04819182aa2a549d46543e" target="_blank" rel="noopener noreferrer" aria-label="Try Mandate in ChatGPT">Try in ChatGPT <span aria-hidden="true">↗</span></a></div>
+</article>
+<article class="plugin-card">
+  <div class="plugin-art plugin-art--proper"><img src="assets/plugins/proper-job-logo.png" alt="Proper Job" loading="lazy" decoding="async"><span class="plugin-screenshot plugin-screenshot--proper" aria-hidden="true"><img src="assets/plugins/proper-job-card.jpg" alt="" loading="eager" decoding="async"></span><span class="plugin-platform"><img src="assets/plugins/chatgpt-mark-white.svg" width="22" height="22" alt="" aria-hidden="true"><span>ChatGPT plugin</span></span><button class="plugin-preview-trigger" type="button" data-card-preview="Proper Job" data-card-image="assets/plugins/proper-job-card.jpg" data-card-description="Proper Job building budget card with specification choices and a cost estimate" aria-label="View Proper Job card preview" aria-haspopup="dialog"></button></div>
+  <div class="plugin-copy"><h3>Proper Job</h3><p>Estimate building costs, compare quotes and check scope, assumptions and missing costs in ChatGPT.</p><a class="plugin-cta" href="https://chatgpt.com/plugins/plugin_asdk_app_6a9ace9128dc8191a71c188f2b07d422" target="_blank" rel="noopener noreferrer" aria-label="Try Proper Job in ChatGPT">Try in ChatGPT <span aria-hidden="true">↗</span></a></div>
+</article>
+<article class="plugin-card">
+  <div class="plugin-art plugin-art--mylegend"><img src="assets/plugins/mylegend-logo.png" alt="MyLegend" loading="lazy" decoding="async"><span class="plugin-screenshot plugin-screenshot--mylegend" aria-hidden="true"><img src="assets/plugins/mylegend-morgan-card.png" alt="" loading="eager" decoding="async"></span><span class="plugin-platform"><img src="assets/plugins/chatgpt-mark-white.svg" width="22" height="22" alt="" aria-hidden="true"><span>ChatGPT plugin</span></span><button class="plugin-preview-trigger" type="button" data-card-preview="MyLegend" data-card-image="assets/plugins/mylegend-morgan-card.png" data-card-description="Morgan Example fictional MyLegend profile card with information, links and questions" aria-label="View MyLegend card preview" aria-haspopup="dialog"></button></div>
+  <div class="plugin-copy"><h3>MyLegend</h3><p>Find people and ask their personal AI agent about their work, experience and interests. Answers use information they’ve chosen to share. Explore their interactive profile card inside ChatGPT.</p><a class="plugin-cta" href="https://chatgpt.com/plugins/plugin_asdk_app_6acf5ae7e37c81919918975794ac13af" target="_blank" rel="noopener noreferrer" aria-label="Try MyLegend in ChatGPT">Try in ChatGPT <span aria-hidden="true">↗</span></a></div>
+</article>
+</div>
+</div></section>
+<section class="section engineering-section" id="engineering" aria-labelledby="engineering-title"><div class="section-inner engineering-layout">
+<div class="engineering-copy"><p class="project-label">Engineering tools</p><h2 id="engineering-title">Scanaweb +<br>Scanamon</h2><p>Scanaweb runs project checks and browser tests. Scanamon checks source code for security issues, exposed secrets and vulnerable dependencies.</p><p>Results include findings, logs and coverage limits.</p><div class="engineering-details" aria-label="Technical capabilities"><span>MCP</span><span>Playwright</span><span>Static analysis</span><span>Dependency checks</span></div></div>
+<div class="engineering-console"><div class="mascot-dock"><img src="assets/projects/scanamon-munchkin.png" width="256" height="256" alt="Munchkin, the Scanamon mascot" loading="lazy" decoding="async"><span class="mascot-scan-beam" aria-hidden="true"></span></div><div class="engineering-terminal" aria-label="Technical overview of the two tools"><div class="terminal-title">sr3h / engineering</div><div class="terminal-body"><p><strong>scanaweb / website quality</strong>lint · types · tests · build<br>browser checks · console · layout</p><p><strong>scanamon / security evidence</strong>static analysis · secret detection<br>dependency advisories · scan coverage</p><p><strong>evidence</strong>logs · findings · exclusions · limits</p></div></div></div>
+</div></section>
+      <section class="section platform-section" id="platform" aria-labelledby="platform-title">
+        <div class="section-inner">
+          <div class="research-heading">
+            <h2 id="platform-title">Research</h2>
+            <p class="large-copy">We test how AI uses information, works with people and supports decisions.</p>
+          </div>
+          <div class="research-systems">
+            <article class="research-system">
+              <h3>Output and relevance</h3>
+              <p>We test how context and sources affect AI answers, and how those answers can be checked.</p>
+            </article>
+            <article class="research-system">
+              <h3>Personal context and privacy</h3>
+              <p>We investigate on-device processing, selective sharing and controls over what AI remembers and uses.</p>
+            </article>
+            <article class="research-system">
+              <h3>Tools and human control</h3>
+              <p>We test which tasks suit automation, fixed rules or human review.</p>
+            </article>
+            <article class="research-system">
+              <h3>Discovery and recommendations</h3>
+              <p>We study how AI finds and recommends businesses, and how sources and commercial influence affect its answers.</p>
+            </article>
+          </div>
+<div class="research-examples" aria-label="In-house software examples">
+<a class="work-item project-card project-card--conchup project-card--phone project-card--hover-preview project-card--linked" href="conchup.html" aria-label="Explore Conchup">
               <div class="project-media project-media--conchup">
                 <img src="assets/projects/conchup-mark.png" alt="Conchup identity mark" loading="lazy" decoding="async">
                 <img class="project-media-alt" src="assets/projects/conchup-correct-branding.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
@@ -287,11 +317,10 @@
               <div class="project-content">
                 <p class="project-label">In development · Software engineering</p>
                 <h3>Conchup</h3>
-                <p>A software development workspace that keeps requirements, decisions, code and tests connected, so changes can be reviewed against what the product is meant to do. <span class="project-page-link">Explore ↗</span></p>
+                <p>A workspace connecting requirements, decisions, implementation, tests and evidence. We’re developing automated web builds through Codex Cloud, guided by our in-house engineering standards. <span class="project-page-link">Explore Conchup ↗</span></p>
               </div>
             </a>
-
-            <article class="work-item project-card project-card--aido project-card--hover-preview">
+<article class="work-item project-card project-card--aido project-card--hover-preview">
               <a class="project-media" href="signal.html" aria-label="About Signal">
                 <img src="assets/projects/signal-logo.png" alt="Signal by SR3H" loading="lazy" decoding="async">
                 <span class="project-media-alt project-media-alt--signal" aria-hidden="true">
@@ -305,12 +334,11 @@
               <div class="project-content">
                 <p class="project-label">In-house research tool</p>
                 <h3>Signal</h3>
-                <p>AI visibility and analytics software for testing how AI finds, describes and recommends businesses. Signal runs batches of questions, records answers and sources, and compares results across repeated tests.</p>
+                <p>Tests how AI finds, describes and recommends businesses. Records questions, answers and sources for comparison across repeated tests.</p>
                 <div class="project-card-actions"><a class="project-page-link" href="signal.html">About Signal ↗</a><a class="project-link" href="signal.html#ai-check">Free website check ↗</a></div>
               </div>
             </article>
-
-            <article class="work-item project-card project-card--redthread project-card--phone project-card--hover-preview">
+<article class="work-item project-card project-card--redthread project-card--phone project-card--hover-preview">
               <div class="project-media project-media--phone">
                 <img src="assets/projects/redthread-phone.jpg" alt="RedThread private briefings sign-in screen" loading="lazy" decoding="async">
                 <img class="project-media-alt" src="assets/projects/redthread-hover.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
@@ -318,47 +346,10 @@
               <div class="project-content">
                 <p class="project-label">Private workspace · Briefings</p>
                 <h3>RedThread</h3>
-                <p>A private workspace for people preparing briefings from complex source material, with each person’s work kept separate.</p>
+                <p>A private workspace for preparing briefings from complex sources. Each person’s work stays separate.</p>
               </div>
             </article>
-
-            <article class="work-item project-card project-card--route">
-              <div class="project-content">
-                <p class="project-label">Navigation project · Public website</p>
-                <h3>Good Route</h3>
-                <p>Navigation that preserves the rider’s chosen route and makes rerouting an explicit decision. <a class="project-link" href="https://goodroute.app/" target="_blank" rel="noopener noreferrer" aria-label="Visit the Good Route website">Website ↗</a></p>
-                <p><a class="project-link" href="blog/the-road-we-meant-to-take.html">Read how it began ↗</a></p>
-              </div>
-            </article>
-
-          </div>
-        </div>
-      </section>
-
-      <section class="section platform-section" id="platform" aria-labelledby="platform-title">
-        <div class="section-inner">
-          <div class="research-heading">
-            <h2 id="platform-title">Research</h2>
-            <p class="large-copy">We build prototypes to test ideas, compare approaches and find out what is worth developing further. Our work covers how AI systems use information, how people work with them and what makes their results useful.</p>
-          </div>
-          <div class="research-systems">
-            <article class="research-system">
-              <h3>Output and relevance</h3>
-              <p>We investigate what makes an AI response accurate, useful and relevant to the task. This includes how systems use context, draw on sources and retain information, and how their output can be checked.</p>
-            </article>
-            <article class="research-system">
-              <h3>Personal context and privacy</h3>
-              <p>We research how to give AI useful context without handing over an entire personal history. This includes on-device processing, selective sharing and clear choices about what is remembered, used or sent to an external service.</p>
-            </article>
-            <article class="research-system">
-              <h3>Tools and human control</h3>
-              <p>We develop ways for AI to work with software and practical tasks. We test where automation helps, where fixed rules work better and where a person needs to review or approve the result.</p>
-            </article>
-            <article class="research-system">
-              <h3>Discovery and recommendations</h3>
-              <p>We study how AI finds information, compares options and recommends businesses, products or services. We examine the evidence behind those recommendations and the role of commercial influence. Signal is one project exploring these questions.</p>
-            </article>
-          </div>
+</div>
           <a class="button primary research-contact" href="mailto:hello@sr3h.uk?subject=Discuss%20our%20research">Discuss our research</a>
         </div>
       </section>
@@ -366,27 +357,27 @@
       <section class="section contact" id="contact" aria-labelledby="contact-title">
         <div class="section-inner contact-panel">
           <div>
-            <h2 id="contact-title">Have a problem worth investigating?</h2>
+            <h2 id="contact-title">Get in touch</h2>
           </div>
           <div>
-            <p>We welcome conversations about research, product design and software development. Tell us what you are trying to understand or build, and where you need help.</p>
+            <p>Tell us what you want to understand or build.</p>
             <a class="button primary" href="mailto:hello@sr3h.uk">hello@sr3h.uk</a>
           </div>
         </div>
       </section>
-    </main>
-
-    <footer class="site-footer">
+</main>
+<footer class="site-footer">
       <p class="footer-note">
         <img class="footer-mark" src="favicon.svg?v=20260702-4" width="50" height="54" alt="" aria-hidden="true">
         <span>SR3H LTD. Company number 17281224. Registered in England and Wales. Registered office: 2 Pavilion Court, 600 Pavilion Drive, Northampton, United Kingdom, NN4 7SL.</span>
       </p>
       <nav class="footer-links" aria-label="Footer">
         <a href="mailto:hello@sr3h.uk">Contact</a>
-        <a href="ai-presence-privacy.html">Signal Website Check privacy</a>
-        <a href="ai-presence-terms.html">Signal Website Check terms</a>
+        <a href="ai-presence-privacy.html">Privacy</a>
+        <a href="ai-presence-terms.html">Terms</a>
       </nav>
     </footer>
+<dialog class="plugin-card-dialog" aria-labelledby="card-dialog-title"><div class="card-dialog-header"><div><h2 id="card-dialog-title">Card preview</h2></div><form method="dialog"><button class="dialog-close">Close</button></form></div><img class="card-dialog-image" alt=""></dialog>
     <script src="site.js?v=20260912-9"></script>
   </body>
 </html>

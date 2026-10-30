@@ -30,8 +30,8 @@
     },
     {
       "id": "mcp-engineering",
-      "name": "MCP app and AI tool engineering",
-      "description": "Focused Model Context Protocol (MCP) tools and AI-assisted services, designed around useful tasks, clear permissions and responsible data handling.",
+      "name": "ChatGPT plugin and MCP tool engineering",
+      "description": "Design, build and release of ChatGPT plugins, tools, skills, interactive cards and workspaces, with clear data and permission boundaries.",
       "availability": "Available by enquiry"
     },
     {
@@ -95,5 +95,19 @@
     "terms": "https://sr3h.uk/ai-presence-terms.html",
     "legacyName": "AIDO Discoverability Check",
     "url": "https://sr3h.uk/signal.html#ai-check"
-  }
+  },
+  "chatgptPlugins": [
+    {
+      "name": "Mandate",
+      "url": "https://chatgpt.com/plugins/plugin_asdk_app_6acf8c6dec04819182aa2a549d46543e"
+    },
+    {
+      "name": "Proper Job",
+      "url": "https://chatgpt.com/plugins/plugin_asdk_app_6a9ace9128dc8191a71c188f2b07d422"
+    },
+    {
+      "name": "MyLegend",
+      "url": "https://chatgpt.com/plugins/plugin_asdk_app_6acf5ae7e37c81919918975794ac13af"
+    }
+  ]
 }

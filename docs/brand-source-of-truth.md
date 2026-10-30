@@ -47,6 +47,16 @@ Signal card: AI visibility and analytics software for testing how AI finds, desc
 
 Signal page: Lead with Signal’s repeatable testing and analysis. Keep the public website check as a separate entry point. Results retain questions, AI system, date, sources, sample size and limits; small samples are not market rankings or causal proof. MyLegend is the separate profile and rich-card product; hosting does not change Signal’s role.
 
+## ChatGPT plugins
+
+We design, build and release plugins, tools, skills, interactive cards and workspaces for ChatGPT.
+
+Mandate: A lightweight version of our in-house engineering and requirements software. Define what a product should do and record its requirements and decisions.
+
+MyLegend: Find people and ask their personal AI agent about their work, experience and interests. Answers use information they have chosen to share. Explore their interactive profile card inside ChatGPT. The public connection does not send messages or change profiles.
+
+Keep Signal and MyLegend in the shared header. Label footer policy links Privacy and Terms.
+
 ## Research Language
 
 We build prototypes to test ideas, compare approaches and find out what is worth developing further. Our work covers how AI systems use information, how people work with them and what makes their results genuinely useful.

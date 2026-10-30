@@ -10,3 +10,8 @@
 *.log
 /_site/
 __pycache__/
+/.playwright-mcp/
+/plugin-preview.html
+/plugin-preview.css
+/plugin-preview.js
+/preview-assets/
