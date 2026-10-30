@@ -6,7 +6,7 @@ const read = name => readFileSync(new URL(name, root), 'utf8');
 const pages = [...read('sitemap.xml').matchAll(/<loc>(.*?)<\/loc>/g)].map(m => new URL(m[1]).pathname.slice(1) || 'index.html');
 for (const page of pages) {
   const html = read(page);
-  assert(html.includes('navigation.js?v=20260915-2'), `${page}: missing shared menu`);
+  assert(html.includes('navigation.js?v=20261030-1'), `${page}: missing shared menu`);
   assert(/href="\/?styles\.css\?v=[^"]+"/.test(html), `${page}: missing versioned stylesheet`);
   const nav = html.match(/<nav class="nav nav--full"[^>]*>([\s\S]*?)<\/nav>/)[1];
   const labels = [...nav.matchAll(/<a\b[^>]*>(.*?)<\/a>/g)].map(m => /aria-label="([^"]+)"/.exec(m[0])?.[1] || m[1]);
@@ -26,7 +26,7 @@ let button;
 const header = { ...target(), querySelector: () => nav, contains: el => [nav, button, link].includes(el), classList: { add: v => classes.add(v), remove: v => classes.delete(v), contains: v => classes.has(v) } };
 const document = { ...target(), querySelector: () => header, createElement: () => ({ ...target(), attrs: {}, setAttribute(k,v) { this.attrs[k] = v; }, focus() { document.activeElement = this; } }) };
 const media = { ...target(), matches: true };
-const window = { ...target(), matchMedia: () => media };
+const window = { ...target(), matchMedia: query => { assert.equal(query, '(max-width: 1024px)'); return media; } };
 runInNewContext(read('navigation.js'), { document, window });
 assert.equal(button.attrs['aria-expanded'], 'false');
 assert.equal(button.attrs['aria-label'], 'Open menu');

@@ -3,7 +3,7 @@
   const header = document.querySelector('.site-header');
   const nav = header?.querySelector('.nav');
   if (!nav) return;
-  const mobile = window.matchMedia('(max-width: 760px)');
+  const mobile = window.matchMedia('(max-width: 1024px)');
   const toggle = document.createElement('button');
   toggle.type = 'button';
   toggle.className = 'nav-toggle';
