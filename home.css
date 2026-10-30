@@ -77,28 +77,45 @@ html { scroll-padding-top: 104px; }
 .engineering-copy h2 { margin-bottom: 26px; font-size: clamp(33px, 3.8vw, 56px); }
 .engineering-copy > p { max-width: 500px; color: #b9cac1; font-size: 16px; line-height: 1.65; }
 .engineering-copy .project-label { color: #a3bdb0; }
+.engineering-copy > p a { color: #d8e8dc; text-decoration: underline; text-decoration-color: #789a85; text-underline-offset: 3px; }
+.engineering-copy > p a:hover { color: #fff; text-decoration-color: currentColor; }
+.engineering-copy > p a:focus-visible { outline: 2px solid #b6d794; outline-offset: 4px; }
 .engineering-details { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 27px; }
 .engineering-details span { padding: 5px 10px; border: 1px solid #3c5148; border-radius: 5px; color: #c0d4c8; font: 12px ui-monospace, SFMono-Regular, Consolas, monospace; }
-.engineering-console { position: relative; margin-top: 24px; }
-.mascot-dock { position: absolute; z-index: 1; top: -24px; right: 24px; display: grid; width: 96px; height: 96px; place-items: center; border: 1px solid #536b48; border-radius: 9px; background: #161d18; box-shadow: 0 0 0 6px #111e1b, 0 8px 24px #0003; }
+.engineering-console { position: relative; min-width: 0; margin-top: 24px; }
+.engineering-terminal { overflow: hidden; border: 1px solid #3a4b43; border-radius: 12px; background: #0b1511; box-shadow: 0 18px 46px #0002; font: 13px/1.6 ui-monospace, SFMono-Regular, Consolas, monospace; }
+.terminal-title { display: grid; gap: 3px; min-height: 76px; align-content: center; padding: 16px 130px 16px 24px; border-bottom: 1px solid #293a31; background: #14221b; color: #c0d4c7; }
+.terminal-title > span:last-child { color: #80998b; font-size: 11px; }
+.terminal-body { padding: 5px 24px; }
+.terminal-entry { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 16px; padding: 17px 0; border-bottom: 1px solid #24362c; }
+.terminal-entry:last-child { border-bottom: 0; }
+.terminal-line { padding-top: 1px; color: #557262; font-size: 11px; }
+.terminal-entry p { margin: 0; color: #8ea79a; overflow-wrap: anywhere; }
+.terminal-entry strong { display: block; margin-bottom: 3px; color: #d8e7de; font-weight: 500; }
+.terminal-entry--evidence strong { color: #b6d794; }
+.mascot-dock { position: absolute; z-index: 1; top: -20px; right: 24px; display: grid; width: 88px; height: 88px; place-items: center; border: 1px solid #536b48; border-radius: 9px; background: #161d18; box-shadow: 0 0 0 6px #111e1b, 0 8px 24px #0003; }
 .mascot-dock::before { position: absolute; top: 50%; right: calc(100% + 7px); width: 18px; border-top: 1px solid #536b48; content: ''; }
 .mascot-dock::after { position: absolute; inset: 6px; border: 1px solid #b6d7941c; border-radius: 4px; content: ''; pointer-events: none; }
-.mascot-dock img { display: block; width: 82px; height: 82px; image-rendering: pixelated; }
-.mascot-scan-beam { position: absolute; left: 16px; top: 18px; width: 62px; height: 2px; background: #b6d794; box-shadow: 0 0 7px #b6d794; opacity: 0; pointer-events: none; }
+.mascot-dock img { display: block; width: 74px; height: 74px; image-rendering: pixelated; }
+.mascot-scan-beam { position: absolute; left: 14px; top: 16px; width: 58px; height: 2px; background: #b6d794; box-shadow: 0 0 7px #b6d794; opacity: 0; pointer-events: none; }
 @keyframes munchkin-section-scan { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-4px) rotate(2deg); } }
-@keyframes munchkin-section-beam { from { transform: translateY(0); opacity: 1; } to { transform: translateY(50px); opacity: .5; } }
+@keyframes munchkin-section-beam { from { transform: translateY(0); opacity: 1; } to { transform: translateY(44px); opacity: .5; } }
 @media (hover: hover) and (pointer: fine) {
   .engineering-section:hover .mascot-dock img { animation: munchkin-section-scan 1.7s ease-in-out infinite; }
   .engineering-section:hover .mascot-scan-beam { animation: munchkin-section-beam 1.7s ease-in-out infinite alternate; }
 }
-.engineering-terminal { overflow: hidden; border: 1px solid #3a4b43; border-radius: 13px; background: #0b1511; font: 13px/1.6 ui-monospace, SFMono-Regular, Consolas, monospace; }
-.terminal-title { display: flex; min-height: 68px; align-items: center; padding: 14px 156px 14px 21px; border-bottom: 1px solid #293a31; color: #90aa9b; }
-.terminal-body { display: grid; gap: 27px; padding: 29px 25px; }
-.terminal-body p { margin: 0; color: #92aa9c; }
-.terminal-body strong { display: block; margin-bottom: 5px; color: #e1eee5; font-weight: 500; }
+@media (max-width: 480px) {
+  .terminal-title { padding-left: 18px; padding-right: 100px; font-size: 12px; }
+  .terminal-body { padding: 3px 16px; font-size: 12px; }
+  .terminal-entry { grid-template-columns: 18px minmax(0, 1fr); gap: 12px; padding: 16px 0; }
+  .mascot-dock { width: 72px; height: 72px; right: 18px; top: -16px; }
+  .mascot-dock img { width: 60px; height: 60px; }
+  .mascot-scan-beam { left: 10px; top: 8px; width: 50px; }
+}
+
 .dialog-close { min-height: 44px; padding: 0 20px; border: 0; border-radius: 24px; background: var(--forest-dark); color: white; font: inherit; cursor: pointer; }
 @media (max-width: 1100px) and (min-width: 761px) { .research-examples .project-card { display: flex; flex-direction: column; gap: 18px; } }
-@media (max-width: 980px) { .engineering-layout { gap: 36px; } .terminal-body { padding: 24px 18px; } .research-examples { gap: 26px; } }
+@media (max-width: 980px) { .engineering-layout { gap: 36px; } .research-examples { gap: 26px; } }
 @media (max-width: 760px) {
   html { scroll-padding-top: 104px; }
   .hero { min-height: 740px; padding-top: 132px; }
@@ -111,6 +128,5 @@ html { scroll-padding-top: 104px; }
   .engineering-layout { gap: 30px; }
   .research-examples { grid-template-columns: 1fr; gap: 34px; margin-top: 38px; padding-top: 32px; }
   .research-examples .project-card { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 20px; }
-  .terminal-body { font-size: 12px; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .plugin-art > img, .plugin-platform, .plugin-screenshot { transition: none; } .engineering-section:hover .mascot-dock img, .engineering-section:hover .mascot-scan-beam { animation: none; } }

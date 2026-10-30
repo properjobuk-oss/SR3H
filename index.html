@@ -44,7 +44,7 @@
     <link rel="preload" href="assets/sr3h-quiet-material.jpg" as="image">
     <link rel="preload" href="assets/sr3h-logo-reveal.mp4?v=20260912-1" as="video" type="video/mp4">
     <link rel="stylesheet" href="styles.css?v=20261009-1">
-    <link rel="stylesheet" href="home.css?v=20261030-1">
+    <link rel="stylesheet" href="home.css?v=20261030-3">
     <script src="home.js?v=20261030-1" defer></script>
     <script type="application/ld+json">
       {
@@ -281,8 +281,26 @@
 </div>
 </div></section>
 <section class="section engineering-section" id="engineering" aria-labelledby="engineering-title"><div class="section-inner engineering-layout">
-<div class="engineering-copy"><p class="project-label">Engineering tools</p><h2 id="engineering-title">Scanaweb +<br>Scanamon</h2><p>Scanaweb runs project checks and browser tests. Scanamon checks source code for security issues, exposed secrets and vulnerable dependencies.</p><p>Results include findings, logs and coverage limits.</p><div class="engineering-details" aria-label="Technical capabilities"><span>MCP</span><span>Playwright</span><span>Static analysis</span><span>Dependency checks</span></div></div>
-<div class="engineering-console"><div class="mascot-dock"><img src="assets/projects/scanamon-munchkin.png" width="256" height="256" alt="Munchkin, the Scanamon mascot" loading="lazy" decoding="async"><span class="mascot-scan-beam" aria-hidden="true"></span></div><div class="engineering-terminal" aria-label="Technical overview of the two tools"><div class="terminal-title">sr3h / engineering</div><div class="terminal-body"><p><strong>scanaweb / website quality</strong>lint · types · tests · build<br>browser checks · console · layout</p><p><strong>scanamon / security evidence</strong>static analysis · secret detection<br>dependency advisories · scan coverage</p><p><strong>evidence</strong>logs · findings · exclusions · limits</p></div></div></div>
+<div class="engineering-copy">
+  <p class="project-label">Engineering tools</p>
+  <h2 id="engineering-title">Scanaweb +<br>Scanamon</h2>
+  <p>Scanaweb validates builds and tests browser journeys with Playwright. Scanamon combines Semgrep static analysis, Gitleaks secret detection and Nuclei vulnerability templates with our own browser and API security checks.</p>
+  <p>Scanamon pairs a Mac desktop app with a lightweight ChatGPT plugin over MCP. Its orchestration code is MIT licensed. An optional Docker-hosted <a href="https://github.com/samugit83/redamon" target="_blank" rel="noopener noreferrer">RedAmon</a> backend adds attack-surface reconnaissance and graph views. Findings include evidence, scanner provenance and coverage limits for AI-assisted triage.</p>
+  <div class="engineering-details" aria-label="Interfaces and deployment"><span>Mac desktop</span><span>Docker backend</span><span>ChatGPT · MCP</span></div>
+</div>
+<div class="engineering-console">
+  <div class="mascot-dock"><img src="assets/projects/scanamon-munchkin.png" width="256" height="256" alt="Munchkin, the Scanamon mascot" loading="lazy" decoding="async"><span class="mascot-scan-beam" aria-hidden="true"></span></div>
+  <div class="engineering-terminal" aria-label="Scanaweb and Scanamon check pipeline">
+    <div class="terminal-title"><span>sr3h / engineering</span><span>check pipeline</span></div>
+    <div class="terminal-body">
+      <div class="terminal-entry"><span class="terminal-line" aria-hidden="true">01</span><p><strong>scanaweb / project checks</strong>lint · types · tests · build</p></div>
+      <div class="terminal-entry"><span class="terminal-line" aria-hidden="true">02</span><p><strong>scanaweb / browser tests</strong>Playwright · journeys · console · layout</p></div>
+      <div class="terminal-entry"><span class="terminal-line" aria-hidden="true">03</span><p><strong>scanamon / source analysis</strong>Semgrep · Gitleaks · OSV advisories</p></div>
+      <div class="terminal-entry"><span class="terminal-line" aria-hidden="true">04</span><p><strong>scanamon / web reconnaissance</strong>Nuclei · browser + API security checks</p></div>
+      <div class="terminal-entry terminal-entry--evidence"><span class="terminal-line" aria-hidden="true">05</span><p><strong>evidence / review</strong>findings · logs · provenance · coverage</p></div>
+    </div>
+  </div>
+</div>
 </div></section>
       <section class="section platform-section" id="platform" aria-labelledby="platform-title">
         <div class="section-inner">

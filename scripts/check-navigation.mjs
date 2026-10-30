@@ -10,7 +10,8 @@ for (const page of pages) {
   assert(/href="\/?styles\.css\?v=[^"]+"/.test(html), `${page}: missing versioned stylesheet`);
   const nav = html.match(/<nav class="nav nav--full"[^>]*>([\s\S]*?)<\/nav>/)[1];
   const labels = [...nav.matchAll(/<a\b[^>]*>(.*?)<\/a>/g)].map(m => /aria-label="([^"]+)"/.exec(m[0])?.[1] || m[1]);
-  assert.deepEqual(labels, ['Work', 'Research', 'Blog', 'Signal', 'MyLegend', 'Contact', 'About']);
+  const tail = page === 'index.html' ? ['About', 'Contact'] : ['Contact', 'About'];
+  assert.deepEqual(labels, ['Work', 'ChatGPT', 'Research', 'Blog', 'Signal', 'MyLegend', ...tail], `${page}: incorrect navigation links`);
   const signalLink = nav.match(/<a class="nav-signal-link"[^>]*>/)?.[0] || '';
   assert(/href="\/?signal\.html"/.test(signalLink), `${page}: incorrect Signal link`);
   const productLink = nav.match(/<a class="nav-mylegend-link"[^>]*>/)?.[0] || '';
