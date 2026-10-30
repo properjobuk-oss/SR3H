@@ -61,7 +61,13 @@ Keep Signal and MyLegend in the shared header. Label footer policy links Privacy
 
 We build prototypes to test ideas, compare approaches and find out what is worth developing further. Our work covers how AI systems use information, how people work with them and what makes their results genuinely useful.
 
-Our research covers output and relevance; personal context and privacy; tools and human control; and discovery and recommendations.
+Our research covers personal computing and operating systems; living software and language design; efficient computation and privacy; output and relevance; personal context and privacy; tools and human control; and discovery and recommendations.
+
+Personal computing and operating systems: We are building towards an AI-centred personal operating system, beginning with a working desktop environment that brings information, tools and ongoing work together under user control.
+
+Living software and language design: We are designing a programming language and execution engine for software that can take shape and adapt while it runs, with AI participating in its ongoing computation. We are exploring applications in adaptive interfaces, interactive environments and research workspaces.
+
+Efficient computation and privacy: We investigate efficient ways to represent and process information, and ways to protect it as data, software and analyses evolve.
 
 Conchup: We explore how AI-assisted development can carry requirements and decisions from an idea through to a tested build, without losing why things changed.
 
