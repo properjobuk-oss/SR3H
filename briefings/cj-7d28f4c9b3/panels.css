@@ -565,3 +565,4 @@
 .agenda-photo figcaption{display:flex;flex-wrap:wrap;gap:5px 12px;justify-content:space-between;margin-top:8px;font-size:11px;line-height:1.5;color:#215c9c}
 .agenda-photo figcaption a:hover{text-decoration:underline}
 @media(max-width:760px){.visit-hero{min-height:410px}.visit-days{max-width:330px;gap:7px 20px;margin-top:20px}.visit-days strong{font-size:12px}.visit-days span{font-size:11px}.visit-agenda{margin-top:28px}.agenda-day-layout.has-photos{grid-template-columns:1fr;gap:20px}.agenda-day h3{font-size:23px}.agenda-item{grid-template-columns:78px minmax(0,1fr);gap:12px}.agenda-item dd{font-size:13px}.agenda-item dt{font-size:12px}.agenda-item dd p{font-size:12px}.agenda-photos{max-width:440px}.agenda-photo img{height:180px}}
+
