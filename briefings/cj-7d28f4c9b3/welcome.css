@@ -271,7 +271,7 @@
 .stay-overview-heading h2 em{color:#856b4b;font-weight:400}
 .stay-overview-heading>a{font-size:12px;color:#645548;border-bottom:1px solid #c6b28e;padding:5px 0}
 .stay-overview-heading>a span{margin-left:22px}
-.stay-days{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid #c9bba4;border-bottom:1px solid #c9bba4}
+.stay-days{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid #c9bba4;border-bottom:1px solid #c9bba4}
 .stay-days>a{position:relative;min-width:0;display:flex;flex-direction:column;padding:24px 23px 25px;border-right:1px solid #ded7cb;transition:background .25s}
 .stay-days>a:first-child{padding-left:0}
 .stay-days>a:last-child{border-right:0;padding-right:0}
@@ -293,3 +293,7 @@
 @media(max-width:760px){.stay-overview{margin:0 24px;padding-top:5px;padding-bottom:34px}.stay-overview-heading{gap:15px;align-items:flex-end;margin-bottom:19px}.stay-overview-heading h2{font-size:30px;max-width:215px}.stay-overview-heading>a{white-space:nowrap;font-size:11px}.stay-overview-heading>a span{margin-left:10px}.stay-days>a{padding:21px 12px 21px 17px}.stay-days>a:first-child,.stay-days>a:nth-child(3){padding-left:0}.stay-days>a:last-child{padding-right:12px}.stay-date{font-size:10px;letter-spacing:0;line-height:1.6;margin-bottom:11px}.stay-days strong{font-size:23px;line-height:1.16;padding-right:7px}.stay-detail{font-size:11px;line-height:1.7}.stay-day-arrow{right:8px;top:22px;font-size:14px}.stay-days>a:last-child .stay-day-arrow{right:8px}.visit-section-nav{gap:22px;padding:10px 0}.visit-section-nav a{font-size:11px}.visit-agenda .agenda-photo figcaption{font-size:11px}#visit-people{scroll-margin-top:24px}}
 @media(max-width:360px){.stay-overview{margin-left:20px;margin-right:20px}.stay-overview-heading h2{font-size:27px}.stay-days strong{font-size:21px}.stay-date{max-width:130px}.visit-section-nav{gap:16px}.visit-section-nav a{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.stay-days>a,.stay-day-arrow{transition:none}.stay-days>a:hover .stay-day-arrow{transform:none}}
+
+/* Three-day visit overview. */
+@media(min-width:761px) and (max-width:1100px){.stay-days{grid-template-columns:repeat(3,minmax(0,1fr))}.stay-days>a:nth-child(2){border-right:1px solid #ded7cb}.stay-days>a:nth-child(3){border-top:0;padding-left:22px}}
+@media(max-width:760px){.stay-days{grid-template-columns:1fr}.stay-days>a,.stay-days>a:last-child{padding:20px 26px 20px 0;border-right:0;border-top:1px solid #ded7cb}.stay-days>a:first-child{border-top:0}.stay-days strong{font-size:25px}.stay-detail{max-width:none}.stay-date{margin-bottom:7px}.stay-day-arrow,.stay-days>a:last-child .stay-day-arrow{right:5px}}
