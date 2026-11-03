@@ -310,12 +310,31 @@
   #day-5 .malmaison-photo figcaption{flex-shrink:0}
 }
 
-.meeting-detail{display:flex;flex-direction:column;gap:5px;margin:-10px 0 30px;padding:20px 0;border-top:1px solid #d3c4b0;border-bottom:1px solid #d3c4b0;color:#4f5555;font-size:13px;line-height:1.6}
-.meeting-detail strong{font-size:17px;font-weight:500;color:#52383e}.meeting-detail a{width:fit-content;color:#155c9b;text-decoration:underline;text-underline-offset:3px;margin-top:5px}
 .simon-connections{max-width:1296px;margin:0 auto;padding:70px 0 80px;scroll-margin-top:100px}.simon-connections-heading{margin-bottom:30px}.simon-connections h2{font:400 48px/1.1 Georgia,serif;color:#352b2d;letter-spacing:-.035em}.simon-connections h2 em{color:#856b4b;font-weight:400}
 .simon-connection-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}.simon-connection-grid article{border-top:1px solid #cbbda6;padding-top:18px}.simon-connection-grid img{width:100%;height:220px;object-fit:contain;background:#e9e6df;border-radius:2px}.simon-connection-grid article>div{padding:24px 0}.simon-connection-grid h3{font:400 27px/1.2 Georgia,serif;color:#352b2d;margin-bottom:15px}.simon-connection-grid p{font-size:14px;line-height:1.8;color:#596565;margin-bottom:20px}.simon-connection-grid a{font-size:12px;color:#155c9b;text-decoration:underline;text-underline-offset:4px}.home-demo-band{margin-top:5px}
-@media(max-width:1400px){.simon-connections{padding-left:72px;padding-right:72px}}@media(max-width:1100px){.simon-connections{padding-left:40px;padding-right:40px}.simon-connection-grid{gap:20px}.simon-connection-grid h3{font-size:23px}}@media(max-width:760px){.simon-connections{padding:45px 24px}.simon-connections h2{font-size:38px}.simon-connection-grid{grid-template-columns:1fr;gap:12px}.simon-connection-grid img{height:220px}.meeting-detail strong{font-size:16px}.home-actions{align-items:stretch}.home-actions>a{flex:1 1 auto}}
+@media(max-width:1400px){.simon-connections{padding-left:72px;padding-right:72px}}@media(max-width:1100px){.simon-connections{padding-left:40px;padding-right:40px}.simon-connection-grid{gap:20px}.simon-connection-grid h3{font-size:23px}}@media(max-width:760px){.simon-connections{padding:45px 24px}.simon-connections h2{font-size:38px}.simon-connection-grid{grid-template-columns:1fr;gap:12px}.simon-connection-grid img{height:220px}.home-actions{align-items:stretch}.home-actions>a{flex:1 1 auto}}
 
-.meeting-detail .meeting-parking{font-size:13px;line-height:1.7;margin:10px 0 0;max-width:440px;color:#596565}
 
 .demo-example-controls{flex-wrap:wrap}
+
+
+
+
+
+
+.meeting-detail{margin:0 0 26px;padding:23px 25px 7px;background:#eaf0e8;border-top:1px solid #bfcab9;border-bottom:1px solid #bfcab9;color:#43534d}
+.meeting-detail h2{font:400 28px/1.2 Georgia,serif;letter-spacing:-.025em;color:#2f5044;margin:0 0 15px}
+.meeting-detail .meeting-parking{font-size:12px;line-height:1.65;color:#5a675e;margin:0;padding-bottom:17px;border-bottom:1px solid #cad4c5}
+.meeting-detail .parking-label{font-weight:600;display:block;margin-bottom:3px;color:#41584a}
+.meeting-detail a{color:#155c9b;text-decoration:underline;text-underline-offset:3px}
+.meeting-itinerary{margin:0}.meeting-item{display:grid;grid-template-columns:82px minmax(0,1fr);gap:17px;padding:19px 0;border-bottom:1px solid #cad4c5}.meeting-item:last-child{border-bottom:0}
+.meeting-item dt{font:italic 18px/1.45 Georgia,serif;color:#385c4d;white-space:nowrap;padding-top:1px}
+.meeting-item dd{margin:0;min-width:0}.meeting-item h3{font:400 23px/1.15 Georgia,serif;letter-spacing:-.02em;color:#253c37;margin:0 0 9px}.meeting-item p{font-size:12px;line-height:1.7;margin:0 0 8px;color:#58675f}.meeting-item p:last-child{margin-bottom:0}.meeting-item .meeting-place{font-size:11px;margin-top:12px}
+@media(max-width:760px){.meeting-detail{padding:20px 18px 5px}.meeting-detail h2{font-size:25px}.meeting-item{grid-template-columns:71px minmax(0,1fr);gap:12px;padding:17px 0}.meeting-item dt{font-size:16px}.meeting-item h3{font-size:21px}}
+
+.demo-card-capture .central-panel-slide img{height:100%;width:100%;object-fit:cover;object-position:50% 77%}
+.central-panel-slide.is-current img{animation:central-panel-reveal 12s ease-in-out both}
+@keyframes central-panel-reveal{from{object-position:50% 72%}to{object-position:50% 85%}}
+.demo-screens-paused .central-panel-slide img,.welcome-paused .central-panel-slide img{animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){.central-panel-slide.is-current img{animation:none}}
+@media(min-width:761px){.home-hero>.welcome-gallery{align-self:start;margin-top:30px}}
