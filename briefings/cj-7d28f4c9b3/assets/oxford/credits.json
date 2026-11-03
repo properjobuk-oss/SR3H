@@ -112,13 +112,13 @@
     "imageUrl": "https://therag.co.uk/wp-content/uploads/2022/05/RAG-Club-2021-Amy-Murrell-2021-32-scaled.jpg"
   },
   {
-    "key": "randolph",
-    "author": "The Randolph Hotel Oxford / Graduate by Hilton",
+    "key": "malmaison-oxford",
+    "author": "Malmaison Oxford / Booking.com hotel photography",
     "license": "Official hotel photography",
     "licenseUrl": null,
-    "source": "https://www.hilton.com/en/hotels/lonrdgu-graduate-oxford-uk/",
-    "changes": "Official hotel image resized and converted to WebP; supplied composition retained after entrance animation.",
-    "imageUrl": "https://www.hilton.com/im/en/LONRDGU/21441573/210913-graduate-oxford-uk-1320-b.tif"
+    "source": "https://www.malmaison.com/locations/oxford/",
+    "changes": "User-selected hotel photograph converted to WebP; landscape display crop applied.",
+    "imageUrl": "https://q-xx.bstatic.com/xdata/images/hotel/max750/90387555.jpg?k=fab0d0d06e0e151ec89b5d2868b9a56ad91a10aac24de88822b4d0db84b36f9a&o=&a=839822"
   },
   {
     "key": "rose-crown",
