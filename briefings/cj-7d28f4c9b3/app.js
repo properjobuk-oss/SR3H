@@ -31,17 +31,18 @@
     };
     const select=(next,manual=false)=>{
       index=(next+slides.length)%slides.length;
+      slides.forEach(slide=>slide.classList.remove('is-current'));
+      void stage.offsetWidth;
       slides.forEach((slide,i)=>{const current=i===index;slide.classList.toggle('is-current',current);slide.setAttribute('aria-hidden',String(!current));slide.inert=!current;});
       buttons.forEach((button,i)=>button.setAttribute('aria-pressed',String(i===index)));
       label.textContent=slides[index].dataset.label;full.href=slides[index].getAttribute('href');
       full.setAttribute('aria-label',slides[index].getAttribute('aria-label'));
-      if(manual){paused=true;sync();}
+      if(manual){paused=false;sync();}
     };
     const restart=()=>{
       clearInterval(timer);if(!visible)return;
       timer=setInterval(()=>{
-        if(paused||reduced.matches||document.hidden||document.body.classList.contains('welcome-paused')||demoPreview.contains(document.activeElement))return;
-        if(matchMedia('(hover: hover)').matches&&demoPreview.matches(':hover'))return;
+        if(paused||reduced.matches||document.hidden||document.body.classList.contains('welcome-paused')||stage.contains(document.activeElement))return;
         select(index+1);
       },12000);
     };

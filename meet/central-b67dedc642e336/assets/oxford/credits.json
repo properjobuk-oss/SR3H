@@ -1,0 +1,60 @@
+[
+  {
+    "key": "bodleian",
+    "file": "File:Divinity School Interior 2, Bodleian Library, Oxford, UK - Diliff.jpg",
+    "author": "David Iliff",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Divinity_School_Interior_2,_Bodleian_Library,_Oxford,_UK_-_Diliff.jpg",
+    "changes": "Resized and converted to WebP; display crops may apply."
+  },
+  {
+    "key": "boyle-pump",
+    "file": "File:Replica of the Hooke-Boyle Air Pump, Science in the 18th Century, The King George III Collection, Science Museum, London.jpg",
+    "author": "John Cummings",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Replica_of_the_Hooke-Boyle_Air_Pump,_Science_in_the_18th_Century,_The_King_George_III_Collection,_Science_Museum,_London.jpg",
+    "changes": "Resized and converted to WebP; display crops may apply."
+  },
+  {
+    "key": "radcliffe",
+    "file": "File:The Radcliffe Camera at sunset.jpg",
+    "author": "Joshuagrubb",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:The_Radcliffe_Camera_at_sunset.jpg",
+    "changes": "Resized and converted to WebP; display crop and horizontal mirroring in Visit hero. Optimised JPEG version used for link previews."
+  },
+  {
+    "key": "boyle-plaque",
+    "file": "File:Boyle and Hooke plaque 1.jpg",
+    "author": "Set in Stone Project",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Boyle_and_Hooke_plaque_1.jpg",
+    "changes": "Resized and converted to WebP; display crops may apply."
+  },
+  {
+    "key": "oxford-instruments",
+    "author": "History of Science Museum, University of Oxford",
+    "source": "https://mhs.web.ox.ac.uk/node/804176",
+    "provenance": "Image supplied in Swagelok-and-Oxford.pdf; original institutional attribution retained.",
+    "changes": "Resized and converted to WebP."
+  },
+  {
+    "key": "diamond-gas-cell",
+    "author": "Diamond Light Source",
+    "source": "https://www.diamond.ac.uk/Instruments/Crystallography/I15-1/sample-environments.html",
+    "provenance": "Image supplied in Swagelok-and-Oxford.pdf; original institutional attribution retained.",
+    "changes": "Resized and converted to WebP."
+  },
+  {
+    "key": "swagelok-cad-preview",
+    "author": "Swagelok Company",
+    "license": "Manufacturer CAD viewer screenshot",
+    "licenseUrl": null,
+    "source": "https://cad.swagelok.com/item/category-2556/category-2358/ss-400-1-4",
+    "changes": "Official public CAD viewer captured within a Central UK demonstration card."
+  }
+]

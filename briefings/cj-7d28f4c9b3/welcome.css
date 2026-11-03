@@ -147,13 +147,13 @@
 .demo-example-controls button:hover{background:#ffffff15}
 .demo-example-controls .demo-rotation-toggle{margin-left:auto;font-size:17px;padding:8px}
 .demo-example-controls .demo-rotation-toggle[hidden]{display:none}
-.demo-preview-manual .demo-long-capture,.demo-screens-paused .demo-long-capture,.welcome-paused .demo-long-capture,.home-demo-visual:focus-within .demo-long-capture{animation-play-state:paused}
-@keyframes demo-capture-read{0%,18%{transform:translateY(0)}82%,100%{transform:translateY(min(0px,calc(var(--demo-frame-height,535px) - 100%)))}}
+.demo-screens-paused .demo-long-capture,.welcome-paused .demo-long-capture{animation-play-state:paused}
+@keyframes demo-capture-read{0%{transform:translateY(0)}85%,100%{transform:translateY(min(0px,calc(var(--demo-frame-height,535px) - 100%)))}}
 @media(max-width:760px){.demo-example-controls{gap:4px}.demo-example-controls button{font-size:10px;padding:8px}.demo-example-caption{font-size:10px;gap:8px}.demo-example-caption a{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.demo-preview-slide,.demo-example-controls button{transition:none}.demo-preview-slide.is-current .demo-long-capture{animation:none}}
 
 .demo-example-controls[hidden]{display:none}
-@media(hover:hover){.home-demo-visual:hover .demo-long-capture{animation-play-state:paused}}
+
 
 /* A single editorial photograph for the London evening. */
 .agenda-photo.club-editorial:only-child{max-width:none;width:100%}
