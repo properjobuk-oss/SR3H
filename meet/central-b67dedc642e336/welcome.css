@@ -337,4 +337,16 @@
 @keyframes central-panel-reveal{from{object-position:50% 72%}to{object-position:50% 85%}}
 .demo-screens-paused .central-panel-slide img,.welcome-paused .central-panel-slide img{animation-play-state:paused}
 @media(prefers-reduced-motion:reduce){.central-panel-slide.is-current img{animation:none}}
-@media(min-width:761px){.home-hero>.welcome-gallery{align-self:start;margin-top:30px}}
+
+
+/* Welcome first; practical meeting details have their own space below. */
+.home-hero{padding-top:44px;padding-bottom:48px}.home-welcome-copy h1{font-size:clamp(49px,5.1vw,74px)}
+.home-hero>.welcome-gallery{align-self:center;margin-top:0}.home-hero .welcome-visual{aspect-ratio:1.12/1}
+.hero-meeting-link{display:inline-flex;align-items:center;gap:24px;margin:-13px 0 28px;padding:8px 0;border-bottom:1px solid #b9c8bf;color:#3b5c50;font-size:13px;line-height:1.5}.hero-meeting-link:hover{color:#173a49;border-color:#173a49}
+.meeting-detail{max-width:1296px;margin:0 auto 58px;display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);gap:64px;padding:35px 38px 22px;background:#edf2ea;border-top:1px solid #c4cfbd;border-bottom:1px solid #c4cfbd}
+.meeting-detail h2{font-size:33px;line-height:1.2;max-width:300px;margin-bottom:24px}.meeting-detail .meeting-parking{border-bottom:0;padding-bottom:0;font-size:13px;line-height:1.8;max-width:335px}.meeting-detail .parking-label{font-size:13px;margin-bottom:7px}
+.meeting-item:first-child{padding-top:0}.meeting-item{grid-template-columns:96px minmax(0,1fr);gap:22px;padding:21px 0}.meeting-item dt{font-size:21px}.meeting-item h3{font-size:27px}.meeting-item p{font-size:13px}.meeting-item .meeting-place{font-size:12px}
+@media(max-width:1400px){.meeting-detail{margin-left:72px;margin-right:72px}}
+@media(max-width:1100px){.meeting-detail{margin-left:40px;margin-right:40px;gap:32px;padding:28px}.meeting-detail h2{font-size:29px}.meeting-item{grid-template-columns:82px minmax(0,1fr);gap:16px}.meeting-item dt{font-size:18px}.meeting-item h3{font-size:23px}}
+@media(max-width:760px){.home-hero{padding-top:32px;padding-bottom:32px}.hero-meeting-link{margin-top:-10px;margin-bottom:24px;font-size:12px}.meeting-detail{margin:0 24px 34px;grid-template-columns:1fr;gap:22px;padding:24px 20px 6px}.meeting-detail h2{max-width:none;font-size:28px;margin-bottom:17px}.meeting-detail .meeting-parking{max-width:none;font-size:12px;padding-bottom:19px;border-bottom:1px solid #cad4c5}.meeting-item{grid-template-columns:73px minmax(0,1fr);gap:14px;padding:18px 0}.meeting-item dt{font-size:17px}.meeting-item h3{font-size:23px}.meeting-item p{font-size:12px}}
+#friday-meeting{scroll-margin-top:115px}
